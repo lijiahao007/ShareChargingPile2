@@ -109,4 +109,10 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // LeakCanary 内存泄漏检测工具
+    // https://mvnrepository.com/artifact/com.squareup.leakcanary/leakcanary-android
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+
+
 }
