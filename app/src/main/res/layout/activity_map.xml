@@ -30,6 +30,19 @@
             app:fabCustomSize="@dimen/location_btn_size"
             app:pressedTranslationZ="2dp"
             app:srcCompat="@drawable/ic_location_button_img" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_insert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/map_location_btn"
+            android:elevation="20dp"
+            app:backgroundTint="@color/white"
+            app:fabCustomSize="@dimen/location_btn_size"
+            app:pressedTranslationZ="2dp"
+            app:srcCompat="@drawable/ic_test"
+            />
 
 
         <!--        这里是 BottomSheet的样式-->

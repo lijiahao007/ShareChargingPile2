@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_bottom_sheet"
+    app:startDestination="@id/PileListFragment">
+
+    <fragment
+        android:id="@+id/PileListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.PileListFragment"
+        android:label="PileListFragment"
+        tools:layout="@layout/pile_list_fragment">
+
+
+        <action
+            android:id="@+id/action_PileListFragment_to_PileDetailFragment"
+            app:destination="@id/PileDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PileDetailFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.PileDetailFragment"
+        android:label="PileDetailFragment"
+        tools:layout="@layout/fragment_pile_detail">
+        <!--    List中点击具体的Item跳转对用的PileDetail-->
+        <argument
+            android:name="pileId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+    </fragment>
+
+</navigation>

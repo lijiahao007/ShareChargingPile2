@@ -7,12 +7,12 @@
         android:id="@+id/bottom_sheet_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/shape_bottom_sheet_header"
+        android:elevation="10dp"
         app:behavior_fitToContents="false"
         app:behavior_hideable="false"
         app:behavior_peekHeight="@dimen/bottom_sheet_header_height"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        android:elevation="10dp"
-        android:background="@drawable/shape_bottom_sheet_header">
+        app:layout_behavior="@string/bottom_sheet_behavior">
 
         <!--        bottom_sheet_header-->
         <RelativeLayout
@@ -22,18 +22,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="40dp"
                 android:layout_height="5dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                app:cardCornerRadius="20dp"
-                app:cardBackgroundColor="@color/gray"/>
+                app:cardBackgroundColor="@color/gray"
+                app:cardCornerRadius="20dp" />
 
         </RelativeLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/bottom_sheet_fragment_container_view"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_header"
+            app:navGraph="@navigation/nav_bottom_sheet" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

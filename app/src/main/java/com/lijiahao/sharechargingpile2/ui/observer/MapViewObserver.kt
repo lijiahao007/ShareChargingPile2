@@ -6,14 +6,11 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.amap.api.maps.MapView
 
-class MapViewObserver(private val mapView: MapView, var savedInstanceState: Bundle?) :
+class MapViewObserver(private val mapView: MapView) :
     DefaultLifecycleObserver {
     // 会根据Activity各个生命周期，来对mapView进行一些配置操作
 
-    // 在OnCreate 、 OnSaveInstanceState 中也有mapView相关操作
-    override fun onCreate(owner: LifecycleOwner) {
-        mapView.onCreate(savedInstanceState)
-    }
+    // onCreate 、onSaveInstanceState 在MapActivity中
 
     override fun onResume(owner: LifecycleOwner) {
         mapView.onResume()

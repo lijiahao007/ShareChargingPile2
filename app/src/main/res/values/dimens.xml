@@ -2,4 +2,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bottom_sheet_header_height">60dp</dimen>
     <dimen name="location_btn_size">40dp</dimen>
+    <dimen name="back_btn_size">25dp</dimen>
 </resources>
