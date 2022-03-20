@@ -3,30 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_bottom_sheet"
-    app:startDestination="@id/PileListFragment">
+    app:startDestination="@id/StationListFragment">
 
     <fragment
-        android:id="@+id/PileListFragment"
-        android:name="com.lijiahao.sharechargingpile2.ui.PileListFragment"
-        android:label="PileListFragment"
-        tools:layout="@layout/pile_list_fragment">
+        android:id="@+id/StationListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.StationListFragment"
+        android:label="StationListFragment"
+        tools:layout="@layout/fragment_station_list">
 
 
         <action
-            android:id="@+id/action_PileListFragment_to_PileDetailFragment"
-            app:destination="@id/PileDetailFragment" />
+            android:id="@+id/action_StationListFragment_to_StationDetailFragment"
+            app:destination="@id/StationDetailFragment"
+            app:popUpTo="@id/StationListFragment">
+            <argument
+                android:name="pileId"
+                android:defaultValue="-1" />
+        </action>
     </fragment>
 
     <fragment
-        android:id="@+id/PileDetailFragment"
-        android:name="com.lijiahao.sharechargingpile2.ui.PileDetailFragment"
-        android:label="PileDetailFragment"
-        tools:layout="@layout/fragment_pile_detail">
+        android:id="@+id/StationDetailFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.StationDetailFragment"
+        android:label="StationDetailFragment"
+        tools:layout="@layout/fragment_station_detail">
         <!--    List中点击具体的Item跳转对用的PileDetail-->
         <argument
             android:name="pileId"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            app:argType="integer" />
 
     </fragment>
 

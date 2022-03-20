@@ -87,6 +87,9 @@ dependencies {
     implementation 'androidx.activity:activity-ktx:1.4.0'
     // Fragment kotlin拓展
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
+    // ListAdapter、RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
 
 
     // hilt 依赖注入
@@ -100,6 +103,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.9.0'
+
+    // Glide 图片加载库
+    implementation 'com.github.bumptech.glide:glide:4.13.1'
+    kapt 'com.github.bumptech.glide:compiler:4.13.1'
 
 
     // 高德地图

@@ -27,4 +27,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="backup">返回</string>
+    <string name="charging_pile_name">充电桩名字</string>
+    <string name="_5_0km">5.0km</string>
+    <string name="kh">/度</string>
+    <string name="DC">直流：</string>
+    <string name="AC">交流：</string>
+    <string name="no_start_data">未有数据</string>
+    <string name="used_time_info">使用数据：</string>
+    <string name="comment">评价</string>
+    <string name="to">~</string>
+    <string name="sort_by_distance">按距离排序</string>
+    <string name="sort_by_score">按评分排序</string>
+    <string name="sort_by_used_time">按使用次数排序</string>
+    <string name="sort">排序</string>
 </resources>

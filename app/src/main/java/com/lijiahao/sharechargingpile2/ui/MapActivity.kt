@@ -1,6 +1,7 @@
 package com.lijiahao.sharechargingpile2.ui
 
 import android.Manifest
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +11,9 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapBinding
@@ -23,15 +26,15 @@ import com.amap.api.location.AMapLocationClientOption
 
 import com.amap.api.maps.*
 import com.amap.api.maps.model.*
-import com.amap.api.navi.AMapNavi
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.ServiceSettings
 import com.amap.api.services.geocoder.*
-import com.lijiahao.sharechargingpile2.network.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.LoginService
+import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.ui.observer.LocationClientObserver
 import com.lijiahao.sharechargingpile2.ui.viewmodel.MapViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -40,17 +43,25 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
 
-
     private val viewModel: MapViewModel by viewModels()
-    private val binding: ActivityMapBinding by lazy { DataBindingUtil.setContentView<ActivityMapBinding>(this, R.layout.activity_map) }
+    private val binding: ActivityMapBinding by lazy {
+        DataBindingUtil.setContentView<ActivityMapBinding>(
+            this,
+            R.layout.activity_map
+        )
+    }
     private val bottomSheetBinding: MapActivityBottomSheetBinding by lazy { binding.bottomSheetInclude }
-    private val bottomSheetBehavior: BottomSheetBehavior<View> by lazy { BottomSheetBehavior.from(bottomSheetBinding.bottomSheetLayout) }
-    private val mapView: MapView by lazy{ binding.mapView }   // 地图视图
+    private val bottomSheetBehavior: BottomSheetBehavior<View> by lazy {
+        BottomSheetBehavior.from(
+            bottomSheetBinding.bottomSheetLayout
+        )
+    }
+    private val mapView: MapView by lazy { binding.mapView }   // 地图视图
     private lateinit var locationClient: AMapLocationClient     // locationClient 负责获取定位信息
     private lateinit var aMap: AMap // 地图控制器
     private lateinit var uiSettings: UiSettings // 地图控件控制器
     private var mapCenterMarker: Marker? = null // 屏幕中心标点
-    private lateinit var geocodeSearch:GeocodeSearch // 地址 <-> 经纬度 转换工具
+    private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -78,7 +89,11 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val res = PermissionTool.usedOnRequestPermissionsResult(
             requestCode,
@@ -93,10 +108,12 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        viewModel // 加载一下ViewModel。
         initMap()
-        initUi()
         initLocation()
+        initUi()
         initGeoSearch()
+        initMarker() // 插入充电桩marker
     }
 
     // 执行地图初始化操作
@@ -126,6 +143,7 @@ class MapActivity : AppCompatActivity() {
         val mapViewObserver = MapViewObserver(mapView)
         lifecycle.addObserver(mapViewObserver)
 
+
     }
 
     // 设置和AMap地图相关的Listener
@@ -151,6 +169,22 @@ class MapActivity : AppCompatActivity() {
                 }
             }
         })
+
+        // 3. AMap.OnMapLoadedListener (最好这时才使用AMap和地图相关的属性)
+        aMap.setOnMapLoadedListener {
+            // 7.1 设置marker
+        }
+
+        // 4. marker 点击事件
+        aMap.setOnMarkerClickListener { marker ->
+            if (marker.isClickable && marker.title != null) {
+                val id = marker.title.toInt()
+                navigationToDetailFragment(id)
+                true
+            } else {
+                false
+            }
+        }
 
     }
 
@@ -272,20 +306,29 @@ class MapActivity : AppCompatActivity() {
         }
         binding.btnInsert.setOnClickListener {
             mapCenterMarker?.position?.let {
-                lifecycleScope.launch(Dispatchers.IO){
-                    val lat = viewModel.mapCenterPos.latitude
-                    val lon = viewModel.mapCenterPos.longitude
-                    val result = withContext(Dispatchers.IO) {
-                        val query = RegeocodeQuery(LatLonPoint(lat, lon), 10f, GeocodeSearch.AMAP)
-                        geocodeSearch.getFromLocation(query)
+                lifecycleScope.launch(Dispatchers.IO) {
+
+                    try {
+                        val lat = viewModel.mapCenterPos.latitude
+                        val lon = viewModel.mapCenterPos.longitude
+                        val result = withContext(Dispatchers.IO) {
+                            val query =
+                                RegeocodeQuery(LatLonPoint(lat, lon), 10f, GeocodeSearch.AMAP)
+                            geocodeSearch.getFromLocation(query)
+                        }
+                        Log.i("btnInsertGeoSearch", result.formatAddress)
+                        val insertRes = chargingPileStationService.insertTestChargingPile(
+                            lon,
+                            lat,
+                            result.formatAddress
+                        )
+                        Log.i("btnInsertGeoSearch", insertRes)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.i("btnInsertGeoSearch", "IO错误")
+                    } finally {
+
                     }
-                    Log.i("btnInsertGeoSearch", result.formatAddress)
-                    val insertRes = chargingPileStationService.insertTestChargingPile(
-                        lon,
-                        lat,
-                        result.formatAddress
-                    )
-                    Log.i("btnInsertGeoSearch", insertRes)
                 }
             }
 
@@ -294,7 +337,6 @@ class MapActivity : AppCompatActivity() {
 
     // 定位相关的初始化
     private fun initLocation() {
-
 
         // 1. 创建 AMapLocationClient
         locationClient = AMapLocationClient(applicationContext)
@@ -309,13 +351,14 @@ class MapActivity : AppCompatActivity() {
 
 
         // 3. 添加监听器，回调onLocationChanged获取定位信息。
-        locationClient.setLocationListener{ location ->
+        locationClient.setLocationListener { location ->
             if (location != null) {
                 if (location.errorCode == 0) {
                     Log.i("AMapLocation", "${location.address} ${location.aoiName}")
                     val latLng = LatLng(location.latitude, location.longitude)
                     // 3.1 将视角转移到当前，并带有缩放
                     aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                    Log.i("Projection", "${aMap.projection.visibleRegion}")
                 } else {
                     Log.e(
                         "AmapError", "location Error, ErrCode:"
@@ -331,15 +374,14 @@ class MapActivity : AppCompatActivity() {
 
         // 5. 定位到当前位置
         onceLocation()
-
     }
 
     // 经纬度->地址转换
     private fun initGeoSearch() {
         geocodeSearch = GeocodeSearch(this)
 
-        // 1. 设置查询回调
-        geocodeSearch.setOnGeocodeSearchListener(object: GeocodeSearch.OnGeocodeSearchListener{
+        // 1. 设置查询回调 (异步方法回调)
+        geocodeSearch.setOnGeocodeSearchListener(object : GeocodeSearch.OnGeocodeSearchListener {
             override fun onRegeocodeSearched(result: RegeocodeResult?, rCode: Int) {
                 // 经纬度 -> 地址信息
                 if (rCode == 1000) {
@@ -356,7 +398,10 @@ class MapActivity : AppCompatActivity() {
                 if (rCode == 1000) {
                     // 成功
                     val latLonPoint = result?.geocodeAddressList?.get(0)?.latLonPoint
-                    Log.i("GeocodeSearch", "latitude=${latLonPoint?.latitude}  longitude=${latLonPoint?.longitude}")
+                    Log.i(
+                        "GeocodeSearch",
+                        "latitude=${latLonPoint?.latitude}  longitude=${latLonPoint?.longitude}"
+                    )
                 } else {
                     Log.e("GeocodeSearch", "rCode=$rCode, result=$result")
                 }
@@ -370,8 +415,35 @@ class MapActivity : AppCompatActivity() {
         geocodeSearch.getFromLocationNameAsyn(geoQuery) // 异步方法
 
         // 3. 查询经纬度对应地址
-        val reGeoQuery = RegeocodeQuery(LatLonPoint(23.410183, 116.635294), 100f, GeocodeSearch.AMAP)
+        val reGeoQuery =
+            RegeocodeQuery(LatLonPoint(23.410183, 116.635294), 100f, GeocodeSearch.AMAP)
         geocodeSearch.getFromLocationAsyn(reGeoQuery)
+
+    }
+
+    // 初始化地图上的UI， 如圆，如标点
+    private fun initMarker() {
+        viewModel.isReady.observe(this) {
+            Log.i("initMarker", "viewModel.stationList.size=${viewModel.stationList.size}")
+            // 添加标点
+            viewModel.stationList.forEach { station ->
+                aMap.addMarker(
+                    MarkerOptions()
+                        .visible(true)
+                        .draggable(false)
+                        .position(LatLng(station.latitude, station.longitude))
+                        .icon(
+                            BitmapDescriptorFactory.fromBitmap(
+                                BitmapFactory.decodeResource(
+                                    resources,
+                                    R.drawable.station_marker
+                                )
+                            )
+                        )
+                        .title(station.id.toString())
+                ) // 注意title中的id是唯一标识
+            }
+        }
 
     }
 
@@ -390,8 +462,16 @@ class MapActivity : AppCompatActivity() {
                 MarkerOptions().position(latLng)
                     .draggable(false)
                     .visible(true)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_location_marker))
+                    .icon(
+                        BitmapDescriptorFactory.fromBitmap(
+                            BitmapFactory.decodeResource(
+                                resources,
+                                R.drawable.map_center_marker
+                            )
+                        )
+                    )
             )
+            mapCenterMarker?.isClickable = false
         } else {
             mapCenterMarker?.position = latLng
         }
@@ -400,6 +480,15 @@ class MapActivity : AppCompatActivity() {
     }
 
 
+    private fun navigationToDetailFragment(id: Int) {
+        val navController = findNavController(R.id.bottom_sheet_fragment_container_view)
+        val action = StationListFragmentDirections.actionStationListFragmentToStationDetailFragment(id)
+        navController.navigate(action)
+        // 将底部BottomSheet放上来
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // mapView保存状态 TODO: 把这个整合到MapViewObserver中
@@ -407,6 +496,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val TAG="MAPACTIVITY"
         const val REQUEST_CODE = 1
         private val permissions = arrayOf(
             Manifest.permission.INTERNET,
@@ -441,9 +531,8 @@ class MapActivity : AppCompatActivity() {
             "写拓展存储控件权限",
             "读拓展存储权限",
             "读取精确位置",
-            "调用A-GPS模块",
-            "前台服务",
-            "获取后台定位"
+            "获取位置附加信息"
         )
     }
 }
+    

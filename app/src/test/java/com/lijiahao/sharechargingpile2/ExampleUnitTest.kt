@@ -14,4 +14,10 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun sumOfTest() {
+        val list = listOf<Double>(1.0, 2.0, 3.0, 4.0)
+        println(list.sumOf { it })
+    }
 }

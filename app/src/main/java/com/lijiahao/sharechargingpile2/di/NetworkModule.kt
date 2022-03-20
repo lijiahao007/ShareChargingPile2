@@ -1,7 +1,7 @@
 package com.lijiahao.sharechargingpile2.di
 
-import com.lijiahao.sharechargingpile2.network.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.LoginService
+import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.network.service.LoginService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,7 +39,7 @@ class NetworkModule {
     }
 
     @Provides
-    fun provideChargingPileStationService(retrofit2: Retrofit): ChargingPileStationService{
+    fun provideChargingPileStationService(retrofit2: Retrofit): ChargingPileStationService {
         return retrofit2.create(ChargingPileStationService::class.java)
     }
 }

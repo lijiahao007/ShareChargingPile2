@@ -3,4 +3,7 @@
     <dimen name="bottom_sheet_header_height">60dp</dimen>
     <dimen name="location_btn_size">40dp</dimen>
     <dimen name="back_btn_size">25dp</dimen>
+    <dimen name="card_view_margin">10dp</dimen>
+    <dimen name="station_detail_margin"> 30dp</dimen>
+    <dimen name="station_detail_item_top_margin">20dp</dimen>
 </resources>

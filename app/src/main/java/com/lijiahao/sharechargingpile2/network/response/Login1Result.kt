@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.data.response
+package com.lijiahao.sharechargingpile2.network.response
 
 import com.google.gson.annotations.SerializedName
 

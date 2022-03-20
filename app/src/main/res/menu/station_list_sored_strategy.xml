@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/opt_dis"
+        android:title="@string/sort_by_distance" />
+    <item android:id="@+id/opt_score"
+        android:title="@string/sort_by_score" />
+    <item android:id="@+id/opt_used_time"
+        android:title="@string/sort_by_used_time" />
+</menu>
