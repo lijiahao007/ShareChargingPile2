@@ -1,8 +1,6 @@
-package com.lijiahao.sharechargingpile2.ui
+package com.lijiahao.sharechargingpile2.ui.mapModule
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -10,14 +8,11 @@ import androidx.navigation.fragment.findNavController
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
 import com.lijiahao.sharechargingpile2.R
-import com.lijiahao.sharechargingpile2.data.ChargingPile
-import com.lijiahao.sharechargingpile2.data.OpenTime
-import com.lijiahao.sharechargingpile2.data.Tags
 import com.lijiahao.sharechargingpile2.databinding.FragmentStationListBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.ui.adapter.StationListAdapter
-import com.lijiahao.sharechargingpile2.ui.viewmodel.MapViewModel
-import com.lijiahao.sharechargingpile2.ui.viewmodel.StationListItemViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.adapter.StationListAdapter
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationListItemViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

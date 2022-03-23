@@ -1,7 +1,7 @@
-package com.lijiahao.sharechargingpile2.ui.adapter
+package com.lijiahao.sharechargingpile2.ui.mapModule.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.lijiahao.sharechargingpile2.ui.viewmodel.StationListItemViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationListItemViewModel
 
 class StationListItemViewModelDiffItemCallback: DiffUtil.ItemCallback<StationListItemViewModel>() {
     override fun areItemsTheSame(

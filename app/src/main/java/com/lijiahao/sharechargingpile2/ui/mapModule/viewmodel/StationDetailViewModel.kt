@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.viewmodel
+package com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.viewmodel
+package com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.lijiahao.sharechargingpile2.data.ChargingPile
@@ -7,11 +7,8 @@ import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.data.Tags
 import com.lijiahao.sharechargingpile2.utils.INVISIBLE
 import com.lijiahao.sharechargingpile2.utils.VISIBLE
-import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
-import javax.inject.Inject
-import kotlin.math.roundToInt
 
 class StationListItemViewModel(
     val station: ChargingPileStation,

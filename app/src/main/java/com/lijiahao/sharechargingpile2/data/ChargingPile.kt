@@ -5,6 +5,7 @@ data class ChargingPile(
     val id:Int,
     val electricType:String,
     val powerRate:Float,
-    val pileNum:Int,
-    val stationId: Int
+    var pileNum:Int,
+    val stationId: Int,
+    val state:String
 )

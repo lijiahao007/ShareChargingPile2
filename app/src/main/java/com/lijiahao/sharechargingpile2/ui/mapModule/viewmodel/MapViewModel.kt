@@ -1,24 +1,19 @@
-package com.lijiahao.sharechargingpile2.ui.viewmodel
+package com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel
 
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.*
-import com.amap.api.maps.AMapUtils
-import com.amap.api.maps.model.BitmapDescriptorFactory
+import com.amap.api.maps.Projection
 import com.amap.api.maps.model.LatLng
-import com.amap.api.maps.model.MarkerOptions
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.ChargingPileStation
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.data.Tags
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.ui.MapActivity
+import com.lijiahao.sharechargingpile2.ui.mapModule.MapActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +22,7 @@ class MapViewModel @Inject constructor(
 ) : ViewModel() {
     var mapCenterPos: LatLng = LatLng(0.0, 0.0) // 屏幕中心位置
     var bluePointPos: LatLng = LatLng(0.0, 0.0) // 定位蓝点位置（当前位置, 在addOnMyLocationChangeListener 中赋予值）
+    lateinit var projection: Projection
     var stationList: List<ChargingPileStation> = ArrayList<ChargingPileStation>()
     var stationTagMap: Map<String, List<Tags>> = HashMap<String, List<Tags>>()
     var stationPileMap: Map<String, List<ChargingPile>> = HashMap<String, List<ChargingPile>>()

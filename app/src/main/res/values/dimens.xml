@@ -6,4 +6,6 @@
     <dimen name="card_view_margin">10dp</dimen>
     <dimen name="station_detail_margin"> 30dp</dimen>
     <dimen name="station_detail_item_top_margin">20dp</dimen>
+    <dimen name="add_station_top_margin">13dp</dimen>
+    <dimen name="add_station_edittext_top_margin">5.5dp</dimen>
 </resources>

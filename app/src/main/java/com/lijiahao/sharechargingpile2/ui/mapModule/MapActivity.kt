@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui
+package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.Manifest
 import android.graphics.BitmapFactory
@@ -11,18 +11,16 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapBinding
 import com.lijiahao.sharechargingpile2.databinding.MapActivityBottomSheetBinding
-import com.lijiahao.sharechargingpile2.ui.observer.MapViewObserver
+import com.lijiahao.sharechargingpile2.ui.mapModule.observer.MapViewObserver
 import com.lijiahao.sharechargingpile2.utils.PermissionTool
 import dagger.hilt.android.AndroidEntryPoint
 import com.amap.api.location.AMapLocationClient
-import com.amap.api.location.AMapLocationClientOption
 
 import com.amap.api.maps.*
 import com.amap.api.maps.model.*
@@ -31,10 +29,8 @@ import com.amap.api.services.core.ServiceSettings
 import com.amap.api.services.geocoder.*
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
-import com.lijiahao.sharechargingpile2.ui.observer.LocationClientObserver
-import com.lijiahao.sharechargingpile2.ui.viewmodel.MapViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -57,11 +53,12 @@ class MapActivity : AppCompatActivity() {
         )
     }
     private val mapView: MapView by lazy { binding.mapView }   // 地图视图
-    private lateinit var locationClient: AMapLocationClient     // locationClient 负责获取定位信息
     private lateinit var aMap: AMap // 地图控制器
     private lateinit var uiSettings: UiSettings // 地图控件控制器
     private var mapCenterMarker: Marker? = null // 屏幕中心标点
     private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
+    private var firstFlag = true
+
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -110,7 +107,6 @@ class MapActivity : AppCompatActivity() {
     private fun init() {
         viewModel // 加载一下ViewModel。
         initMap()
-        initLocation()
         initUi()
         initGeoSearch()
         initMarker() // 插入充电桩marker
@@ -153,6 +149,10 @@ class MapActivity : AppCompatActivity() {
         aMap.addOnMyLocationChangeListener { location ->
             // 获取当前定位蓝点位置信息
             viewModel.bluePointPos = LatLng(location.latitude, location.longitude)
+            if (firstFlag) {
+                aMap.animateCamera(CameraUpdateFactory.newLatLng(viewModel.bluePointPos))
+                firstFlag = false
+            }
         }
 
         // 2. 设置屏幕移动监视器
@@ -167,6 +167,10 @@ class MapActivity : AppCompatActivity() {
                 if (p0 != null) {
                     setCenterMarkerPosition(p0.target)
                 }
+                viewModel.projection = aMap.projection
+                Log.i("Projection", "projection = ${viewModel.projection}")
+                Log.i("Projection", "visibleRegion = ${viewModel.projection.visibleRegion}")
+                Log.i("Projection", "latLngBounds = ${viewModel.projection.visibleRegion.latLngBounds}")
             }
         })
 
@@ -179,6 +183,7 @@ class MapActivity : AppCompatActivity() {
         aMap.setOnMarkerClickListener { marker ->
             if (marker.isClickable && marker.title != null) {
                 val id = marker.title.toInt()
+                findNavController(R.id.bottom_sheet_fragment_container_view).popBackStack(R.id.StationListFragment, false)
                 navigationToDetailFragment(id)
                 true
             } else {
@@ -199,110 +204,9 @@ class MapActivity : AppCompatActivity() {
         // 定位按钮
         binding.btnLocation.setOnClickListener {
             // 每次点击按钮，会地洞
-            onceLocation()
+//            onceLocation()
+            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(viewModel.bluePointPos, 12f))
             Log.i("AMapLocation", "FAB click")
-
-            // 测试网络连接
-//            lifecycleScope.launch {
-//                try {
-//                    val res = loginService.login("What", "the fuck ")
-//                    Log.i("后端连接", " 收到结果了，$res")
-//
-//                    val res1 = loginService.login5(Login1Result(10, "lijiahoa", "1353585364654645"))
-//                    Log.i("后端连接", "Post数据了，响应是：$res1")
-//
-//                    // 上传文件
-//                    Log.i("后端连接", "filesDir = $filesDir  cacheDir = $cacheDir")
-//                    val imgPath = "$filesDir/imgs/1.jpeg"
-//                    val imgFile = File(imgPath)
-//                    Log.i(
-//                        "后端连接",
-//                        "path = $imgPath; file = $imgFile; type=${
-//                            URLConnection.getFileNameMap().getContentTypeFor(imgFile.name)
-//                        }"
-//                    )
-//                    Log.i("后端连接", "fileList = ${fileList()}")
-//                    val imgPart = MultipartBody.Part.createFormData(
-//                        "picture",
-//                        imgFile.name,
-//                        imgFile.asRequestBody("multipart/form-data".toMediaType())
-//                    )
-//                    val res2 = loginService.login6(imgPart)
-//                    Log.i("后端连接", "res=$res2  图片上传了")
-//
-//                    // 下载文件
-//                    val filePath = "C:\\Users\\10403\\Desktop\\imgs\\1.jpeg"
-//                    val responseBody = loginService.login7(filePath)
-//                    Log.i("后端连接", "图片下载了， contentLength = ${responseBody.contentLength()} ;")
-//                    val responseFile = File("$filesDir/imgs/2.jpeg")
-//                    withContext(Dispatchers.IO) {
-//                        val byteStream = responseBody.byteStream()
-//
-//                        val fileOutputStream = FileOutputStream(responseFile)
-//                        try {
-//                            var totalSize = 0;
-//
-//                            val byteBuffer = ByteArray(1024)
-//                            while (true) {
-//                                val byteSize = byteStream.read(byteBuffer)
-//                                if (byteSize == -1) break
-//                                fileOutputStream.write(byteBuffer, 0, byteSize)
-//                                totalSize += byteSize
-//                            }
-//                            Log.i("后端连接", " 成功写入了 $totalSize bytes")
-//                        } finally {
-//                            byteStream?.close()
-//                            fileOutputStream?.close()
-//                        }
-//                    }
-//
-//
-//                    // 下载文件
-//                    val response = loginService.login8(filePath)
-//                    val contentDisposition = response.headers()["Content-Disposition"]
-//                    var fileName:String = "default"+UUID.randomUUID().toString()
-//                    contentDisposition?.let {
-//                        val pattern = Pattern.compile("\"(.*?)\"")
-//                        val matcher = pattern.matcher(it)
-//                        if (matcher.find()) {
-//                            fileName = matcher.group(0)!!
-//                            fileName = fileName.substring(1, fileName.length-1)
-//                        }
-//                    }
-//
-//                    Log.i(
-//                        "后端连接", "获取文件名字 $fileName"
-//                    )
-//                    val responseFile1 = File("$filesDir/imgs/3.jpeg")
-//                    withContext(Dispatchers.IO) {
-//                        response.body()?.let {
-//                            val byteStream = it.byteStream()
-//                            val fileOutputStream = FileOutputStream(responseFile1)
-//                            try {
-//                                var totalSize = 0;
-//
-//                                val byteBuffer = ByteArray(1024)
-//                                while (true) {
-//                                    val byteSize = byteStream.read(byteBuffer)
-//                                    if (byteSize == -1) break
-//                                    fileOutputStream.write(byteBuffer, 0, byteSize)
-//                                    totalSize += byteSize
-//                                }
-//                                Log.i("后端连接", " !!成功写入了 $totalSize bytes")
-//                            } finally {
-//                                byteStream?.close()
-//                                fileOutputStream?.close()
-//                            }
-//                        }
-//                    }
-//
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                    Log.i("后端连接", "发生的IO错误")
-//                }
-//            }
-//
-
         }
         binding.btnInsert.setOnClickListener {
             mapCenterMarker?.position?.let {
@@ -333,47 +237,6 @@ class MapActivity : AppCompatActivity() {
             }
 
         }
-    }
-
-    // 定位相关的初始化
-    private fun initLocation() {
-
-        // 1. 创建 AMapLocationClient
-        locationClient = AMapLocationClient(applicationContext)
-
-        // 2. 设置定位相关参数
-        val option = AMapLocationClientOption().apply {
-            locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy
-            isOnceLocation = true // 单次即可
-            isOnceLocationLatest = true // 取3秒内精度最高的
-        }
-        locationClient.setLocationOption(option)
-
-
-        // 3. 添加监听器，回调onLocationChanged获取定位信息。
-        locationClient.setLocationListener { location ->
-            if (location != null) {
-                if (location.errorCode == 0) {
-                    Log.i("AMapLocation", "${location.address} ${location.aoiName}")
-                    val latLng = LatLng(location.latitude, location.longitude)
-                    // 3.1 将视角转移到当前，并带有缩放
-                    aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-                    Log.i("Projection", "${aMap.projection.visibleRegion}")
-                } else {
-                    Log.e(
-                        "AmapError", "location Error, ErrCode:"
-                                + location.errorCode + ", errInfo:"
-                                + location.errorInfo
-                    );
-                }
-            }
-        }
-
-        // 4. 设置 LocationClientObserver 来管理Client的生命周期
-        lifecycle.addObserver(LocationClientObserver(locationClient))
-
-        // 5. 定位到当前位置
-        onceLocation()
     }
 
     // 经纬度->地址转换
@@ -445,14 +308,6 @@ class MapActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    // 开始定位，会触发AMapLocationListener回调（initLocation的第3步）
-    private fun onceLocation() {
-        locationClient.apply {
-            stopLocation()
-            startLocation()
-        }
     }
 
     // 将mapCenterMarker设置到屏幕中心

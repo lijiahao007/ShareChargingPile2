@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.lijiahao.sharechargingpile2.ui.viewmodel.StationListItemViewModel" />
+            type="com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationListItemViewModel" />
     </data>
 
 

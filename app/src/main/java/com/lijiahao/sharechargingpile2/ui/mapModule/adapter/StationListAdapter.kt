@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.adapter
+package com.lijiahao.sharechargingpile2.ui.mapModule.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.databinding.StationListItemBinding
-import com.lijiahao.sharechargingpile2.ui.StationListFragmentDirections
-import com.lijiahao.sharechargingpile2.ui.viewmodel.StationListItemViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.StationListFragmentDirections
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationListItemViewModel
 
 class StationListAdapter() :
     ListAdapter<StationListItemViewModel, StationListAdapter.StationItemViewHolder>(

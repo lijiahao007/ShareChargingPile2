@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui
+package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,15 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.lijiahao.sharechargingpile2.data.ChargingPileStation
 import com.lijiahao.sharechargingpile2.databinding.FragmentStationDetailBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.ui.viewmodel.MapViewModel
-import com.lijiahao.sharechargingpile2.ui.viewmodel.StationDetailViewModel
-import com.lijiahao.sharechargingpile2.utils.INVISIBLE
-import com.lijiahao.sharechargingpile2.utils.VISIBLE
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

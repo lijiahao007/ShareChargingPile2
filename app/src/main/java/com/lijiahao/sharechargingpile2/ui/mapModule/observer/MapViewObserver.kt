@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.observer
+package com.lijiahao.sharechargingpile2.ui.mapModule.observer
 
 import android.os.Bundle
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -23,6 +23,7 @@ class MapViewObserver(private val mapView: MapView) :
     override fun onDestroy(owner: LifecycleOwner) {
         mapView.onDestroy()
     }
+
 
 
 }

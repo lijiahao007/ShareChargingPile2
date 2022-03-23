@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/StationListFragment"
-        android:name="com.lijiahao.sharechargingpile2.ui.StationListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.StationListFragment"
         android:label="StationListFragment"
         tools:layout="@layout/fragment_station_list">
 
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/StationDetailFragment"
-        android:name="com.lijiahao.sharechargingpile2.ui.StationDetailFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.StationDetailFragment"
         android:label="StationDetailFragment"
         tools:layout="@layout/fragment_station_detail">
         <!--    List中点击具体的Item跳转对用的PileDetail-->

@@ -14,4 +14,5 @@ data class ChargingPileStation(
     var userId: Int,
     var createTime: String,
     var updateTime: String,
+    val remark:String
 )

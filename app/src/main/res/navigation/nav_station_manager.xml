@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_station_manager"
+    app:startDestination="@+id/AddStationFragment">
+
+    <fragment
+        android:id="@+id/AddStationFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment"
+        android:label="AddStationFragment"
+        tools:layout = "@layout/fragment_add_station">
+
+        <action
+            android:id="@+id/action_AddStationFragment_to_LocationMapFragment"
+            app:destination="@id/LocationMapFragment" />
+        <action
+            android:id="@+id/action_AddStationFragment_to_AddPileFragment"
+            app:destination="@id/AddPileFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/LocationMapFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.LocationMapFragment"
+        android:label="LocationMapFragment"
+        tools:layout="@layout/fragment_location_map">
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/AddPileFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.AddPileFragment"
+        android:label="AddPileFragment"
+        tools:layout="@layout/fragment_add_pile">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/StationManagerFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.StationManagerFragment"
+        android:label="StationmanagerFragment"
+        tools:layout="@layout/fragment_station_manager">
+    </fragment>
+
+
+</navigation>

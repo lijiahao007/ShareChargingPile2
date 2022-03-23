@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.observer
+package com.lijiahao.sharechargingpile2.ui.mapModule.observer
 
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver

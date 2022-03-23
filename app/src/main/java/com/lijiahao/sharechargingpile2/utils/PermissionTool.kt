@@ -1,6 +1,5 @@
 package com.lijiahao.sharechargingpile2.utils
 
-import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 
@@ -11,16 +10,11 @@ import androidx.core.app.ActivityCompat
 import android.app.Activity
 import android.content.Intent
 
-import android.content.DialogInterface
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.lijiahao.sharechargingpile2.ui.MapActivity
 import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
-import java.lang.ref.WeakReference
 
 
 /**
