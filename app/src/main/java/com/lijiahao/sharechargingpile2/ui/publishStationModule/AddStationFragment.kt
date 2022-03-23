@@ -314,21 +314,20 @@ class AddStationFragment : Fragment() {
                             outputStream.close()
                         }
                     }
-
-
                     val stationInfoRequest = StationInfoRequest(
                         dayList,
                         timeList,
                         timeCharge,
                         viewModel.getStation(),
                         viewModel.pileList,
-                        "1"
+                        "1",
                     )
 
                     try {
-                        //                    val stationId =  chargingPileStationService.uploadStationInfo(stationInfoRequest)
-                        //                    Log.i(TAG, "stationId = $stationId")
-                        val res = chargingPileStationRepository.uploadStationPics("1", fileList)
+                        val stationId =
+                            chargingPileStationService.uploadStationInfo(stationInfoRequest)
+                                            Log.i(TAG, "stationId = $stationId")
+                        val res = chargingPileStationRepository.uploadStationPics(stationId, fileList)
 
                         withContext(Dispatchers.Main) {
                             Snackbar.make(

@@ -35,4 +35,5 @@ class ChargingPileStationRepository @Inject constructor(
         }
         return chargingPileStationService.uploadStationPics(builder.build())
     }
+
 }

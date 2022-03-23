@@ -53,7 +53,6 @@ interface ChargingPileStationService {
     @POST("chargingPileStation/uploadStationInfo")
     suspend fun uploadStationInfo(@Body stationInfo: StationInfoRequest): String
 
-
     @POST("chargingPileStation/uploadStationPic")
     suspend fun uploadStationPics(@Body body:MultipartBody) : String
 
