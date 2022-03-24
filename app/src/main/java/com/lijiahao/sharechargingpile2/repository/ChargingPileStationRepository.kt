@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.network.repository
+package com.lijiahao.sharechargingpile2.repository
 
 import android.util.Log
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService

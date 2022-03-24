@@ -1,7 +1,9 @@
 package com.lijiahao.sharechargingpile2.di
 
+import androidx.room.PrimaryKey
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
+import com.lijiahao.sharechargingpile2.network.service.MessageService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,5 +43,10 @@ class NetworkModule {
     @Provides
     fun provideChargingPileStationService(retrofit2: Retrofit): ChargingPileStationService {
         return retrofit2.create(ChargingPileStationService::class.java)
+    }
+
+    @Provides
+    fun provideMessageService(retrofit2: Retrofit): MessageService {
+        return retrofit2.create(MessageService::class.java)
     }
 }

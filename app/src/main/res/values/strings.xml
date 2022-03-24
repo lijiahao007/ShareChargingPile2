@@ -84,4 +84,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="message">Message</string>
+    <string name="send_message">发送</string>
+    <string name="hello">你好</string>
 </resources>
