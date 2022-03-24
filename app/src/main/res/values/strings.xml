@@ -79,4 +79,9 @@
     <string name="power_rate">功率</string>
     <string name="pile_num">充电桩数量</string>
     <string name="OK">确定</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="message">Message</string>
 </resources>
