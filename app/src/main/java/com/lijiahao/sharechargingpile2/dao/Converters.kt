@@ -1,10 +1,9 @@
 package com.lijiahao.sharechargingpile2.dao
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.lijiahao.sharechargingpile2.data.MsgBody
-import com.lijiahao.sharechargingpile2.data.MsgState
-import com.lijiahao.sharechargingpile2.data.MsgType
+import com.lijiahao.sharechargingpile2.data.*
 import java.io.*
 import java.util.*
 
@@ -31,13 +30,25 @@ class Converters {
     @TypeConverter
     fun msgBodyToString(msgBody:MsgBody) :String {
         val gson = Gson()
-        return gson.toJson(msgBody)
+
+        return when(msgBody.localMsgType){
+            MsgType.TEXT -> {
+                gson.toJson((msgBody as TextMsgBody))
+            }
+            MsgType.IMAGE -> {
+                gson.toJson((msgBody as ImageMsgBody))
+            }
+        }
     }
 
     @TypeConverter
     fun stringToMsgBody(str:String):MsgBody {
         val gson = Gson()
-        return gson.fromJson(str, MsgBody::class.java)
+        return if (str.contains("TEXT")) {
+            gson.fromJson(str, TextMsgBody::class.java)
+        } else {
+            gson.fromJson(str, ImageMsgBody::class.java)
+        }
     }
 
     @TypeConverter
@@ -46,6 +57,8 @@ class Converters {
             MsgState.SENDING -> "SENDING"
             MsgState.SENT -> "SENT"
             MsgState.FAILED -> "FAILED"
+            MsgState.CHECKED -> "CHECKED"
+            MsgState.UNCHECKED -> "UNCHECKED"
         }
     }
 
@@ -55,6 +68,8 @@ class Converters {
             "SENDING" -> MsgState.SENDING
             "SENT" -> MsgState.SENT
             "FAILED" -> MsgState.FAILED
+            "CHECKED" -> MsgState.CHECKED
+            "UNCHECKED" -> MsgState.UNCHECKED
             else -> MsgState.FAILED
         }
     }

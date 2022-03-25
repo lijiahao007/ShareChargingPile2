@@ -13,10 +13,10 @@
 
     <fragment
         android:id="@+id/navigation_message"
-        android:name="com.lijiahao.sharechargingpile2.ui.ChatModule.MessageListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.chatModule.MessageListFragment"
         android:label="navigation_message"
         tools:layout="@layout/fragment_message_list">
-        <action
+            <action
             android:id="@+id/action_messageListFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.lijiahao.sharechargingpile2.ui.ChatModule.ChatFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.chatModule.ChatFragment"
         android:label="ChatFragment"
         tools:layout="@layout/fragment_chat" />
 </navigation>

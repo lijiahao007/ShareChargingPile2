@@ -1,12 +1,9 @@
-package com.lijiahao.sharechargingpile2.ui.ChatModule.adapter
+package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.Message
 import com.lijiahao.sharechargingpile2.data.MsgType
 import com.lijiahao.sharechargingpile2.databinding.ItemImageReceiveBinding

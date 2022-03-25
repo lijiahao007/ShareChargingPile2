@@ -1,4 +1,4 @@
-package com.lijiahao.sharechargingpile2.ui.ChatModule.adapter
+package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

@@ -1,15 +1,19 @@
-package com.lijiahao.sharechargingpile2.ui.ChatModule.adapter
+package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
 import android.view.View
+import com.lijiahao.sharechargingpile2.data.ImageMsgBody
 import com.lijiahao.sharechargingpile2.data.Message
 import com.lijiahao.sharechargingpile2.data.MsgState
-import com.lijiahao.sharechargingpile2.data.TextMsgBody
-import com.lijiahao.sharechargingpile2.databinding.ItemTextSendBinding
+import com.lijiahao.sharechargingpile2.databinding.ItemImageSendBinding
+import com.lijiahao.sharechargingpile2.di.GlideApp
+import java.io.File
 
-class SendTextViewHolder(val binding: ItemTextSendBinding): MessageViewHolder(binding.root) {
+
+class SendImageViewHolder(val binding: ItemImageSendBinding) :
+    MessageViewHolder(binding.root){
     override fun bind(message: Message) {
-        val msgBody = message.msgBody as TextMsgBody
-        binding.chatItemContentText.text = msgBody.message
+        val msgBody = message.msgBody as ImageMsgBody
+        GlideApp.with(binding.root).load(File(msgBody.localPath)).into(binding.bivPic)
         when (message.state) {
             MsgState.SENDING -> {
                 binding.chatItemProgress.visibility = View.VISIBLE

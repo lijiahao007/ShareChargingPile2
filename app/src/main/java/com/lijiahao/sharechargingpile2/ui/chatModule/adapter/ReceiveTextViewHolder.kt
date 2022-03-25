@@ -1,6 +1,5 @@
-package com.lijiahao.sharechargingpile2.ui.ChatModule.adapter
+package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.data.Message
 import com.lijiahao.sharechargingpile2.data.TextMsgBody
 import com.lijiahao.sharechargingpile2.databinding.ItemTextReceiveBinding

@@ -1,6 +1,6 @@
 package com.lijiahao.sharechargingpile2.network.request
 
-data class TextMessageRequest(
+data class MessageRequest(
     val uuid:String,
     val type:String,
     val sendUserId: String,
