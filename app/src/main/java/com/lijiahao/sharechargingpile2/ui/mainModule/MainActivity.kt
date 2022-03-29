@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -8,6 +9,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
+import com.lijiahao.sharechargingpile2.ui.service.MessagePollingService
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initBottomNav()
+        initService()
     }
 
 
@@ -38,4 +41,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initService() {
+        val intent = Intent(this, MessagePollingService::class.java)
+        startService(intent)
+    }
+
+
+    override fun onDestroy() {
+        stopService(Intent(this, MessagePollingService::class.java))
+        super.onDestroy()
+    }
 }

@@ -1,12 +1,15 @@
 package com.lijiahao.sharechargingpile2.di
 
+import android.content.Context
 import androidx.room.PrimaryKey
+import com.lijiahao.sharechargingpile2.network.interceptor.TokenHeaderInterceptor
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.network.service.MessageService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,10 +22,11 @@ class NetworkModule {
 
 
     @Provides
-    fun provideOkHttpClient():OkHttpClient {
+    fun provideOkHttpClient(@ApplicationContext context: Context):OkHttpClient {
         val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
         return OkHttpClient.Builder()
             .addInterceptor(logger)
+            .addNetworkInterceptor(TokenHeaderInterceptor(context))
             .build()
     }
 

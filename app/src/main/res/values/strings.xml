@@ -86,4 +86,12 @@
     <string name="message">Message</string>
     <string name="send_message">发送</string>
     <string name="hello">你好</string>
+    <string name="Username">Username</string>
+    <string name="Password">Password</string>
+    <string name="Login">Login</string>
+    <string name="login_cn">登录</string>
+    <string name="chargingpile_platform">共享充电桩平台</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="close">Close</string>
+    <string name="confirm_password">Confirm password</string>
 </resources>

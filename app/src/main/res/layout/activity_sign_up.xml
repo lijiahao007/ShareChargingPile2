@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/heading"
+            style="@style/TextView.Heading"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="center"
+            android:text="@string/sign_up"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_close_primary_24dp"
+            app:layout_constraintBottom_toBottomOf="@id/heading"
+            app:layout_constraintLeft_toLeftOf="@id/heading"
+            app:layout_constraintTop_toTopOf="@id/heading" />
+
+
+        <ScrollView
+
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:animateLayoutChanges="true"
+            android:fadingEdgeLength="12dp"
+            android:requiresFadingEdge="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading">
+
+            <LinearLayout
+                android:id="@+id/inputs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingBottom="20dp">
+
+
+                <EditText
+                    android:id="@+id/username"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:drawableStart="@drawable/ic_person_primary_24dp"
+                    android:hint="@string/Username"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:maxLength="16" />
+
+                <EditText
+                    android:id="@+id/password"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:drawableStart="@drawable/ic_password_primary_24dp"
+                    android:hint="@string/Password"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:maxLength="16" />
+
+                <EditText
+                    android:id="@+id/password2"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:drawableStart="@drawable/ic_password2_primary_24dp"
+                    android:hint="@string/confirm_password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:maxLength="16" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="20dp" />
+
+                <Button
+                    android:id="@+id/signup"
+                    style="@style/Button.Background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/sign_up"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

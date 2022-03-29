@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.lijiahao.sharechargingpile2">
+    package="com.lijiahao.sharechargingpile2" >
     <!-- 允许访问网络，必选权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 允许获取粗略位置，若用GPS实现定位小蓝点功能则必选 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 允许获取设备和运营商信息，用于问题排查和网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->
@@ -28,31 +28,39 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareChargingPile2"
-        tools:targetApi="r">
-
+        tools:targetApi="r" >
         <activity
-            android:name=".ui.mainModule.MainActivity"
+            android:name=".ui.mainModule.notifications.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.loginRegisterModule.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.loginRegisterModule.LoginActivity"
             android:exported="true"
-            android:label="@string/title_activity_main">
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+
+        <service
+            android:name=".ui.service.MessagePollingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.mainModule.MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main" />
         <activity
             android:name=".ui.publishStationModule.PublishStationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:label="@string/title_activity_publish_station"
-            android:theme="@style/Theme.ShareChargingPile2.Fullscreen">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity> <!-- 高德地图API key -->
+            android:theme="@style/Theme.ShareChargingPile2.Fullscreen" /> <!-- 高德地图API key -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b8d207c04265bcb78092bbf29a2a97d9" /> <!-- 高德地图定位Service -->
@@ -60,13 +68,7 @@
 
         <activity
             android:name=".ui.mapModule.MapActivity"
-            android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

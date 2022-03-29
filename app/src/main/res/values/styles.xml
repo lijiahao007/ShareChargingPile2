@@ -8,4 +8,45 @@
         <item name="android:background">@color/black</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+
+
+<!--    Login in 界面用到的-->
+    <style name="EditText">
+        <item name="android:digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:background">@drawable/edit_text</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Color of disabled elements, always overlaying the background color or itself -->
+    <attr name="colorDisable" format="color"/>
+
+    <style name="Button">
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/button_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="Button.Flat">
+        <item name="android:background">@drawable/button_flat</item>
+    </style>
+
+    <style name="Button.Background">
+        <item name="android:background">@drawable/button_background</item>
+    </style>
+
+
+<!--    Sign Up界面用到的-->
+    <style name="TextView"/>
+    <style name="TextView.Heading">
+        <item name="android:textColor">?android:colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>
