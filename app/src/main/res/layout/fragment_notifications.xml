@@ -1,56 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.mainModule.notifications.NotificationsFragment">
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.NotificationsViewModel" />
+    </data>
 
-
-
-
-
-    <TextView
-        android:id="@+id/text_notifications"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        tools:context=".ui.mainModule.notifications.NotificationsFragment"
+        android:background="@color/user_info_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <ImageView
-            android:id="@+id/imageView9"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_people"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.514" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingVertical="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/user_img"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/ic_people" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="45dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="2dp"
+                        android:text="@{viewModel.userInfo.name}"
+                        tools:text="@string/user"
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="2dp"
+                            android:text="手机号: " />
+
+                        <TextView
+                            android:id="@+id/user_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="2dp"
+                            tools:text="110"
+                            android:text="@{viewModel.userInfo.phone}"
+                            />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="2dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="个性签名: " />
+
+                        <TextView
+                            android:id="@+id/user_sign"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="2dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="这个人很懒~什么都没写" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/modify"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/selector_click"
+                android:gravity="center"
+                android:text="修改个人资料"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+            <TextView
+                android:id="@+id/modify_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/selector_click"
+                android:gravity="center"
+                android:text="修改密码"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/modify" />
+
+            <TextView
+                android:id="@+id/order_info"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/selector_click"
+                android:gravity="center"
+                android:text="查看订单"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/modify_pwd" />
+
+            <TextView
+                android:id="@+id/other_info"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/selector_click"
+                android:gravity="center"
+                android:text="其他信息"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/order_info" />
+
+
+            <TextView
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_click"
+                android:gravity="center"
+                android:text="修改密码"
+                android:textColor="@color/sign_out"
+                app:layout_constraintTop_toBottomOf="@+id/other_info" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

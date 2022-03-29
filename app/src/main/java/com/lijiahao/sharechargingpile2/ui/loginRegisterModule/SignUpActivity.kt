@@ -37,7 +37,6 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun initUI() {
 
-
         binding.signup.setOnClickListener {
             val username = binding.username.text.toString()
             val password = binding.password.text.toString()
@@ -77,6 +76,9 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+
     }
 
     companion object {

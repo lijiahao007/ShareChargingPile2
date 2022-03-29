@@ -130,7 +130,7 @@
                     android:id="@+id/ivAdd"
                     android:layout_width="30dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_add" />
+                    android:src="@drawable/ic_add_user_info" />
 
                 <Button
                     android:id="@+id/btn_send"

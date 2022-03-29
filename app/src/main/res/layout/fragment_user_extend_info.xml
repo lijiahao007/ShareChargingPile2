@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.mainModule.notifications.UserExtendInfoFragment"
+        android:background="@color/user_info_background">
+
+        <TextView
+            android:id="@+id/heading"
+            style="@style/TextView.Heading"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="center"
+            android:text="拓展信息"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_close_primary_24dp"
+            app:layout_constraintBottom_toBottomOf="@id/heading"
+            app:layout_constraintLeft_toLeftOf="@id/heading"
+            app:layout_constraintTop_toTopOf="@id/heading" />
+
+        <ImageButton
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_submit"
+            app:layout_constraintBottom_toBottomOf="@id/heading"
+            app:layout_constraintRight_toRightOf="@+id/heading"
+            app:layout_constraintTop_toTopOf="@id/heading" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/heading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/user_info_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/item_user_extend_info"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <ImageView
+                    android:id="@+id/iv_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_user_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/user_info_recyclerview"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

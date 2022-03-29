@@ -13,6 +13,8 @@ import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.utils.LOGIN_OUT_OF_TIME
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
+import com.lijiahao.sharechargingpile2.utils.TOKEN_IN_PREFERENCES
+import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,8 +60,8 @@ class LoginActivity : AppCompatActivity() {
                             val sharedPreferences =
                                 getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
                             val editor = sharedPreferences.edit()
-                            editor.putString("userId", loginResponse.userId)
-                            editor.putString("token", loginResponse.token)
+                            editor.putString(USER_ID_IN_PREFERENCES, loginResponse.userId)
+                            editor.putString(TOKEN_IN_PREFERENCES, loginResponse.token)
                             editor.apply()
 
                             Log.i(TAG, "userId: ${loginResponse.userId}")

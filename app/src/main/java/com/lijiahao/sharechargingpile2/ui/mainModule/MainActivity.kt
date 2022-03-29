@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.chatFragment -> { navView.visibility = View.GONE}
+                R.id.userExtendInfoFragment -> { navView.visibility = View.GONE }
+
                 else -> {navView.visibility = View.VISIBLE}
             }
         }

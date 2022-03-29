@@ -15,6 +15,10 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="click">#D7CFCBCB</color>
+    <color name="sign_out">#D7F81414</color>
+    <color name="user_info_background">#F5F5F5</color>
+
 
 
 </resources>

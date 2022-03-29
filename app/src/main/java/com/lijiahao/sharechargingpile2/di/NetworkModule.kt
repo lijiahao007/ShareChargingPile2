@@ -6,6 +6,7 @@ import com.lijiahao.sharechargingpile2.network.interceptor.TokenHeaderIntercepto
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.network.service.MessageService
+import com.lijiahao.sharechargingpile2.network.service.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,4 +54,10 @@ class NetworkModule {
     fun provideMessageService(retrofit2: Retrofit): MessageService {
         return retrofit2.create(MessageService::class.java)
     }
+
+    @Provides
+    fun provideUserService(retrofit2: Retrofit): UserService {
+        return retrofit2.create(UserService::class.java)
+    }
+
 }

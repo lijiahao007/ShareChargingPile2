@@ -94,4 +94,9 @@
     <string name="sign_up">Sign Up</string>
     <string name="close">Close</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="user">用户</string>
+    <string name="old_password">old password</string>
+    <string name="value">value</string>
+    <string name="avatar">头像</string>
+    <string name="personal_sign">个性签名</string>
 </resources>

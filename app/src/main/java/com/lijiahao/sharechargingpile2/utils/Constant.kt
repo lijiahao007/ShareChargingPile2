@@ -7,3 +7,6 @@ const val GONE: Int = 2
 const val SHARED_PREFERENCES_NAME = "SharedChargingPile2"
 
 const val LOGIN_OUT_OF_TIME = "LoginOutOfTime"
+
+const val USER_ID_IN_PREFERENCES = "userId"
+const val TOKEN_IN_PREFERENCES = "token"

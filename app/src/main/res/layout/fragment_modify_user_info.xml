@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/user_info_background"
+        tools:context=".ui.mainModule.notifications.ModifyUserInfoFragment">
+
+        <TextView
+            android:id="@+id/heading"
+            style="@style/TextView.Heading"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="center"
+            android:text="修改用户信息"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_close_primary_24dp"
+            app:layout_constraintBottom_toBottomOf="@id/heading"
+            app:layout_constraintLeft_toLeftOf="@id/heading"
+            app:layout_constraintTop_toTopOf="@id/heading" />
+
+        <ImageButton
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close"
+            android:src="@drawable/ic_submit"
+            app:layout_constraintBottom_toBottomOf="@id/heading"
+            app:layout_constraintRight_toRightOf="@+id/heading"
+            app:layout_constraintTop_toTopOf="@id/heading" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/avatar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/heading">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="@string/avatar"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                tools:src="@tools:sample/avatars" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/avatar_layout">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="用户名"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/user_name"
+                style="@style/EditText_chn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Helloworld" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/name_layout">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="@string/personal_sign"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/user_remark"
+                style="@style/EditText_chn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="这是一个很懒的人" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
