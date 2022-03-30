@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_station_manager"
-    app:startDestination="@+id/AddStationFragment">
+    app:startDestination="@+id/StationManagerFragment">
 
     <fragment
         android:id="@+id/AddStationFragment"
@@ -41,6 +41,9 @@
         android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.StationManagerFragment"
         android:label="StationmanagerFragment"
         tools:layout="@layout/fragment_station_manager">
+        <action
+            android:id="@+id/action_StationManagerFragment_to_AddStationFragment"
+            app:destination="@id/AddStationFragment" />
     </fragment>
 
 

@@ -1,13 +1,9 @@
 package com.lijiahao.sharechargingpile2.network.service
 
-import android.net.Uri
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.http.*
-import java.io.File
 
 interface ChargingPileStationService {
 
@@ -41,6 +37,15 @@ interface ChargingPileStationService {
     @GET("chargingPileStation/getStationOpenTime")
     suspend fun getStationOpenTime(): Map<String, List<OpenTime>>
 
+    @GET("chargingPileStation/getStationOpenDay")
+    suspend fun getStationOpenDay(): Map<String, List<OpenDayInWeek>>
+
+    @GET("chargingPileStation/getStationInfo")
+    suspend fun getStationAllInfo() :StationAllInfo
+
+    @GET("chargingPileStation/getStationInfoByUserId")
+    suspend fun getStationInfoByUserId(@Query("userId") userId: String): StationAllInfo
+
     @GET("chargingPileStation/getStationPicUrl")
     suspend fun getStationPicUrl(@Query("stationId") stationId: Int): List<String>
 
@@ -55,6 +60,7 @@ interface ChargingPileStationService {
 
     @POST("chargingPileStation/uploadStationPic")
     suspend fun uploadStationPics(@Body body:MultipartBody) : String
+
 
 
 

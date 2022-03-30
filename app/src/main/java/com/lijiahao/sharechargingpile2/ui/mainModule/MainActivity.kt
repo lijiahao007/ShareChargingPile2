@@ -1,10 +1,13 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lijiahao.sharechargingpile2.R
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = Color.TRANSPARENT
         initBottomNav()
         initService()
     }
@@ -37,8 +41,14 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.chatFragment -> { navView.visibility = View.GONE}
                 R.id.userExtendInfoFragment -> { navView.visibility = View.GONE }
-
-                else -> {navView.visibility = View.VISIBLE}
+                R.id.navigation_home -> {
+                    navView.visibility = View.VISIBLE
+                    navView.alpha = 0.5F
+                }
+                else -> {
+                    navView.visibility = View.VISIBLE
+                    navView.alpha = 1F
+                }
             }
         }
     }

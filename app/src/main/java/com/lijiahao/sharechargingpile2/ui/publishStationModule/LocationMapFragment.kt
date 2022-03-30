@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.amap.api.location.AMapLocationClient
@@ -91,6 +92,8 @@ class LocationMapFragment : Fragment() {
 
     private fun initUI() {
         initMap()
+        initIfChange()
+
         adapter = AddressListAdapter(curPos, aMap, bottomSheetBehavior)
         binding.bottomSheetRecyclerView.adapter = adapter
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -177,6 +180,16 @@ class LocationMapFragment : Fragment() {
         })
 
 
+    }
+
+    private fun initIfChange() {
+        // 如果当前AddStationFragment是修改状态，那么就将当前屏幕中心定位顶到目标中。
+        setFragmentResultListener(StationManagerFragment.CHANGE_STATION) { _, bundle ->
+            val isChange = bundle.get(StationManagerFragment.IS_CHANGE) as Boolean
+            if (isChange) {
+                aMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(viewModel.latitude, viewModel.longitude)))
+            }
+        }
     }
 
     private fun initMap() {

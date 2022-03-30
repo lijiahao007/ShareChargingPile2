@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.*
+import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.data.UserExtendInfo
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.UserService
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
-    @ApplicationContext val context: Context,
+    private val sharedPreferenceData: SharedPreferenceData,
     private val userService: UserService
 ) : ViewModel() {
 
@@ -63,9 +64,7 @@ class NotificationsViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val sharedPreferences =
-                context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-            val userId = sharedPreferences?.getString(USER_ID_IN_PREFERENCES, "")
+            val userId = sharedPreferenceData.userId
             val response = userService.getUserInfo(userId!!)
             Log.i(NotificationsFragment.TAG, "response = $response")
             _userInfo.postValue(response)

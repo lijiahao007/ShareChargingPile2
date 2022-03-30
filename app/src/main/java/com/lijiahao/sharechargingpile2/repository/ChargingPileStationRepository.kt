@@ -1,8 +1,13 @@
 package com.lijiahao.sharechargingpile2.repository
 
 import android.util.Log
+import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.ui.mapModule.MapActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -34,6 +39,20 @@ class ChargingPileStationRepository @Inject constructor(
             builder.addPart(it)
         }
         return chargingPileStationService.uploadStationPics(builder.build())
+    }
+
+
+    suspend fun getStation(): StationAllInfo {
+        return withContext(Dispatchers.IO) {
+           chargingPileStationService.getStationAllInfo()
+        }
+    }
+
+
+    suspend fun getStation(userId:String): StationAllInfo {
+        return withContext(Dispatchers.IO) {
+            chargingPileStationService.getStationInfoByUserId(userId)
+        }
     }
 
 }

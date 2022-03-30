@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
@@ -20,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
@@ -28,10 +30,12 @@ import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOC
 import com.google.android.material.timepicker.TimeFormat
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentAddStationBinding
+import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStationViewModel
+import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.StationManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +51,9 @@ class AddStationFragment : Fragment() {
     val binding: FragmentAddStationBinding by lazy {
         FragmentAddStationBinding.inflate(layoutInflater)
     }
+
     val viewModel: AddStationViewModel by activityViewModels()
+    private val viewModelStationManager: StationManagerViewModel by activityViewModels()
 
     @Inject
     lateinit var chargingPileStationService: ChargingPileStationService
@@ -56,6 +62,29 @@ class AddStationFragment : Fragment() {
     lateinit var chargingPileStationRepository: ChargingPileStationRepository
 
     private lateinit var albumLauncher: ActivityResultLauncher<Unit>
+
+    private var isChange: Boolean = false
+    private var stationId: String = ""
+
+    // 图片相关的View
+    private val imgList:Array<ImageView> by lazy {
+        arrayOf(
+            binding.imStationPic1,
+            binding.stationPic2,
+            binding.stationPic3,
+            binding.stationPic4,
+            binding.stationPic5
+        )
+    }
+    private val cardList:Array<MaterialCardView> by lazy{
+        arrayOf(
+            binding.cardStationPic1,
+            binding.cardStationPic2,
+            binding.cardStationPic3,
+            binding.cardStationPic4,
+            binding.cardStationPic5
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         albumLauncher = registerForActivityResult(
@@ -97,9 +126,122 @@ class AddStationFragment : Fragment() {
     }
 
     private fun initUI() {
+        initIfChange()
         initUIListener()
         initTimePick()
         initSubmit()
+    }
+
+
+    private fun initIfChange() {
+        // 如果是修改充电桩，则将对应的消息补上
+        setFragmentResultListener(StationManagerFragment.CHANGE_STATION) { _, bundle ->
+            isChange = bundle.get(StationManagerFragment.IS_CHANGE) as Boolean
+            stationId = bundle.get(StationManagerFragment.STATION_ID).toString()
+            if (isChange) {
+                // 设置对应消息
+                val userStationInfo = viewModelStationManager.userStationInfo.value
+                userStationInfo?.let { info ->
+
+                    val station = info.stations.find { it.id.toString() == stationId }
+
+                    // 1. 设置开放星期数
+                    info.openDayMap[stationId]?.forEach { it ->
+                        when (it.day) {
+                            "周一" -> {
+                                binding.chipMon.isChecked = true
+                            }
+                            "周二" -> {
+                                binding.chipTue.isChecked = true
+                            }
+                            "周三" -> {
+                                binding.chipWen.isChecked = true
+                            }
+                            "周四" -> {
+                                binding.chipThu.isChecked = true
+                            }
+                            "周五" -> {
+                                binding.chipFri.isChecked = true
+                            }
+                            "周六" -> {
+                                binding.chipSat.isChecked = true
+                            }
+                            "周日" -> {
+                                binding.chipSun.isChecked = true
+                            }
+                        }
+                    }
+
+                    // 2. 设置日期
+                    val openTimeList = info.openTimeMap[stationId]
+                    openTimeList?.let {
+                        if (it.size == 1 && it[0].beginTime == "00:00:00" && it[0].endTime == "23:59:59") {
+                            binding.chipAllDay.isChecked = true
+                        } else {
+                            binding.chipSpecialTime.isChecked = true
+                            it.forEach { openTime ->
+                                val time = openTime.beginTime.substring(
+                                    0,
+                                    5
+                                ) + "~" + openTime.endTime.substring(0, 5)
+                                addChipToChipGroup(time, binding.chipGroupTime)
+                            }
+                        }
+                    }
+
+                    // 3. 设置地点
+                    station?.let {
+                        binding.tvPosition.text = station.posDescription
+                        viewModel.latitude = station.latitude
+                        viewModel.longitude = station.longitude
+                    }
+
+
+                    // 4. 设置名字
+                    binding.itStationName.setText(station?.name)
+
+                    // 5. 设置停车费
+                    binding.etParkFee.setText(station?.parkFee.toString())
+
+                    //6. 设置电费
+                    val openTimes = info.openTimeMap[stationId]
+                    openTimes?.let {
+                        if (it.isNotEmpty()) {
+                            binding.etChargeFee.setText(it[0].electricCharge.toString())
+                        }
+                    }
+
+                    // 7.设置remark
+                    station?.let {
+                        binding.remark.editText?.setText(it.remark)
+                    }
+
+                    // 8. 设置充电站中的充电桩
+                    val list = info.pileMap[stationId]
+                    list?.let {
+                        viewModel.pileList = ArrayList(list)
+                    }
+                    binding.acNum.text = list?.count { it.electricType == "交流" }.toString()
+                    binding.dcNum.text = list?.count { it.electricType == "直流" }.toString()
+
+                    // 9. 加载图片
+                    val urls = info.picMap[stationId]
+                    urls?.let {
+                        it.forEachIndexed { index, url ->
+                            GlideApp.with(context!!).load(url).into(imgList[index])
+                            cardList[index].visibility = View.VISIBLE
+                        }
+                    }
+
+                    // 10 设置图片删除功能
+                    // TODO: 将添加充电站模块中的图片管理， 与修改充电站模块中的图片管理结合一起。
+                    // TODO: 修稿充电站模块的提交按钮功能实现。（感觉可以修改一下之前提交的逻辑，每次都设置一下stationId, 后台的话如果stationId不为0设置为修改）
+                }
+
+
+            }
+
+        }
     }
 
     private fun initUIListener() {
@@ -194,20 +336,7 @@ class AddStationFragment : Fragment() {
         }
 
 
-        val imgList = arrayOf(
-            binding.imStationPic1,
-            binding.stationPic2,
-            binding.stationPic3,
-            binding.stationPic4,
-            binding.stationPic5
-        )
-        val cardList = arrayOf(
-            binding.cardStationPic1,
-            binding.cardStationPic2,
-            binding.cardStationPic3,
-            binding.cardStationPic4,
-            binding.cardStationPic5
-        )
+
         viewModel.stationPicUriList.observe(this) { uriList ->
             // 根据uri将图片显示在imageView中
             Log.i(TAG, " observe $uriList")
@@ -323,8 +452,9 @@ class AddStationFragment : Fragment() {
                     try {
                         val stationId =
                             chargingPileStationService.uploadStationInfo(stationInfoRequest)
-                                            Log.i(TAG, "stationId = $stationId")
-                        val res = chargingPileStationRepository.uploadStationPics(stationId, fileList)
+                        Log.i(TAG, "stationId = $stationId")
+                        val res =
+                            chargingPileStationRepository.uploadStationPics(stationId, fileList)
 
                         withContext(Dispatchers.Main) {
                             Snackbar.make(
@@ -361,14 +491,7 @@ class AddStationFragment : Fragment() {
 
         binding.chipAllDay.setOnClickListener {
             chipGroupTime.removeAllViews()
-            val allDayTimeChip = Chip(chipGroupTime.context)
-            allDayTimeChip.text = resources.getString(R.string.all_day_time)
-            allDayTimeChip.isChecked = true
-            allDayTimeChip.isCloseIconVisible = true
-            allDayTimeChip.setOnCloseIconClickListener {
-                (it.parent as ChipGroup).removeView(it) // 把自己删掉
-            }
-            chipGroupTime.addView(allDayTimeChip)
+            addChipToChipGroup(resources.getString(R.string.all_day_time), chipGroupTime)
         }
 
         binding.chipSpecialTime.setOnClickListener {
@@ -419,6 +542,17 @@ class AddStationFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun addChipToChipGroup(text: String, group: ChipGroup) {
+        val allDayTimeChip = Chip(group.context)
+        allDayTimeChip.text = text
+        allDayTimeChip.isChecked = true
+        allDayTimeChip.isCloseIconVisible = true
+        allDayTimeChip.setOnCloseIconClickListener {
+            group.removeView(it) // 把自己删掉
+        }
+        group.addView(allDayTimeChip)
     }
 
     private fun navigateToLocationMapFragment() {

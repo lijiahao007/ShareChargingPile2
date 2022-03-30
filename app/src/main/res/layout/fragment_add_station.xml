@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.039"
+                    app:layout_constraintHorizontal_bias="0.056"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/chip_group_time_type">
 

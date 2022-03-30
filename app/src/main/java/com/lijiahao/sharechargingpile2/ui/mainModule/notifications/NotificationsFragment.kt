@@ -58,7 +58,6 @@ class NotificationsFragment : Fragment() {
             GlideApp.with(this).load(url).into(binding.userImg) // 加载
         }
 
-
         binding.signOut.setOnClickListener {
             // 1. 将token无效化
             context?.apply {
@@ -88,6 +87,10 @@ class NotificationsFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+        binding.orderInfo.setOnClickListener {
+            val action = NotificationsFragmentDirections.actionNavigationNotificationsToOrderListFragment()
+            findNavController().navigate(action)
+        }
 
     }
 

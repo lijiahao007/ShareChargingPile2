@@ -1,6 +1,7 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule.home
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +16,23 @@ import com.lijiahao.sharechargingpile2.ui.publishStationModule.PublishStationAct
 
 class HomeFragment : Fragment() {
 
+
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().window.apply {
+            statusBarColor = Color.TRANSPARENT
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
