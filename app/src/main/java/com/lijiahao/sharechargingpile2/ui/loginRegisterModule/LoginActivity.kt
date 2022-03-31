@@ -7,18 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.ActivityLoginBinding
 import com.lijiahao.sharechargingpile2.network.request.LoginRequest
 import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
-import com.lijiahao.sharechargingpile2.utils.LOGIN_OUT_OF_TIME
-import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
-import com.lijiahao.sharechargingpile2.utils.TOKEN_IN_PREFERENCES
-import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES
+import com.lijiahao.sharechargingpile2.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,13 +25,44 @@ class LoginActivity : AppCompatActivity() {
     @Inject
     lateinit var loginService: LoginService
 
+    @Inject
+    lateinit var sharedPreferenceData: SharedPreferenceData
+
+    private val job = Job() // job相关协程，只有在当前Activity可见的时候才会执行，当stop是会取消所有协程。
+    private val viewScope = CoroutineScope(job)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initUI()
+        autoLogin()
     }
 
+    private fun autoLogin() {
+        // 自动登录
+        viewScope.launch(Dispatchers.IO) {
+            try {
+                val response = loginService.login(LoginRequest(sharedPreferenceData.account, sharedPreferenceData.password))
+                Log.i(TAG, "自动登录response: $response,  data = $sharedPreferenceData")
+                if (response.code == "success") {
+                    // 跳转MainActivity
+                    withContext(Dispatchers.Main) {
+                        Log.i(TAG, "自动登录了")
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onStop() {
+        job.cancel()
+        super.onStop()
+    }
 
     private fun initUI() {
 
@@ -62,6 +89,9 @@ class LoginActivity : AppCompatActivity() {
                             val editor = sharedPreferences.edit()
                             editor.putString(USER_ID_IN_PREFERENCES, loginResponse.userId)
                             editor.putString(TOKEN_IN_PREFERENCES, loginResponse.token)
+                            editor.putString(USER_ACCOUNT_IN_PREFERENCES, username)
+                            editor.putString(USER_PASSWORD_IN_PREFERENCES, password)
+
                             editor.apply()
 
                             Log.i(TAG, "userId: ${loginResponse.userId}")

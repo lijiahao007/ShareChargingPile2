@@ -51,8 +51,39 @@ class StationManagerFragment : Fragment() {
             adapter.submitList(it.stations)
         }
 
-        // TODO: 充电桩删除功能
 
+        binding.deleteStation.setOnClickListener {
+            deleteMode()
+        }
+
+        binding.ibtnConfirm.setOnClickListener {
+            checkMode()
+            // TODO: 上传删除逻辑，将除了当前列表以外的充电站从数据库中删除。
+            val stationIds = ArrayList<Int>()
+            adapter.currentList.forEach {
+                stationIds.add(it.id)
+            }
+            Log.i(TAG, "remain stationIds = $stationIds")
+        }
+
+    }
+
+    private fun deleteMode() {
+        // 删除模式
+        binding.deleteStation.visibility = View.GONE
+        binding.addStation.visibility = View.GONE
+        binding.ibtnConfirm.visibility = View.VISIBLE
+        adapter.deleteMode = true
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun checkMode() {
+        // 查看模式
+        binding.deleteStation.visibility = View.VISIBLE
+        binding.addStation.visibility = View.VISIBLE
+        binding.ibtnConfirm.visibility = View.GONE
+        adapter.deleteMode = false
+        adapter.notifyDataSetChanged()
     }
 
     companion object {

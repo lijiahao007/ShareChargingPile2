@@ -11,14 +11,18 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
 import com.lijiahao.sharechargingpile2.ui.service.MessagePollingService
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

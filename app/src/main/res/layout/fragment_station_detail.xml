@@ -392,12 +392,12 @@
 
             <ImageView
                 android:id="@+id/iv_navigation"
-                android:layout_width="29dp"
-                android:layout_height="29dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_navigation" />
+                app:srcCompat="@drawable/ic_navigation_1" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -552,16 +552,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_station_electric_charge"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/iv_to_electric_charge_info"
-                android:layout_width="27dp"
-                android:layout_height="27dp"
-                android:layout_weight="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_right" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -841,7 +831,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:button="@drawable/collection_cb_selctor"
-                android:buttonTint="@color/teal_200"
+                android:buttonTint="?android:colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -852,7 +842,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="#08BAB5"
+                android:backgroundTint="?android:colorPrimary"
                 android:text="联系桩主"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

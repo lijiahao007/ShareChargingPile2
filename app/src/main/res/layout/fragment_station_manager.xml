@@ -37,6 +37,18 @@
             app:layout_constraintTop_toTopOf="@id/heading" />
 
         <ImageButton
+            android:id="@+id/delete_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="52dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:visibility="visible"
+            android:src="@drawable/ic_delete_station"
+            app:layout_constraintBottom_toBottomOf="@+id/heading"
+            app:layout_constraintEnd_toEndOf="@+id/heading"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
             android:id="@+id/add_station"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +57,21 @@
             android:src="@drawable/ic_addition"
             app:layout_constraintBottom_toBottomOf="@+id/heading"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/ibtn_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_confirm"
+            app:layout_constraintBottom_toBottomOf="@+id/heading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/station_recyclerview"

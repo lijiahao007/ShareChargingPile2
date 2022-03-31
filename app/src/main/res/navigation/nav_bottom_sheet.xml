@@ -17,7 +17,7 @@
             app:destination="@id/StationDetailFragment"
             app:popUpTo="@id/StationListFragment">
             <argument
-                android:name="pileId"
+                android:name="stationId"
                 android:defaultValue="-1" />
         </action>
     </fragment>
@@ -29,9 +29,34 @@
         tools:layout="@layout/fragment_station_detail">
         <!--    List中点击具体的Item跳转对用的PileDetail-->
         <argument
-            android:name="pileId"
+            android:name="stationId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_StationDetailFragment_to_chargingPileListFragment"
+            app:destination="@id/chargingPileListFragment" />
+        <action
+            android:id="@+id/action_StationDetailFragment_to_openTimeFragment"
+            app:destination="@id/openTimeFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/chargingPileListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ChargingPileListFragment"
+        android:label="ChargingPileListFragment"
+        tools:layout="@layout/fragment_charging_pile_list">
+        <argument
+            android:name="stationId"
             app:argType="integer" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/openTimeFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.OpenTimeFragment"
+        android:label="OpenTimeFragment"
+        tools:layout="@layout/fragment_open_time">
+        <argument
+            android:name="stationId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

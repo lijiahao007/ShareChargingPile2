@@ -11,7 +11,7 @@
         android:elevation="10dp"
         app:behavior_fitToContents="false"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="@dimen/bottom_sheet_header_height"
+        app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <!--        bottom_sheet_header-->

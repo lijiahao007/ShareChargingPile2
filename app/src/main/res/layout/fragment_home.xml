@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:text="发布充电桩"
+            android:text="我的充电站"
             android:textAlignment="center" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:text="寻找充电桩"
+            android:text="寻找充电站"
             android:textAlignment="center" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

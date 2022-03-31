@@ -41,9 +41,6 @@ class StationListFragment : Fragment() {
     private fun initUI() {
         initRecyclerView()
 
-        binding.btnNavigation.setOnClickListener {
-            navigateToPileDetail(1)
-        }
         registerForContextMenu(binding.sortMenu)
         binding.sortMenu.setOnClickListener{
             it.performLongClick()

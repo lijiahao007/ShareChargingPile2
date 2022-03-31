@@ -20,8 +20,6 @@ class ChargingPileListAdapter:ListAdapter<ChargingPile, ChargingPileListAdapter.
     }
 
 
-
-
     class MyViewHolder(val binding: PileListItemForAddPileBinding, private val adapter: ChargingPileListAdapter): RecyclerView.ViewHolder(binding.root) {
         fun bind(chargingPile: ChargingPile) {
             binding.electricType.text = chargingPile.electricType

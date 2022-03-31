@@ -1,10 +1,7 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.lijiahao.sharechargingpile2.data.ChargingPile
-import com.lijiahao.sharechargingpile2.data.ChargingPileStation
-import com.lijiahao.sharechargingpile2.data.OpenTime
-import com.lijiahao.sharechargingpile2.data.Tags
+import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.utils.INVISIBLE
 import com.lijiahao.sharechargingpile2.utils.VISIBLE
 import java.math.BigDecimal
@@ -15,6 +12,7 @@ class StationListItemViewModel(
     val tags: List<Tags>,
     val piles: List<ChargingPile>,
     val openTimes: List<OpenTime>,
+    val openDays: List<OpenDayInWeek>,
     var distance:Float
     ) : ViewModel() {
     val stationId = station.id

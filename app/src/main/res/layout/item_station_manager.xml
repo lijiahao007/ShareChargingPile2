@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/tv_station_name_manager"
-            android:layout_width="177dp"
+            android:layout_width="163dp"
             android:layout_height="36dp"
             android:layout_marginStart="12dp"
             android:ellipsize="end"
@@ -39,16 +39,32 @@
         <TextView
             android:id="@+id/tv_location"
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="40dp"
             android:layout_marginStart="12dp"
-            android:ellipsize="end"
+            android:ellipsize="start"
             android:gravity="start|center_vertical"
             android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/tv_station_name_manager"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.509"
             tools:text="广东省汕头市金平区鮀浦街道汕头大学" />
+
+        <ImageButton
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.51"
+            android:visibility="gone"
+            />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -9,6 +9,9 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import com.lijiahao.sharechargingpile2.network.interceptor.TokenHeaderInterceptor
 import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.InputStream
@@ -17,13 +20,16 @@ import javax.inject.Inject
 @GlideModule
 class MyAppGlideModule : AppGlideModule() {
 
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface MyAppGlideModuleEntryPoint {
+        fun okHttpClient():OkHttpClient
+    }
+
+
     // 为Glide的OkhttpClient添加token拦截器
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
-        val okHttpClient = OkHttpClient.Builder()
-                            .addInterceptor(logger)
-                            .addNetworkInterceptor(TokenHeaderInterceptor(context))
-                            .build()
+        val okHttpClient = EntryPointAccessors.fromApplication(context.applicationContext, MyAppGlideModuleEntryPoint::class.java).okHttpClient()
         val factory = OkHttpUrlLoader.Factory(okHttpClient)
         glide.registry.replace(GlideUrl::class.java, InputStream::class.java, factory)
     }

@@ -11,8 +11,11 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapBinding
@@ -27,8 +30,12 @@ import com.amap.api.maps.model.*
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.ServiceSettings
 import com.amap.api.services.geocoder.*
+import com.amap.api.services.route.*
+import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
+import com.lijiahao.sharechargingpile2.ui.mapModule.listener.BaseOnRouteSearchListener
+import com.lijiahao.sharechargingpile2.ui.mapModule.overlay.DrivingRouteOverlay
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +65,7 @@ class MapActivity : AppCompatActivity() {
     private var mapCenterMarker: Marker? = null // 屏幕中心标点
     private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
     private var firstFlag = true
-
+    private var isStationMarkerShowed: Boolean = true
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -110,6 +117,7 @@ class MapActivity : AppCompatActivity() {
         initUi()
         initGeoSearch()
         initMarker() // 插入充电桩marker
+        initRouteSearch()
     }
 
     // 执行地图初始化操作
@@ -170,7 +178,10 @@ class MapActivity : AppCompatActivity() {
                 viewModel.projection = aMap.projection
                 Log.i("Projection", "projection = ${viewModel.projection}")
                 Log.i("Projection", "visibleRegion = ${viewModel.projection.visibleRegion}")
-                Log.i("Projection", "latLngBounds = ${viewModel.projection.visibleRegion.latLngBounds}")
+                Log.i(
+                    "Projection",
+                    "latLngBounds = ${viewModel.projection.visibleRegion.latLngBounds}"
+                )
             }
         })
 
@@ -183,7 +194,10 @@ class MapActivity : AppCompatActivity() {
         aMap.setOnMarkerClickListener { marker ->
             if (marker.isClickable && marker.title != null) {
                 val id = marker.title.toInt()
-                findNavController(R.id.bottom_sheet_fragment_container_view).popBackStack(R.id.StationListFragment, false)
+                findNavController(R.id.bottom_sheet_fragment_container_view).popBackStack(
+                    R.id.StationListFragment,
+                    false
+                )
                 navigationToDetailFragment(id)
                 true
             } else {
@@ -289,23 +303,82 @@ class MapActivity : AppCompatActivity() {
         viewModel.isReady.observe(this) {
             Log.i("initMarker", "viewModel.stationList.size=${viewModel.stationList.size}")
             // 添加标点
-            viewModel.stationList.forEach { station ->
-                aMap.addMarker(
-                    MarkerOptions()
-                        .visible(true)
-                        .draggable(false)
-                        .position(LatLng(station.latitude, station.longitude))
-                        .icon(
-                            BitmapDescriptorFactory.fromBitmap(
-                                BitmapFactory.decodeResource(
-                                    resources,
-                                    R.drawable.station_marker
-                                )
+            setStationMarker()
+        }
+
+    }
+
+    private fun setStationMarker() {
+        isStationMarkerShowed = true
+        viewModel.stationList.forEach { station ->
+            aMap.addMarker(
+                MarkerOptions()
+                    .visible(true)
+                    .draggable(false)
+                    .position(LatLng(station.latitude, station.longitude))
+                    .icon(
+                        BitmapDescriptorFactory.fromBitmap(
+                            BitmapFactory.decodeResource(
+                                resources,
+                                R.drawable.station_marker
                             )
                         )
-                        .title(station.id.toString())
-                ) // 注意title中的id是唯一标识
+                    )
+                    .title(station.id.toString())
+            ) // 注意title中的id是唯一标识
+        }
+    }
+
+    private fun initRouteSearch() {
+        val routeSearch = RouteSearch(this)
+        routeSearch.setRouteSearchListener(object : BaseOnRouteSearchListener() {
+            override fun onDriveRouteSearched(result: DriveRouteResult?, rCode: Int) {
+                if (rCode == 1000) {
+                    if (result != null && !result.paths.isNullOrEmpty()) {
+                        aMap.clear()
+                        isStationMarkerShowed = false
+                        val path = result.paths[0]
+                        val drivingRouteOverlay = DrivingRouteOverlay(
+                            applicationContext, aMap, path,
+                            result.startPos,
+                            result.targetPos, null
+                        )
+                        drivingRouteOverlay.setNodeIconVisibility(false) //设置节点marker是否显示
+                        drivingRouteOverlay.setIsColorfulline(false) //是否用颜色展示交通拥堵情况
+                        drivingRouteOverlay.removeFromMap()
+                        drivingRouteOverlay.addToMap()
+                        drivingRouteOverlay.zoomToSpan()
+                    } else {
+                        Snackbar.make(binding.root, "导航信息获取失败", Snackbar.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Snackbar.make(binding.root, "导航信息获取失败", Snackbar.LENGTH_SHORT).show()
+                }
             }
+        })
+
+        // 当充电站详情页面推出时结束导航，如果当前marker没有显示，则重新绘制marker
+        viewModel.finishNavi.observe(this) {
+            if (it && !isStationMarkerShowed) {
+                aMap.clear()
+                setStationMarker()
+            }
+        }
+
+        // 接收StationDetailFragment中的导航请求
+        viewModel.naviEndPoint.observe(this) {
+            val startPoint =
+                LatLonPoint(viewModel.bluePointPos.latitude, viewModel.bluePointPos.longitude)
+            val endPoint = LatLonPoint(it.latitude, it.longitude)
+            val fromAndTo = RouteSearch.FromAndTo(startPoint, endPoint)
+            val query = RouteSearch.DriveRouteQuery(
+                fromAndTo,
+                RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
+                null,
+                null,
+                ""
+            )
+            routeSearch.calculateDriveRouteAsyn(query)
         }
 
     }
@@ -336,12 +409,17 @@ class MapActivity : AppCompatActivity() {
 
 
     private fun navigationToDetailFragment(id: Int) {
-        val navController = findNavController(R.id.bottom_sheet_fragment_container_view)
-        val action = StationListFragmentDirections.actionStationListFragmentToStationDetailFragment(id)
+        val navController = findNavController()
+        val action =
+            StationListFragmentDirections.actionStationListFragmentToStationDetailFragment(id)
         navController.navigate(action)
         // 将底部BottomSheet放上来
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
+    }
+
+    private fun findNavController(): NavController {
+        return findNavController(R.id.bottom_sheet_fragment_container_view)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -351,7 +429,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG="MAPACTIVITY"
+        const val TAG = "MAPACTIVITY"
         const val REQUEST_CODE = 1
         private val permissions = arrayOf(
             Manifest.permission.INTERNET,
@@ -390,4 +468,3 @@ class MapActivity : AppCompatActivity() {
         )
     }
 }
-    

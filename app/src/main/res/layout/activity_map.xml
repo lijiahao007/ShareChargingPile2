@@ -42,6 +42,7 @@
             app:fabCustomSize="@dimen/location_btn_size"
             app:pressedTranslationZ="2dp"
             app:srcCompat="@drawable/ic_test"
+            android:visibility="gone"
             />
 
 
