@@ -7,6 +7,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
+import com.lijiahao.sharechargingpile2.di.annotation.HttpConnect
 import com.lijiahao.sharechargingpile2.network.interceptor.TokenHeaderInterceptor
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -23,6 +24,7 @@ class MyAppGlideModule : AppGlideModule() {
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface MyAppGlideModuleEntryPoint {
+        @HttpConnect
         fun okHttpClient():OkHttpClient
     }
 

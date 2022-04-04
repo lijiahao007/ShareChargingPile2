@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.lijiahao.sharechargingpile2" >
+    package="com.lijiahao.sharechargingpile2">
     <!-- 允许访问网络，必选权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 允许获取粗略位置，若用GPS实现定位小蓝点功能则必选 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 允许获取设备和运营商信息，用于问题排查和网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->
@@ -28,17 +28,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareChargingPile2"
-        tools:targetApi="r" >
-        <activity
-            android:name=".ui.mainModule.notifications.TestActivity"
-            android:exported="false" />
+        tools:targetApi="r">
+
         <activity
             android:name=".ui.loginRegisterModule.SignUpActivity"
             android:exported="false" />
         <activity
             android:name=".ui.loginRegisterModule.LoginActivity"
             android:exported="true"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +45,7 @@
         </activity>
 
         <service
-            android:name=".ui.service.MessagePollingService"
+            android:name=".ui.service.MessageWebSocketService"
             android:enabled="true"
             android:exported="true" />
 

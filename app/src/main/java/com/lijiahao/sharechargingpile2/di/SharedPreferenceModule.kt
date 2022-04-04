@@ -11,8 +11,11 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
+/**
+ * 注意这个Module的调用需要在LoginActivity之后调用，否则后去的数据会不准确。 （即不要在LoginActivity中使用）
+ */
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(SingletonComponent::class)
 class SharedPreferenceModule {
 
     @Provides

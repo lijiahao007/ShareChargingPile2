@@ -50,6 +50,7 @@
                     android:background="@drawable/message_text_send"
                     android:text="@string/hello"
                     android:textColor="#333333"
+                    android:gravity="center"
                     android:textSize="14sp" />
 
             </LinearLayout>

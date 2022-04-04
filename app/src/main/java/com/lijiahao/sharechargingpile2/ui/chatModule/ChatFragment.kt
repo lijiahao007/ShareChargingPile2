@@ -25,9 +25,12 @@ import com.lijiahao.sharechargingpile2.databinding.FragmentChatBinding
 import com.lijiahao.sharechargingpile2.network.request.MessageRequest
 import com.lijiahao.sharechargingpile2.network.service.MessageService
 import com.lijiahao.sharechargingpile2.repository.MessageRepository
+import com.lijiahao.sharechargingpile2.ui.broadcastreceiver.MessageReceiver
 import com.lijiahao.sharechargingpile2.ui.chatModule.adapter.ChatAdapter
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.ChatViewModel
+import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
+import com.lijiahao.sharechargingpile2.utils.NetworkUtils
 import com.lijiahao.sharechargingpile2.utils.SoftKeyBoardUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +39,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.WebSocket
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -60,8 +64,15 @@ class ChatFragment : Fragment() {
 
     private lateinit var adapter: ChatAdapter
 
+    // 初始化WebSocket（从MainActivity中获取）
+    private val webSocket: WebSocket? by lazy {
+        (requireActivity() as MainActivity).webSocket
+    }
+
     val viewModel: ChatViewModel by viewModels()
 
+    // 消息广播接收器
+    lateinit var messageReceiver: MessageReceiver
 
     private lateinit var albumLauncher: ActivityResultLauncher<Unit> // 作用：打开相册，选取相片
 
@@ -94,9 +105,9 @@ class ChatFragment : Fragment() {
                 viewModel.setUri(it)
             }
         }
-
-
         super.onCreate(savedInstanceState)
+        initBroadcastReceiver()
+
     }
 
     override fun onCreateView(
@@ -107,6 +118,10 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        context?.unregisterReceiver(messageReceiver)
+    }
 
     private fun initUI() {
         initToolBar()
@@ -115,6 +130,7 @@ class ChatFragment : Fragment() {
         initSubmitText()
         initSubmitImage()
         loadMessageFromRoom()
+        initWebSocket()
     }
 
     private fun initToolBar() {
@@ -175,16 +191,17 @@ class ChatFragment : Fragment() {
             binding.etContent.setText("")
             list.add(message)
             adapter.submitList(list)
+            adapter.notifyItemInserted(list.size - 1)
 
             // 把文本消息通过发送出去。并且存储在Room数据库中
             lifecycleScope.launch(Dispatchers.IO) {
+                // 通过Http表单的形式传输
                 try {
                     messageRepository.sendAndSaveTextMessage(message)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Snackbar.make(binding.root, "出错了", Snackbar.LENGTH_SHORT).show()
                 }
-
                 withContext(Dispatchers.Main) {
                     val list1 = ArrayList<Message>(adapter.currentList)
                     val index = list1.indexOfFirst { it.uuid == message.uuid }
@@ -270,6 +287,7 @@ class ChatFragment : Fragment() {
                     Log.i(TAG, "outputFile: ${outputFile.name}    size=${outputFile.length()}")
 
 
+                    // 通过Http表单的形式传输
                     // 将图片消息发送出去
                     try {
                         val remotePath = messageService.sendImageMessage(part, request)
@@ -297,6 +315,8 @@ class ChatFragment : Fragment() {
                         adapter.submitList(list)
                         adapter.notifyItemChanged(pos)
                     }
+
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Log.i(AddStationFragment.TAG, "图片上传失败了")
@@ -343,6 +363,30 @@ class ChatFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun initWebSocket() {
+        Log.i(TAG, "websocket in ChatFragment = $webSocket")
+    }
+
+    // 初始化广播接收器
+    private fun initBroadcastReceiver() {
+        messageReceiver = object:MessageReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                super.onReceive(context, intent)
+                message?.let { message ->
+                    // 收到消息后
+                    // 1. 将消息显示在recyclerView中
+                    val list = LinkedList(adapter.currentList)
+                    list.add(message)
+                    adapter.submitList(list)
+                    adapter.notifyItemInserted(list.size-1)
+                    binding.rvChatList.smoothScrollToPosition(list.size-1)
+                }
+            }
+        }
+
+        context?.registerReceiver(messageReceiver, messageReceiver.getIntentFilter())
     }
 
 

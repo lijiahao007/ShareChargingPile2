@@ -1,27 +1,29 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.lijiahao.sharechargingpile2.R
-import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
-import com.lijiahao.sharechargingpile2.ui.service.MessagePollingService
+import com.lijiahao.sharechargingpile2.ui.service.MessageWebSocketService
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import okhttp3.WebSocket
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    var webSocket: WebSocket? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,13 +60,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initService() {
-        val intent = Intent(this, MessagePollingService::class.java)
-        startService(intent)
+        val intent = Intent(this, MessageWebSocketService::class.java)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) // 绑定服务
     }
 
-
     override fun onDestroy() {
-        stopService(Intent(this, MessagePollingService::class.java))
+        unbindService(serviceConnection) // 解绑服务
         super.onDestroy()
+    }
+
+    private val serviceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            webSocket = (service as MessageWebSocketService.WebSocketBinder).webSocket
+            Log.i(TAG, "完成绑定 $webSocket")
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            Log.i(TAG, "MainService 与 MessageWebSocketService断开连接")
+            webSocket = null
+        }
+
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
     }
 }

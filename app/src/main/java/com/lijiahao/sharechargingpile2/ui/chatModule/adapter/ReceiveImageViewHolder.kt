@@ -11,7 +11,12 @@ class ReceiveImageViewHolder(val binding: ItemImageReceiveBinding) :
     MessageViewHolder(binding.root) {
     override fun bind(message: Message) {
         val msgBody = message.msgBody as ImageMsgBody
-        GlideApp.with(binding.root).load(File(msgBody.localPath)).into(binding.bivPic)
+        // 如果有本地地址，就用本地地址。没有就用远程地址
+        if (msgBody.localPath == "") {
+            GlideApp.with(binding.root).load(msgBody.remotePath).into(binding.bivPic)
+        } else {
+            GlideApp.with(binding.root).load(File(msgBody.localPath)).into(binding.bivPic)
+        }
     }
 
 }

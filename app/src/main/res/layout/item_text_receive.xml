@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/ll_text_receive"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:background="@color/user_info_background">
 
 
     <TextView
@@ -61,12 +63,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/message_text_receive"
-                android:text="你好"
+                android:gravity="center"
                 android:textColor="#333333"
-                android:textSize="14dp"
-                android:gravity="left"/>
-
-
+                android:textSize="14sp"
+                tools:text="你好" />
 
         </LinearLayout>
 

@@ -52,9 +52,13 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
                     }
+                } else {
+                    Snackbar.make(binding.root, "token过期", Snackbar.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                Snackbar.make(binding.root, "网络异常", Snackbar.LENGTH_SHORT).show()
+
             }
         }
     }
