@@ -54,7 +54,6 @@ class MessageWebSocketService : Service() {
 
     // 在这里监听webSocket连接状态，并且接收信息
     private val webSocketListener = object: WebSocketListener() {
-
         override fun onOpen(webSocket: WebSocket, response: Response) {
             Log.i(TAG, "WebSocket 连接打开 onOpen $webSocket, $response")
         }
@@ -62,23 +61,24 @@ class MessageWebSocketService : Service() {
             Log.i(TAG, "onMessage with text $webSocket, $text")
             // 分辨获取消息类型
             try {
-                val gson = Gson()
-                val request = gson.fromJson(text, MessageRequest::class.java)
-                val message = request.toMessage()
+                serviceScope.launch(Dispatchers.Default) {
+                    val gson = Gson()
+                    val request = gson.fromJson(text, MessageRequest::class.java)
+                    val message = request.toMessage()
 
-                // message存储在本地
-                messageDao.insertMessage(message)
+                    // message存储在本地
+                    messageDao.insertMessage(message)
 
-                // 发送广播
-                val intent = Intent(MESSAGE_ARRIVED_BROADCAST_ACTION)
-                intent.putExtra(MESSAGE_BROADCAST_BUNDLE, message)
-                sendBroadcast(intent)
+                    // 发送广播
+                    val intent = Intent(MESSAGE_ARRIVED_BROADCAST_ACTION)
+                    intent.putExtra(MESSAGE_BROADCAST_BUNDLE, message)
+                    sendBroadcast(intent)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.i(TAG, "收到非即时通讯消息")
             }
         }
-
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             Log.i(TAG, "onClosed  $webSocket, $reason")
         }
@@ -88,6 +88,9 @@ class MessageWebSocketService : Service() {
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             t.printStackTrace()
             Log.i(TAG, "onFailure  $webSocket, $response")
+            // 执行重连操作
+            this@MessageWebSocketService.webSocket = webSocketClient.newWebSocket(webSocketRequest, this)
+            Log.i(TAG, "websocket冲顶连接")
         }
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
             Log.i(TAG, "onMessage with bytes $webSocket, $bytes")

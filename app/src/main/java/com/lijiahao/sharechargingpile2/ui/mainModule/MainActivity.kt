@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 0.5F
                 }
+                R.id.userInfoFragment -> {navView.visibility = View.GONE}
                 else -> {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 1F

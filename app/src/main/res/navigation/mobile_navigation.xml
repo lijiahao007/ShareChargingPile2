@@ -44,7 +44,13 @@
         android:id="@+id/chatFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.chatModule.ChatFragment"
         android:label="ChatFragment"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <argument android:name="userId"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_chatFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/modifyPwdFragment"
@@ -66,4 +72,12 @@
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderListFragment"
         android:label="OrderListFragment"
         tools:layout="@layout/fragment_order_list"/>
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.chatModule.UserInfoFragment"
+        android:label="UserInfoFragment"
+        tools:layout="@layout/fragment_user_info">
+        <argument android:name="userId"
+            app:argType="string"/>
+    </fragment>
 </navigation>

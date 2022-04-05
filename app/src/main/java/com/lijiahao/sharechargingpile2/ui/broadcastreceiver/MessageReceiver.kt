@@ -11,6 +11,8 @@ import com.lijiahao.sharechargingpile2.utils.MESSAGE_BROADCAST_BUNDLE
 
 open class MessageReceiver: BroadcastReceiver() {
     var message: Message? = null
+
+    // 注意在重写的时候需要保留 super.onReceive
     override fun onReceive(context: Context?, intent: Intent?) {
         message = intent?.getSerializableExtra(MESSAGE_BROADCAST_BUNDLE) as Message?
         Log.i("MessageReceiver", "message: $message")

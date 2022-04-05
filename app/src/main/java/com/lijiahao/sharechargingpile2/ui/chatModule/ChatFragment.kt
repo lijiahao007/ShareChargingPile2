@@ -15,19 +15,23 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.dao.MessageDao
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.databinding.FragmentChatBinding
 import com.lijiahao.sharechargingpile2.network.request.MessageRequest
+import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.MessageService
 import com.lijiahao.sharechargingpile2.repository.MessageRepository
 import com.lijiahao.sharechargingpile2.ui.broadcastreceiver.MessageReceiver
 import com.lijiahao.sharechargingpile2.ui.chatModule.adapter.ChatAdapter
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.ChatViewModel
+import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
 import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import com.lijiahao.sharechargingpile2.utils.NetworkUtils
@@ -53,6 +57,17 @@ class ChatFragment : Fragment() {
         FragmentChatBinding.inflate(layoutInflater)
     }
 
+    private val args: ChatFragmentArgs by navArgs()
+
+    private val messageListViewModel: MessageListViewModel by activityViewModels()
+
+    // 这里不能空呀。
+    private val targetUserInfo: UserInfoResponse by lazy {
+        messageListViewModel.userInfoResponseList.value!!.find {
+            it.userId == args.userId
+        }!!
+    }
+
     @Inject
     lateinit var messageRepository: MessageRepository
 
@@ -62,12 +77,10 @@ class ChatFragment : Fragment() {
     @Inject
     lateinit var messageDao: MessageDao
 
-    private lateinit var adapter: ChatAdapter
+    @Inject
+    lateinit var sharedPreferenceData: SharedPreferenceData
 
-    // 初始化WebSocket（从MainActivity中获取）
-    private val webSocket: WebSocket? by lazy {
-        (requireActivity() as MainActivity).webSocket
-    }
+    private lateinit var adapter: ChatAdapter
 
     val viewModel: ChatViewModel by viewModels()
 
@@ -130,12 +143,17 @@ class ChatFragment : Fragment() {
         initSubmitText()
         initSubmitImage()
         loadMessageFromRoom()
-        initWebSocket()
     }
 
     private fun initToolBar() {
         binding.ivNavigationUp.setOnClickListener {
             navigateUp()
+        }
+
+        binding.tvUserName.text = targetUserInfo.name
+        binding.tvUserInfo.setOnClickListener {
+            val action = ChatFragmentDirections.actionChatFragmentToUserInfoFragment(targetUserInfo.userId)
+            findNavController().navigate(action)
         }
     }
 
@@ -329,15 +347,14 @@ class ChatFragment : Fragment() {
     }
 
     private fun initChatView() {
-        adapter = ChatAdapter("1")
+        adapter = ChatAdapter(sharedPreferenceData.userId)
         binding.rvChatList.adapter = adapter
     }
 
     // 从Room中获取数据
     private fun loadMessageFromRoom() {
-        //TODO 获取targetId
-        val targetId = 2
-        // TODO 设置初始加载的消息数量
+
+        val targetId = targetUserInfo.userId.toInt()
         val messageNum = 10
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             var messageList = messageDao.queryMessageByUserId(targetId, messageNum)
@@ -365,20 +382,21 @@ class ChatFragment : Fragment() {
 
     }
 
-    private fun initWebSocket() {
-        Log.i(TAG, "websocket in ChatFragment = $webSocket")
-    }
-
     // 初始化广播接收器
     private fun initBroadcastReceiver() {
         messageReceiver = object:MessageReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 super.onReceive(context, intent)
-                message?.let { message ->
+                message?.let{
+                    if(it.sendId != targetUserInfo.userId && it.targetId != targetUserInfo.userId) {
+                        // 与该聊天用户不相关的消息不显示
+                        return
+                    }
+
                     // 收到消息后
                     // 1. 将消息显示在recyclerView中
                     val list = LinkedList(adapter.currentList)
-                    list.add(message)
+                    list.add(it)
                     adapter.submitList(list)
                     adapter.notifyItemInserted(list.size-1)
                     binding.rvChatList.smoothScrollToPosition(list.size-1)
