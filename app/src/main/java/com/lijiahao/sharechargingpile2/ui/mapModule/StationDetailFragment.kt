@@ -9,12 +9,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.amap.api.maps.model.LatLng
+import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.FragmentStationDetailBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.network.service.UserService
+import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,8 +39,16 @@ class StationDetailFragment : Fragment() {
     @Inject
     lateinit var chargingPileStationService: ChargingPileStationService
 
+    @Inject
+    lateinit var sharedPreferenceData: SharedPreferenceData
+
+    @Inject
+    lateinit var userService: UserService
+
+
     private val viewModel: StationDetailViewModel by viewModels()
     private val mapViewModel: MapViewModel by activityViewModels()
+    private val messageListViewModel: MessageListViewModel by activityViewModels()
     private val stationId: Int by lazy {
         args.stationId
     }
@@ -88,13 +101,40 @@ class StationDetailFragment : Fragment() {
         }
 
         binding.ivToPileInfo.setOnClickListener {
-            val action = StationDetailFragmentDirections.actionStationDetailFragmentToChargingPileListFragment(stationId)
+            val action =
+                StationDetailFragmentDirections.actionStationDetailFragmentToChargingPileListFragment(
+                    stationId
+                )
             findNavController().navigate(action)
         }
 
         binding.ivToOpentimeInfo.setOnClickListener {
-            val action = StationDetailFragmentDirections.actionStationDetailFragmentToOpenTimeFragment(stationId)
+            val action =
+                StationDetailFragmentDirections.actionStationDetailFragmentToOpenTimeFragment(
+                    stationId
+                )
             findNavController().navigate(action)
+        }
+
+        binding.btnContactOwner.setOnClickListener {
+            val targetUserId = mapViewModel.stationInfoMap[stationId.toString()]?.station?.userId.toString()!!
+            val userInfo = messageListViewModel.userInfoResponseList.value?.let { list ->
+                val info = list.find { it.userId == targetUserId }
+                if (info == null) {
+                    // 没有该用户，请求用户信息
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val response = userService.getUserInfo(targetUserId)
+                        withContext(Dispatchers.Main) {
+                            messageListViewModel.addUserInfoResponse(response)
+                            val action = MapFragmentDirections.actionMapFragmentToChatFragment(targetUserId)
+                            requireActivity().findNavController(R.id.map_module_fragment_container).navigate(action)
+                        }
+                    }
+                } else {
+                    val action = MapFragmentDirections.actionMapFragmentToChatFragment(targetUserId)
+                    requireActivity().findNavController(R.id.map_module_fragment_container).navigate(action)
+                }
+            }
         }
     }
 

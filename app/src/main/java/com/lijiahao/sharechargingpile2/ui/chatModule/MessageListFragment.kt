@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.lijiahao.sharechargingpile2.dao.MessageDao
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.databinding.FragmentMessageListBinding
@@ -22,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import okhttp3.WebSocket
 import javax.inject.Inject
 
@@ -81,7 +79,7 @@ class MessageListFragment : Fragment() {
                         adapter.notifyItemChanged(pos)
                     } else {
                         // 如果该用户不存在，则获取用户信息，然后重新设置列表信息
-                        viewModel.addUserInfoResponse(otherId)
+                        viewModel.postUserInfoResponse(otherId)
                     }
                 }
             }

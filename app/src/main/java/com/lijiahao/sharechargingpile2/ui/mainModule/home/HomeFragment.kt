@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.lijiahao.sharechargingpile2.databinding.FragmentHomeBinding
 import com.lijiahao.sharechargingpile2.ui.mapModule.MapActivity
+import com.lijiahao.sharechargingpile2.ui.mapModule.MapModuleActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.PublishStationActivity
 
 class HomeFragment : Fragment() {
@@ -48,7 +49,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.cardSearchPublish.setOnClickListener {
-            val intent = Intent(context, MapActivity::class.java)
+            val intent = Intent(context, MapModuleActivity::class.java)
             startActivity(intent)
         }
         return root

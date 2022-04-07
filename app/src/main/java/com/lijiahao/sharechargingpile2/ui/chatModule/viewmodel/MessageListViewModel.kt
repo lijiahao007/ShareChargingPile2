@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,7 +28,16 @@ class MessageListViewModel @Inject constructor(
         getData()
     }
 
+    @MainThread
     fun addUserInfoResponse(info: UserInfoResponse) {
+        userInfoResponseList.value?.let {
+            val list = ArrayList(it)
+            list.add(info)
+            userInfoResponseList.value = list
+        }
+    }
+
+    fun postUserInfoResponse(info: UserInfoResponse) {
         userInfoResponseList.value?.let {
             val list = ArrayList(it)
             list.add(info)
@@ -35,10 +45,10 @@ class MessageListViewModel @Inject constructor(
         }
     }
 
-    fun addUserInfoResponse(userId: String) {
+    fun postUserInfoResponse(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val userInfoResponse = userService.getUserInfo(userId)
-            addUserInfoResponse(userInfoResponse)
+            postUserInfoResponse(userInfoResponse)
         }
     }
 

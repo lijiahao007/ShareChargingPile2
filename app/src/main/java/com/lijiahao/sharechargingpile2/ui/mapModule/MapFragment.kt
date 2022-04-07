@@ -1,58 +1,48 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule
 
-import android.Manifest
 import android.graphics.BitmapFactory
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
+import android.view.ViewGroup
 import androidx.core.view.WindowCompat
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.lijiahao.sharechargingpile2.R
-import com.lijiahao.sharechargingpile2.databinding.ActivityMapBinding
-import com.lijiahao.sharechargingpile2.databinding.MapActivityBottomSheetBinding
-import com.lijiahao.sharechargingpile2.ui.mapModule.observer.MapViewObserver
-import com.lijiahao.sharechargingpile2.utils.PermissionTool
-import dagger.hilt.android.AndroidEntryPoint
 import com.amap.api.location.AMapLocationClient
-
 import com.amap.api.maps.*
 import com.amap.api.maps.model.*
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.ServiceSettings
 import com.amap.api.services.geocoder.*
-import com.amap.api.services.route.*
+import com.amap.api.services.route.DriveRouteResult
+import com.amap.api.services.route.RouteSearch
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.databinding.FragmentMapBinding
+import com.lijiahao.sharechargingpile2.databinding.MapActivityBottomSheetBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.LoginService
-import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.listener.BaseOnRouteSearchListener
+import com.lijiahao.sharechargingpile2.ui.mapModule.observer.MapViewObserver
 import com.lijiahao.sharechargingpile2.ui.mapModule.overlay.DrivingRouteOverlay
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class MapActivity : AppCompatActivity() {
+class MapFragment : Fragment() {
 
-    private val viewModel: MapViewModel by viewModels()
-    val binding: ActivityMapBinding by lazy {
-        DataBindingUtil.setContentView<ActivityMapBinding>(
-            this,
-            R.layout.activity_map
-        )
+    private val viewModel: MapViewModel by activityViewModels()
+    val binding: FragmentMapBinding by lazy {
+        FragmentMapBinding.inflate(layoutInflater)
     }
     private val bottomSheetBinding: MapActivityBottomSheetBinding by lazy { binding.bottomSheetInclude }
     private val bottomSheetBehavior: BottomSheetBehavior<View> by lazy {
@@ -73,43 +63,30 @@ class MapActivity : AppCompatActivity() {
         // 基本的初始化操作，需要在所有AMap库相关操作之前调用
         // 1. 更新隐私合规状态。
         // 2. 更新同意隐私状态
-        MapsInitializer.updatePrivacyShow(this, true, true)
-        MapsInitializer.updatePrivacyAgree(this, true)
-        AMapLocationClient.updatePrivacyShow(this, true, true)
-        AMapLocationClient.updatePrivacyAgree(this, true)
-        ServiceSettings.updatePrivacyShow(this, true, true)
-        ServiceSettings.updatePrivacyAgree(this, true)
+        MapsInitializer.updatePrivacyShow(context, true, true)
+        MapsInitializer.updatePrivacyAgree(context, true)
+        AMapLocationClient.updatePrivacyShow(context, true, true)
+        AMapLocationClient.updatePrivacyAgree(context, true)
+        ServiceSettings.updatePrivacyShow(context, true, true)
+        ServiceSettings.updatePrivacyAgree(context, true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false) // 设置全屏显示
-        bottomSheetBehavior.saveFlags = BottomSheetBehavior.SAVE_ALL
         privacyInit()
-        mapView.onCreate(savedInstanceState)
-        // 权限申请
-        val permissionReady = PermissionTool.usedOnCreate(this, permissions, permissionsHint)
-        if (permissionReady) {
-            init()
-        }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val res = PermissionTool.usedOnRequestPermissionsResult(
-            requestCode,
-            permissions,
-            grantResults,
-            this,
-            permissionsHint
-        )
-        if (res) {
-            init()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false) // 设置全屏显示z
+        bottomSheetBehavior.saveFlags = BottomSheetBehavior.SAVE_ALL
+        mapView.onCreate(savedInstanceState)
+        init()
+
+        Log.i(TAG, "binding=$binding, 初始化完成了")
+        return binding.root
     }
 
     private fun init() {
@@ -121,7 +98,6 @@ class MapActivity : AppCompatActivity() {
         initRouteSearch()
     }
 
-    // 执行地图初始化操作
     private fun initMap() {
 
         // 1. 初始化地图控制器对象
@@ -147,8 +123,6 @@ class MapActivity : AppCompatActivity() {
         // 6. 使用 MapViewObserver 来管理MapView的生命周期
         val mapViewObserver = MapViewObserver(mapView)
         lifecycle.addObserver(mapViewObserver)
-
-
     }
 
     // 设置和AMap地图相关的Listener
@@ -195,7 +169,7 @@ class MapActivity : AppCompatActivity() {
         aMap.setOnMarkerClickListener { marker ->
             if (marker.isClickable && marker.title != null) {
                 val id = marker.title.toInt()
-                findNavController(R.id.bottom_sheet_fragment_container_view).popBackStack(
+                findBottomSheetNavController().popBackStack(
                     R.id.StationListFragment,
                     false
                 )
@@ -207,9 +181,6 @@ class MapActivity : AppCompatActivity() {
         }
 
     }
-
-    @Inject
-    lateinit var loginService: LoginService
 
     @Inject
     lateinit var chargingPileStationService: ChargingPileStationService
@@ -256,7 +227,7 @@ class MapActivity : AppCompatActivity() {
 
     // 经纬度->地址转换
     private fun initGeoSearch() {
-        geocodeSearch = GeocodeSearch(this)
+        geocodeSearch = GeocodeSearch(context)
 
         // 1. 设置查询回调 (异步方法回调)
         geocodeSearch.setOnGeocodeSearchListener(object : GeocodeSearch.OnGeocodeSearchListener {
@@ -309,6 +280,7 @@ class MapActivity : AppCompatActivity() {
 
     }
 
+
     private fun setStationMarker() {
         isStationMarkerShowed = true
         viewModel.stationList.forEach { station ->
@@ -331,7 +303,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun initRouteSearch() {
-        val routeSearch = RouteSearch(this)
+        val routeSearch = RouteSearch(context)
         routeSearch.setRouteSearchListener(object : BaseOnRouteSearchListener() {
             override fun onDriveRouteSearched(result: DriveRouteResult?, rCode: Int) {
                 if (rCode == 1000) {
@@ -340,7 +312,7 @@ class MapActivity : AppCompatActivity() {
                         isStationMarkerShowed = false
                         val path = result.paths[0]
                         val drivingRouteOverlay = DrivingRouteOverlay(
-                            applicationContext, aMap, path,
+                            requireActivity().applicationContext, aMap, path,
                             result.startPos,
                             result.targetPos, null
                         )
@@ -408,9 +380,8 @@ class MapActivity : AppCompatActivity() {
         viewModel.mapCenterPos = latLng
     }
 
-
     private fun navigationToDetailFragment(id: Int) {
-        val navController = findNavController()
+        val navController = findBottomSheetNavController()
         val action =
             StationListFragmentDirections.actionStationListFragmentToStationDetailFragment(id)
         navController.navigate(action)
@@ -419,53 +390,22 @@ class MapActivity : AppCompatActivity() {
 
     }
 
-    private fun findNavController(): NavController {
-        return findNavController(R.id.bottom_sheet_fragment_container_view)
+    private fun findBottomSheetNavController(): NavController {
+        return requireActivity().findNavController(R.id.bottom_sheet_fragment_container_view)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // mapView保存状态 TODO: 把这个整合到MapViewObserver中
         mapView.onSaveInstanceState(outState)
     }
 
-    companion object {
-        const val TAG = "MAPACTIVITY"
-        const val REQUEST_CODE = 1
-        private val permissions = arrayOf(
-            Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.CHANGE_WIFI_STATE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
-        )
-
-        @RequiresApi(Build.VERSION_CODES.P)
-        private val permissionsR = arrayOf(
-            Manifest.permission.FOREGROUND_SERVICE,
-        )
-
-        @RequiresApi(Build.VERSION_CODES.Q)
-        private val permissionsQ = arrayOf(
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        )
-
-        private val permissionsHint = arrayOf(
-            "网络权限",
-            "获取粗糙位置权限",
-            "读取手机状态权限",
-            "获取网络状态权限",
-            "获取WIFI状态权限",
-            "更改WIFI状态",
-            "写拓展存储控件权限",
-            "读拓展存储权限",
-            "读取精确位置",
-            "获取位置附加信息"
-        )
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.onDestroy()
     }
+
+    companion object {
+        const val TAG = "MapFragment"
+    }
+
 }

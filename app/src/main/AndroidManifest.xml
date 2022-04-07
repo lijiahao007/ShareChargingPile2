@@ -29,7 +29,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShareChargingPile2"
         tools:targetApi="r">
-
+        <activity
+            android:name=".ui.mapModule.MapModuleActivity"
+            android:exported="false"
+            android:label="@string/title_activity_map_module"
+            android:theme="@style/Theme.ShareChargingPile2.NoActionBar" />
         <activity
             android:name=".ui.loginRegisterModule.SignUpActivity"
             android:exported="false" />

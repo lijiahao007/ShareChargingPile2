@@ -270,4 +270,8 @@ class LocationMapFragment : Fragment() {
         mapView.onSaveInstanceState(outState)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.onDestroy()
+    }
 }

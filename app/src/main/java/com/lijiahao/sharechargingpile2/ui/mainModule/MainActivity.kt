@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+
     private val serviceConnection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             webSocket = (service as MessageWebSocketService.WebSocketBinder).webSocket

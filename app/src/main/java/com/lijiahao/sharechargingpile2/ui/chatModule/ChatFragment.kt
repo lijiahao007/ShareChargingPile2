@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
+import androidx.core.view.WindowCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -27,6 +28,7 @@ import com.lijiahao.sharechargingpile2.databinding.FragmentChatBinding
 import com.lijiahao.sharechargingpile2.network.request.MessageRequest
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.MessageService
+import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.repository.MessageRepository
 import com.lijiahao.sharechargingpile2.ui.broadcastreceiver.MessageReceiver
 import com.lijiahao.sharechargingpile2.ui.chatModule.adapter.ChatAdapter
@@ -61,11 +63,14 @@ class ChatFragment : Fragment() {
 
     private val messageListViewModel: MessageListViewModel by activityViewModels()
 
-    // 这里不能空呀。
+    // 注意：要开启ChatFragment的前提时，在messageListViewModel的userInfoResponseList中存在目标用户的UserInfoResponse。如果没有就需要先获取新用户消息，在转到ChatFragment中
     private val targetUserInfo: UserInfoResponse by lazy {
-        messageListViewModel.userInfoResponseList.value!!.find {
+        Log.i(TAG, "messageListViewModel.userInfoResponseList= ${messageListViewModel.userInfoResponseList.value}")
+        Log.i(TAG, "args.userId = ${args.userId}")
+        val userInfo = messageListViewModel.userInfoResponseList.value!!.find {
             it.userId == args.userId
-        }!!
+        }
+        userInfo!!
     }
 
     @Inject
@@ -127,6 +132,7 @@ class ChatFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true) // 设置全屏显示z
         initUI()
         return binding.root
     }
