@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
+// 该ViewModel中存放着当前用户所拥有的充电站信息
 class StationManagerViewModel @Inject constructor(
     private val sharedPreferenceData: SharedPreferenceData,
     private val chargingPileStationService: ChargingPileStationService
@@ -27,6 +29,9 @@ class StationManagerViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val info = chargingPileStationService.getStationInfoByUserId(sharedPreferenceData.userId)
             userStationInfo.postValue(info)
+            Log.i("StationManagerViewModel", "当前用户充电站信息:$info")
         }
     }
+
+
 }

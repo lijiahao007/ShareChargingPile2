@@ -61,6 +61,21 @@ interface ChargingPileStationService {
     @POST("chargingPileStation/uploadStationPic")
     suspend fun uploadStationPics(@Body body:MultipartBody) : String
 
+    @Multipart
+    @POST("chargingPileStation/modifyStationInfo")
+    suspend fun modifyStationInfo(
+        @Part("stationInfo") stationInfo: StationInfoRequest,
+        @Part("remotePicsUris") remotePicUris: List<String>,
+        @Part newPics:List<MultipartBody.Part>  // 注意MultipartBody.Part 的Part在这里不需要标注value，具体的变量名是在MultipartBody构建的时候写入的
+    ):String
+
+    @Multipart
+    @POST("chargingPileStation/modifyStationInfoWithoutNewPic")
+    suspend fun modifyStationInfo(
+        @Part("stationInfo") stationInfo: StationInfoRequest,
+        @Part("remotePicsUris") remotePicUris: List<String>,
+    ):String
+
 
 
 

@@ -1,17 +1,14 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule.home
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.lijiahao.sharechargingpile2.databinding.FragmentHomeBinding
-import com.lijiahao.sharechargingpile2.ui.mapModule.MapActivity
+import com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeActivity
 import com.lijiahao.sharechargingpile2.ui.mapModule.MapModuleActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.PublishStationActivity
 
@@ -52,6 +49,12 @@ class HomeFragment : Fragment() {
             val intent = Intent(context, MapModuleActivity::class.java)
             startActivity(intent)
         }
+
+        binding.cardScanInfo.setOnClickListener {
+            val intent = Intent(context, QRCodeActivity::class.java)
+            startActivity(intent)
+        }
+
         return root
     }
 

@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.huawei.agconnect'
 }
 
 android {
@@ -35,6 +36,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        create("customDebugType") {
+            debuggable = true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -62,8 +66,8 @@ dependencies {
 
     // Jetpack相关
     // navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     // Room
     implementation 'androidx.room:room-runtime:2.4.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -120,6 +124,11 @@ dependencies {
     implementation 'com.amap.api:search:8.1.0'
     // 定位
     implementation 'com.amap.api:location:6.0.1'
+
+
+    // 华为同一扫描服务
+    implementation 'com.huawei.hms:scanplus:2.4.0.302'
+
 
 
 

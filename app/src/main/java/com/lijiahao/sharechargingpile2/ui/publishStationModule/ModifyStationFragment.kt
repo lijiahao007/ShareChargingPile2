@@ -15,45 +15,53 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
+import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
 import com.google.android.material.timepicker.TimeFormat
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
-import com.lijiahao.sharechargingpile2.databinding.FragmentAddStationBinding
-import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
+import com.lijiahao.sharechargingpile2.databinding.FragmentModifyStationBinding
+import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStationViewModel
+import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.StationManagerViewModel
 import com.lijiahao.sharechargingpile2.utils.FileUtils
-import com.lijiahao.sharechargingpile2.utils.FileUtils.Companion.getLocalPicsFromUris
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
+import java.lang.Exception
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddStationFragment : Fragment() {
+class ModifyStationFragment : Fragment() {
 
-    val binding: FragmentAddStationBinding by lazy {
-        FragmentAddStationBinding.inflate(layoutInflater)
+    private val binding: FragmentModifyStationBinding by lazy {
+        FragmentModifyStationBinding.inflate(layoutInflater)
     }
 
-    val viewModel: AddStationViewModel by activityViewModels() // 这个VieModel用于获取LocationMapFragment与AddPileFragment中获取的信息
+    val viewModel: AddStationViewModel by activityViewModels()
+    private val viewModelStationManager: StationManagerViewModel by activityViewModels()
+    private val args: ModifyStationFragmentArgs by navArgs()
+    private val stationId: String by lazy {
+        args.stationId
+    }
 
     @Inject
     lateinit var chargingPileStationService: ChargingPileStationService
@@ -66,8 +74,9 @@ class AddStationFragment : Fragment() {
 
     private lateinit var albumLauncher: ActivityResultLauncher<Unit>
 
+
     // 图片相关的View
-    private val imgList:Array<ImageView> by lazy {
+    private val imgList: Array<ImageView> by lazy {
         arrayOf(
             binding.imStationPic1,
             binding.stationPic2,
@@ -76,7 +85,7 @@ class AddStationFragment : Fragment() {
             binding.stationPic5
         )
     }
-    private val cardList:Array<MaterialCardView> by lazy{
+    private val cardList: Array<MaterialCardView> by lazy {
         arrayOf(
             binding.cardStationPic1,
             binding.cardStationPic2,
@@ -85,6 +94,7 @@ class AddStationFragment : Fragment() {
             binding.cardStationPic5
         )
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         albumLauncher = registerForActivityResult(
@@ -99,7 +109,10 @@ class AddStationFragment : Fragment() {
                 override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
                     if (resultCode == Activity.RESULT_OK) {
                         intent?.data?.let { uri ->
-                            Log.i(TAG, "uri=$uri \n encodePath=${uri.encodedPath}")
+                            Log.i(
+                                AddStationFragment.TAG,
+                                "uri=$uri \n encodePath=${uri.encodedPath}"
+                            )
                             return uri
                         }
                     }
@@ -109,13 +122,17 @@ class AddStationFragment : Fragment() {
         ) {
             it?.let {
                 viewModel.addLocalUri(it)
-                Log.i(TAG, "uriList size = ${viewModel.stationPicUriList.value?.size}")
+                Log.i(
+                    AddStationFragment.TAG,
+                    "uriList size = ${viewModel.stationPicUriList.value?.size}"
+                )
             }
         }
 
         // 注意上面的registerForActivityResult必须在super.onCreate()上方
         super.onCreate(savedInstanceState)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,10 +143,140 @@ class AddStationFragment : Fragment() {
     }
 
     private fun initUI() {
+        putInfoToView()
         initUIListener()
         initTimePick()
         initSubmit()
+
+        setFragmentResult(CHANGE_STATION, bundleOf())
     }
+
+    // 将对应充电站信息加载到对应View中
+    private fun putInfoToView() {
+
+        val userStationInfo = viewModelStationManager.userStationInfo.value
+        userStationInfo?.let { info ->
+            // 1. 获取对应充电站信息, 并设置ViewModel基本信息
+            val station = info.stations.find { it.id.toString() == stationId }
+            station?.let {
+                viewModel.stationName = it.name
+                viewModel.posDescription = it.posDescription
+                viewModel.longitude = it.longitude
+                viewModel.latitude = it.latitude
+                viewModel.parkFee = it.parkFee.toDouble()
+                viewModel.remark = it.remark ?: ""
+                viewModel.stationCollection = it.collection
+                viewModel.stationId = it.id
+            }
+
+            // 2. 设置开放星期数
+            info.openDayMap[stationId]?.forEach { it ->
+                when (it.day) {
+                    "周一" -> {
+                        binding.chipMon.isChecked = true
+                    }
+                    "周二" -> {
+                        binding.chipTue.isChecked = true
+                    }
+                    "周三" -> {
+                        binding.chipWen.isChecked = true
+                    }
+                    "周四" -> {
+                        binding.chipThu.isChecked = true
+                    }
+                    "周五" -> {
+                        binding.chipFri.isChecked = true
+                    }
+                    "周六" -> {
+                        binding.chipSat.isChecked = true
+                    }
+                    "周日" -> {
+                        binding.chipSun.isChecked = true
+                    }
+                }
+            }
+
+            // 3. 设置时间
+            val openTimeList = info.openTimeMap[stationId]
+            binding.chipGroupTime.removeAllViews()
+            openTimeList?.let {
+                if (it.size == 1 && it[0].beginTime == "00:00:00" && it[0].endTime == "23:59:59") {
+                    binding.chipAllDay.isChecked = true
+                } else {
+                    binding.chipSpecialTime.isChecked = true
+                    it.forEach { openTime ->
+                        val time = openTime.beginTime.substring(
+                            0,
+                            5
+                        ) + "~" + openTime.endTime.substring(0, 5)
+                        addChipToChipGroup(time, binding.chipGroupTime)
+                    }
+                }
+            }
+            val aver = openTimeList?.sumOf { it.electricCharge.toDouble()/openTimeList.size } ?: 0.0
+            viewModel.chargeFee = aver
+
+            // 4. 设置地点
+            station?.let {
+                binding.tvPosition.text = station.posDescription
+            }
+
+
+            // 5. 设置名字
+            binding.itStationName.setText(station?.name)
+
+            // 6. 设置停车费
+            binding.etParkFee.setText(station?.parkFee.toString())
+
+            // 7. 设置电费
+            val openTimes = info.openTimeMap[stationId]
+            openTimes?.let {
+                if (it.isNotEmpty()) {
+                    binding.etChargeFee.setText(it[0].electricCharge.toString())
+                }
+            }
+
+            // 8.设置remark
+            station?.let {
+                binding.remark.editText?.setText(it.remark)
+            }
+
+            // 9. 设置充电站中的充电桩
+            val list = info.pileMap[stationId]
+            list?.let {
+                viewModel.pileList = ArrayList(list)
+            }
+            binding.acNum.text = list?.count { it.electricType == "交流" }.toString()
+            binding.dcNum.text = list?.count { it.electricType == "直流" }.toString()
+
+            // 9. 加载图片
+            // 9.1 先将所有图片取消显示
+            imgList.forEach {
+                it.setImageBitmap(null)
+            }
+            cardList.forEach {
+                it.visibility = View.GONE
+            }
+            // 9.2 显示对应充电桩图片
+            val urls = info.picMap[stationId]
+            urls?.let {
+                viewModel.setRemoteUriList(it)
+            }
+        }
+
+    }
+
+    private fun addChipToChipGroup(text: String, group: ChipGroup) {
+        val allDayTimeChip = Chip(group.context)
+        allDayTimeChip.text = text
+        allDayTimeChip.isChecked = true
+        allDayTimeChip.isCloseIconVisible = true
+        allDayTimeChip.setOnCloseIconClickListener {
+            group.removeView(it) // 把自己删掉
+        }
+        group.addView(allDayTimeChip)
+    }
+
 
     private fun initUIListener() {
         binding.ivToChoosePosition.setOnClickListener {
@@ -137,7 +284,7 @@ class AddStationFragment : Fragment() {
         }
 
         // 从LocationMapFragment中获取位置
-        setFragmentResultListener(LOCATION_MAP_TO_ADD_STATION_BUNDLE) { _, bundle ->
+        setFragmentResultListener(AddStationFragment.LOCATION_MAP_TO_ADD_STATION_BUNDLE) { _, bundle ->
             val successGetDescription = bundle.getBoolean("isDescription")
             if (successGetDescription) {
                 binding.tvPosition.text = viewModel.posDescription
@@ -151,7 +298,6 @@ class AddStationFragment : Fragment() {
             it?.let {
                 viewModel.stationName = binding.itStationName.text.toString()
             }
-
         }
 
         binding.etChargeFee.addTextChangedListener {
@@ -190,8 +336,7 @@ class AddStationFragment : Fragment() {
             navigateToAddPileFragment()
         }
 
-        // 获取充电桩添加情况
-        setFragmentResultListener(ADD_PILE_TO_ADD_STATION_BUNDLE) { _, bundle ->
+        setFragmentResultListener(AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE) { _, bundle ->
             val isok = bundle.getBoolean("IS_OK")
             if (isok) {
                 val dcNum = viewModel.pileList.count { it.electricType == "直流" }
@@ -200,6 +345,12 @@ class AddStationFragment : Fragment() {
                 binding.acNum.text = acNum.toString()
             } else {
                 Snackbar.make(binding.root, "未添加充电桩", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.remark.editText?.addTextChangedListener {
+            it?.let {
+                viewModel.remark = binding.remark.editText!!.text.toString()
             }
         }
 
@@ -215,41 +366,52 @@ class AddStationFragment : Fragment() {
 
         }
 
-        binding.remark.editText?.addTextChangedListener {
-            it?.let {
-                viewModel.remark = binding.remark.editText!!.text.toString()
+        // 设置0~remoteUriList.size-1 的图片
+        viewModel.stationPicRemoteUriList.observe(this) { remoteUriList ->
+            for (i in 0 until remoteUriList.size) {
+                cardList[i].visibility = View.VISIBLE
+                GlideApp.with(context!!).load(remoteUriList[i]).into(imgList[i])
             }
+            // 也更新一下后续图片
+            viewModel.refreshLocalImage()
         }
 
-
-
+        // 设置remoteUriList.size ~ 5 的图片
         viewModel.stationPicUriList.observe(this) { uriList ->
             // 根据uri将图片显示在imageView中
-            Log.i(TAG, " observe $uriList")
+            Log.i(AddStationFragment.TAG, " observe $uriList")
+            val remoteUriNum = viewModel.stationPicRemoteUriList.value?.size ?: 0
+
             for (i in 0 until uriList.size) {
+                val index = i + remoteUriNum
                 val bitmap =
                     requireActivity().contentResolver.openFileDescriptor(uriList[i], "r")?.use {
                         BitmapFactory.decodeFileDescriptor(it.fileDescriptor)
                     }
-                imgList[i].setImageBitmap(bitmap)
-                cardList[i].visibility = View.VISIBLE
+                imgList[index].setImageBitmap(bitmap)
+                cardList[index].visibility = View.VISIBLE
             }
-            for (i in uriList.size until 5) {
+            for (i in uriList.size + remoteUriNum until 5) {
                 cardList[i].visibility = View.GONE
                 imgList[i].setImageBitmap(null)
             }
         }
+
+
+
         cardList.forEachIndexed { index, card ->
             card.setOnLongClickListener {
-                viewModel.removeLocalUri(index)
+                viewModel.removeImage(index)
                 true
             }
         }
+
     }
+
 
     private fun initSubmit() {
         binding.btnSubmit.setOnClickListener {
-            // 保存日期
+            // 1. 保存日期
             val dayList = ArrayList<String>()
             binding.chipGroupDayPick.checkedChipIds.forEach { chipId ->
                 when (chipId) {
@@ -277,8 +439,7 @@ class AddStationFragment : Fragment() {
                 }
             }
 
-
-            // 保存时间
+            // 2. 保存时间
             val timeList = ArrayList<String>()
             val timeCharge = ArrayList<Float>()
             binding.chipGroupTime.children.forEach { view ->
@@ -286,57 +447,56 @@ class AddStationFragment : Fragment() {
                 timeList.add(timeText)
                 timeCharge.add(viewModel.chargeFee.toFloat())
             }
-            Log.i(TAG, "$dayList\n$timeList")
+            Log.i(AddStationFragment.TAG, "$dayList\n$timeList")
 
+            // 3. 构建StationInfo
+            val stationInfoRequest = StationInfoRequest(
+                dayList,
+                timeList,
+                timeCharge,
+                viewModel.getStation(),
+                viewModel.pileList,
+                sharedPreferenceData.userId
+            )
 
-            // 图片uri
+            // 4. 获取剩余remotePics
+            val remoteUrls = ArrayList(viewModel.stationPicRemoteUriList.value!!)
+            // 4.1 取出remoteUrls中url=后面的内容摘出来
+            for (i in 0 until remoteUrls.size) {
+                remoteUrls[i] = remoteUrls[i].split("=")[1]
+            }
 
-            // 这里有一个巨坑！！！！！ fileList在IO线程中的数据不会更新到主线程中，因为两者是同步的，IO线程还需要
-            lifecycleScope.launch(Dispatchers.IO) {
-                val uris = viewModel.stationPicUriList.value
-                var fileList = ArrayList<File>()
-                try {
-                    // 根据uri获取文件
-                    uris?.let {
+            viewModel.stationPicUriList.value?.let {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    var fileList = ArrayList<File>()
+                    try {// 5. 获取本地图片文件
                         fileList = FileUtils.getLocalPicsFromUris(requireActivity(), it) as ArrayList<File>
-                    }
-                    val stationInfoRequest = StationInfoRequest(
-                        dayList,
-                        timeList,
-                        timeCharge,
-                        viewModel.getStation(),
-                        viewModel.pileList,
-                        sharedPreferenceData.userId
-                    )
 
-                    try {
-                        val stationId =
-                            chargingPileStationService.uploadStationInfo(stationInfoRequest)
-                        Log.i(TAG, "stationId = $stationId")
-                        val res =
-                            chargingPileStationRepository.uploadStationPics(stationId, fileList)
+                        // 6. 网络请求
+                        val res = chargingPileStationRepository.modifyStationInfo(
+                            stationInfoRequest,
+                            remoteUrls,
+                            fileList
+                        )
+                        Log.i(TAG, "修改结果 RES = $res")
 
                         withContext(Dispatchers.Main) {
-                            Snackbar.make(
-                                binding.root,
-                                "上传结果：stationId:$1 + filesize=$res ",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
+                            Snackbar.make(binding.root, "修改上传成功", Snackbar.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
                         withContext(Dispatchers.Main) {
-                            Snackbar.make(binding.root, "网络传输有问题，请重新尝试", Snackbar.LENGTH_SHORT)
-                                .show()
+                            Snackbar.make(binding.root, "修改上传失败", Snackbar.LENGTH_SHORT).show()
+                        }
+                    } finally {
+                        fileList.forEach {
+                            it.delete()
                         }
                     }
-                } finally {
-                    fileList.forEach {
-                        it.delete()
-                    }
-                }
-            }
 
+                }
+
+            }
         }
     }
 
@@ -370,7 +530,7 @@ class AddStationFragment : Fragment() {
                 .setHour(0)
                 .setMinute(0)
                 .setTitleText("选择开始时间")
-                .setInputMode(INPUT_MODE_CLOCK)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
                 .build()
             pickBeginTime.show(parentFragmentManager, "beginTimePicker")
             pickBeginTime.addOnPositiveButtonClickListener {
@@ -379,7 +539,7 @@ class AddStationFragment : Fragment() {
                     .setHour(0)
                     .setMinute(0)
                     .setTitleText("选择结束时间")
-                    .setInputMode(INPUT_MODE_CLOCK)
+                    .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
                     .build()
                 pickEndTime.show(parentFragmentManager, "endTimePicker")
                 pickEndTime.addOnPositiveButtonClickListener {
@@ -404,32 +564,21 @@ class AddStationFragment : Fragment() {
         }
     }
 
-    private fun addChipToChipGroup(text: String, group: ChipGroup) {
-        val allDayTimeChip = Chip(group.context)
-        allDayTimeChip.text = text
-        allDayTimeChip.isChecked = true
-        allDayTimeChip.isCloseIconVisible = true
-        allDayTimeChip.setOnCloseIconClickListener {
-            group.removeView(it) // 把自己删掉
-        }
-        group.addView(allDayTimeChip)
-    }
 
     private fun navigateToLocationMapFragment() {
-        val action = AddStationFragmentDirections.actionAddStationFragmentToLocationMapFragment()
+        val action =
+            ModifyStationFragmentDirections.actionModifyStationFragmentToLocationMapFragment()
         findNavController().navigate(action)
     }
 
     private fun navigateToAddPileFragment() {
-        val action = AddStationFragmentDirections.actionAddStationFragmentToAddPileFragment()
+        val action = ModifyStationFragmentDirections.actionModifyStationFragmentToAddPileFragment()
         findNavController().navigate(action)
     }
 
     companion object {
-        const val LOCATION_MAP_TO_ADD_STATION_BUNDLE = "LOCATION"
-        const val ADD_PILE_TO_ADD_STATION_BUNDLE = "ADD_PILE"
-        const val FROM_ALBUM = 1
-        const val TAG = "AddStationFragment"
+        const val CHANGE_STATION = "ChangeStation"
+        const val TAG = "ModifyStationFragment"
     }
 
 }

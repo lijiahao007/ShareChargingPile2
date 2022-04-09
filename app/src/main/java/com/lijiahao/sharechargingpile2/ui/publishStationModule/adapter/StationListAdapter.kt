@@ -42,15 +42,7 @@ class StationListAdapter(val fragment: Fragment) :
 
         holder.binding.itemStationLayout.setOnClickListener {
             val action =
-                StationManagerFragmentDirections.actionStationManagerFragmentToAddStationFragment()
-            // 点击跳转，并通过FragmentResult带上数据。
-            fragment.setFragmentResult(
-                StationManagerFragment.CHANGE_STATION,
-                bundleOf(
-                    StationManagerFragment.IS_CHANGE to true,
-                    StationManagerFragment.STATION_ID to getItem(position).id
-                )
-            )
+                StationManagerFragmentDirections.actionStationManagerFragmentToModifyStationFragment(getItem(position).id.toString())
             fragment.findNavController().navigate(action)
         }
         if (deleteMode) {

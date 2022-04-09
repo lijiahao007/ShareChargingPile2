@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_qrcode_module"
+    app:startDestination="@id/QRCodeScanFragment">
+
+    <fragment
+        android:id="@+id/QRCodeScanFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeScanFragment"
+        android:label="QRCodeScanFragment"
+        tools:layout="@layout/fragment_q_r_code_scan"/>
+</navigation>

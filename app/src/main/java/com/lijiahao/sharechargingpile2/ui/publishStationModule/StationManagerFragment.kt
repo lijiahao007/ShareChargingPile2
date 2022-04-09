@@ -87,9 +87,7 @@ class StationManagerFragment : Fragment() {
     }
 
     companion object {
-        const val TAG = "StationManagerFragment"
-        const val CHANGE_STATION = "ChangeStation"
-        const val IS_CHANGE = "IsChange"
+        const val TAG = "StationManagerFragemnt"
         const val STATION_ID = "StationId"
     }
 }

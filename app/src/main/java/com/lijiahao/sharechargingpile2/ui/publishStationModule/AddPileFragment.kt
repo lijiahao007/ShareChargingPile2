@@ -11,8 +11,11 @@ import android.widget.AutoCompleteTextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.room.util.UUIDUtil
+import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ChargingPile
@@ -41,7 +44,7 @@ class AddPileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         initUI()
-
+        initIfChange()
 
         return binding.root
     }
@@ -119,6 +122,12 @@ class AddPileFragment : Fragment() {
             navigateUp()
         }
 
+    }
+
+    private fun initIfChange() {
+        setFragmentResultListener(ModifyStationFragment.CHANGE_STATION) { _, _ ->
+            adapter.submitList(viewModel.pileList) // 如果是修改的，就将viewModel中的pile List添加到adapter中
+        }
     }
 
     private fun navigateUp() {

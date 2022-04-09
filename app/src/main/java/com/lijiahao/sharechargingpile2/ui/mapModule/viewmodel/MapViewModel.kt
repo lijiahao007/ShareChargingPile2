@@ -6,7 +6,6 @@ import com.amap.api.maps.Projection
 import com.amap.api.maps.model.LatLng
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.ui.mapModule.MapActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -89,7 +88,7 @@ class MapViewModel @Inject constructor(
                     val stationOpenTime = chargingPileStationService.getStationOpenTime()
                     stationOpenTimeMap = stationOpenTime
                     stationOpenTime.forEach { (id, list) ->
-                        Log.i(MapActivity.TAG, "id=$id, $list")
+                        Log.i(TAG, "id=$id, $list")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -102,7 +101,7 @@ class MapViewModel @Inject constructor(
                     val stationOpenDay = chargingPileStationService.getStationOpenDay()
                     stationOpenDayMap=  stationOpenDay
                     stationOpenDay.forEach { (id, list) ->
-                        Log.i(MapActivity.TAG, "id=$id, $list")
+                        Log.i(TAG, "id=$id, $list")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -128,6 +127,10 @@ class MapViewModel @Inject constructor(
             ready() // 准备好了
 
         }
+    }
+
+    companion object {
+        const val TAG = "MapViewModel"
     }
 
 

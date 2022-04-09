@@ -101,4 +101,6 @@
     <string name="personal_sign">个性签名</string>
     <string name="sign_out">注销登录</string>
     <string name="title_activity_map_module">MapModuleActivity</string>
+    <string name="modify_station_info">修改充电站信息</string>
+    <string name="clear">清空</string>
 </resources>

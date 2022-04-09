@@ -88,8 +88,6 @@ class LocationMapFragment : Fragment() {
     }
 
 
-
-
     private fun initUI() {
         initMap()
         initIfChange()
@@ -118,11 +116,20 @@ class LocationMapFragment : Fragment() {
                         )
                     )
                     viewModel.posDescription = regeocodeAddress.formatAddress
-                    setFragmentResult(AddStationFragment.LOCATION_MAP_TO_ADD_STATION_BUNDLE, bundleOf("isDescription" to true))
-                } catch (e:Exception) {
+                    setFragmentResult(
+                        AddStationFragment.LOCATION_MAP_TO_ADD_STATION_BUNDLE,
+                        bundleOf("isDescription" to true)
+                    )
+                } catch (e: Exception) {
                     e.printStackTrace()
-                    Log.i("btnChoosePosition", "找不到${centerPos.latitude}, ${centerPos.longitude}的地址描述")
-                    setFragmentResult(AddStationFragment.LOCATION_MAP_TO_ADD_STATION_BUNDLE, bundleOf("isDescription" to false))
+                    Log.i(
+                        "btnChoosePosition",
+                        "找不到${centerPos.latitude}, ${centerPos.longitude}的地址描述"
+                    )
+                    setFragmentResult(
+                        AddStationFragment.LOCATION_MAP_TO_ADD_STATION_BUNDLE,
+                        bundleOf("isDescription" to false)
+                    )
                 } finally {
                     withContext(Dispatchers.Main) {
                         navigationUp()
@@ -184,11 +191,15 @@ class LocationMapFragment : Fragment() {
 
     private fun initIfChange() {
         // 如果当前AddStationFragment是修改状态，那么就将当前屏幕中心定位顶到目标中。
-        setFragmentResultListener(StationManagerFragment.CHANGE_STATION) { _, bundle ->
-            val isChange = bundle.get(StationManagerFragment.IS_CHANGE) as Boolean
-            if (isChange) {
-                aMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(viewModel.latitude, viewModel.longitude)))
-            }
+        setFragmentResultListener(ModifyStationFragment.CHANGE_STATION) { _, bundle ->
+            aMap.animateCamera(
+                CameraUpdateFactory.newLatLng(
+                    LatLng(
+                        viewModel.latitude,
+                        viewModel.longitude
+                    )
+                )
+            )
         }
     }
 

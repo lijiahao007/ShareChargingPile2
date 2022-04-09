@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -29,7 +24,7 @@
                     android:layout_width="195dp"
                     android:layout_height="37dp"
                     android:layout_marginTop="16dp"
-                    android:text="@string/station_info"
+                    android:text="@string/modify_station_info"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -302,7 +297,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/materialDivider4"
                     android:layout_marginTop="@dimen/add_station_top_margin"
-/>
+                    />
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -689,6 +684,18 @@
                     app:layout_constraintTop_toBottomOf="@+id/card_add_pic"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.931"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="@dimen/add_station_top_margin"/>
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_add_pic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.634"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="@dimen/add_station_top_margin"/>
 

@@ -199,12 +199,11 @@ class ChatFragment : Fragment() {
             val list = ArrayList<Message>(adapter.currentList)
             val text = binding.etContent.text.toString()
 
-            // TODO: 获取sendId, targetId
             val message = Message(
                 0,
                 UUID.randomUUID().toString(),
-                "1",
-                "2",
+                sharedPreferenceData.userId,
+                targetUserInfo.userId,
                 System.currentTimeMillis(),
                 true,
                 MsgType.TEXT,
@@ -268,11 +267,9 @@ class ChatFragment : Fragment() {
                     )
                     val uuid = UUID.randomUUID().toString()
 
-                    // TODO 获取sendId
-                    val sendId = "1"
+                    val sendId = sharedPreferenceData.userId
 
-                    // TODO 获取targetId
-                    val targetId = "2"
+                    val targetId = targetUserInfo.userId
 
                     val sendTime = System.currentTimeMillis()
 

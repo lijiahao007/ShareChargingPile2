@@ -44,6 +44,24 @@
         <action
             android:id="@+id/action_StationManagerFragment_to_AddStationFragment"
             app:destination="@id/AddStationFragment" />
+        <action
+            android:id="@+id/action_StationManagerFragment_to_modifyStationFragment"
+            app:destination="@id/modifyStationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/modifyStationFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.ModifyStationFragment"
+        android:label="ModifyStationFragment"
+        tools:layout="@layout/fragment_modify_station">
+        <action
+            android:id="@+id/action_modifyStationFragment_to_LocationMapFragment"
+            app:destination="@id/LocationMapFragment" />
+        <action
+            android:id="@+id/action_modifyStationFragment_to_AddPileFragment"
+            app:destination="@id/AddPileFragment" />
+        <argument android:name="stationId"
+            app:argType="string"
+            />
     </fragment>
 
 

@@ -5,10 +5,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
-import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
 import com.lijiahao.sharechargingpile2.R
-import com.lijiahao.sharechargingpile2.databinding.ActivityMapBinding
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapModuleBinding
 import com.lijiahao.sharechargingpile2.utils.PermissionTool
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +30,8 @@ class MapModuleActivity : AppCompatActivity() {
         )
         if (permissionReady) {
             init()
+        } else {
+            setContentView(R.layout.activity_map_module_without_permission)
         }
     }
 
