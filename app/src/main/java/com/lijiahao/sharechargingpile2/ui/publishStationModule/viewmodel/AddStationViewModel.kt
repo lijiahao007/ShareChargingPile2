@@ -22,25 +22,45 @@ import javax.inject.Inject
 @HiltViewModel
 class AddStationViewModel @Inject constructor(
     val sharedPreferenceData: SharedPreferenceData
-): ViewModel() {
+) : ViewModel() {
 
     // TODO: 将下面属性包含到一个ChargingStation中
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var posDescription: String = ""
     var pileList: ArrayList<ChargingPile> = ArrayList<ChargingPile>()
-    var stationName:String = ""
-    var chargeFee:Double = 0.0
-    var parkFee:Double = 0.0
-    var remark:String = ""
+    var stationName: String = ""
+    var chargeFee: Double = -1.0
+    var parkFee: Double = -1.0
+    var remark: String = ""
     var stationId = 0
     var stationCollection = 0
 
+
     // 下面四个LiveData用于图片的显示（其中RemoteUriList主要用于Station信息修改界面的远程图片显示）
-    private val _stationPicUriList:MutableLiveData<ArrayList<Uri>> = MutableLiveData<ArrayList<Uri>>(ArrayList<Uri>())
+    private val _stationPicUriList: MutableLiveData<ArrayList<Uri>> =
+        MutableLiveData<ArrayList<Uri>>(ArrayList<Uri>())
     val stationPicUriList: LiveData<ArrayList<Uri>> = _stationPicUriList
-    private val _stationPicRemoteUriList:MutableLiveData<ArrayList<String>> = MutableLiveData(ArrayList<String>())
-    val stationPicRemoteUriList:LiveData<ArrayList<String>> = _stationPicRemoteUriList
+    private val _stationPicRemoteUriList: MutableLiveData<ArrayList<String>> =
+        MutableLiveData(ArrayList<String>())
+    val stationPicRemoteUriList: LiveData<ArrayList<String>> = _stationPicRemoteUriList
+
+    fun clear() {
+        // 清空所有数据
+        latitude = 0.0
+        longitude = 0.0
+        posDescription = ""
+        pileList = ArrayList<ChargingPile>()
+        stationName = ""
+        chargeFee = -1.0
+        parkFee = -1.0
+        remark = ""
+        stationId = 0
+        stationCollection = 0
+        _stationPicUriList.value = ArrayList<Uri>()
+        _stationPicRemoteUriList.value = ArrayList<String>()
+    }
+
 
     @MainThread
     fun setRemoteUriList(list: List<String>) {
@@ -63,7 +83,7 @@ class AddStationViewModel @Inject constructor(
     }
 
 
-    fun removeImage(index:Int) {
+    fun removeImage(index: Int) {
         if (_stationPicRemoteUriList.value == null || _stationPicUriList.value == null) {
             return
         }
@@ -83,7 +103,7 @@ class AddStationViewModel @Inject constructor(
     }
 
     @MainThread
-    fun removeLocalUri(index:Int) {
+    fun removeLocalUri(index: Int) {
         val list = ArrayList<Uri>(_stationPicUriList.value as ArrayList<Uri>)
         if (index < list.size) {
             list.remove(list[index])

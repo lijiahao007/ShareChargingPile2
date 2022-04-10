@@ -9,7 +9,7 @@
         android:id="@+id/AddStationFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment"
         android:label="AddStationFragment"
-        tools:layout = "@layout/fragment_add_station">
+        tools:layout="@layout/fragment_add_station">
 
         <action
             android:id="@+id/action_AddStationFragment_to_LocationMapFragment"
@@ -24,8 +24,7 @@
         android:id="@+id/LocationMapFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.LocationMapFragment"
         android:label="LocationMapFragment"
-        tools:layout="@layout/fragment_location_map">
-    </fragment>
+        tools:layout="@layout/fragment_location_map"/>
 
 
     <fragment
@@ -34,6 +33,9 @@
         android:label="AddPileFragment"
         tools:layout="@layout/fragment_add_pile">
 
+        <action
+            android:id="@+id/action_AddPileFragment_to_pileQRCodeGenerateFragment"
+            app:destination="@id/pileQRCodeGenerateFragment" />
     </fragment>
 
     <fragment
@@ -59,9 +61,18 @@
         <action
             android:id="@+id/action_modifyStationFragment_to_AddPileFragment"
             app:destination="@id/AddPileFragment" />
-        <argument android:name="stationId"
-            app:argType="string"
-            />
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pileQRCodeGenerateFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.PileQRCodeGenerateFragment"
+        android:label="fragment_pile_q_r_code_generate"
+        tools:layout="@layout/fragment_pile_q_r_code_generate" >
+        <argument app:argType="string"
+                android:name="qrcodeUrl"/>
     </fragment>
 
 

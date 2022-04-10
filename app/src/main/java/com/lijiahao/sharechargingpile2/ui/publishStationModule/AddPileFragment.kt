@@ -22,6 +22,7 @@ import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.databinding.FragmentAddPileBinding
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.adapter.ChargingPileListAdapter
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStationViewModel
+import com.lijiahao.sharechargingpile2.utils.QRCodeUtils
 import com.lijiahao.sharechargingpile2.utils.SoftKeyBoardUtils
 import java.lang.NumberFormatException
 import java.util.*
@@ -36,16 +37,17 @@ class AddPileFragment : Fragment() {
 
     val viewModel: AddStationViewModel by activityViewModels()
 
-    val adapter: ChargingPileListAdapter = ChargingPileListAdapter()
+    lateinit var adapter: ChargingPileListAdapter
 
+    val stationId:Int by lazy {
+        viewModel.stationId
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         initUI()
-        initIfChange()
-
         return binding.root
     }
 
@@ -56,10 +58,11 @@ class AddPileFragment : Fragment() {
         (binding.electricTypeSelector.editText as? AutoCompleteTextView)?.setAdapter(
             electricTypeAdapter
         )
-
+        adapter = ChargingPileListAdapter(this) // 每次开启都创建一个新的adapter
         binding.pileRecyclerview.adapter = adapter
 
-        adapter.submitList(viewModel.pileList)
+        adapter.submitList(viewModel.pileList) // 如果是修改的，就将viewModel中的pile List添加到adapter中
+        adapter.notifyDataSetChanged()
 
         binding.btnAdd.setOnClickListener {
             try {
@@ -69,69 +72,44 @@ class AddPileFragment : Fragment() {
                 val pileNum = binding.pileNum.editText?.text.toString().toInt()
                 val powerRate = binding.powerRate.editText?.text.toString().toFloat()
 
-                var list = ArrayList<ChargingPile>()
-                val listSize = adapter.currentList.size
-                if (listSize != 0) {
-                    list = ArrayList<ChargingPile>(adapter.currentList)
-                }
-                var flag = false;
-                var pos = 0;
-                for (i in 0 until list.size) {
-                    if (list[i].electricType == electricType && list[i].powerRate == powerRate) {
-                        list[i].pileNum += pileNum
-                        flag = true
-                        pos = i
-                        Log.i("AddPileFragment", "$i , ${list[i].pileNum}")
-                    }
-                }
-                if (!flag) {
-                    list.add(
-                        0,
-                        ChargingPile(
-                            0,
-                            electricType,
-                            powerRate,
-                            pileNum,
-                            0,
-                            UUID.randomUUID()!!.toString()
-                        )
-                    )
+                val list = ArrayList(adapter.currentList)
+                for (i in 0 until pileNum) {
+                    list.add(0, ChargingPile(0, electricType, powerRate, stationId, UUID.randomUUID().toString(), null))
                 }
                 adapter.submitList(list)
-                adapter.notifyItemChanged(pos)
-                binding.pileRecyclerview.smoothScrollToPosition(pos)
+                adapter.notifyItemRangeChanged(0, list.size)
+                binding.pileRecyclerview.smoothScrollToPosition(0)
             } catch (e: NumberFormatException) {
                 e.printStackTrace()
                 Snackbar.make(binding.root, "输入格式错误，添加失败", Snackbar.LENGTH_SHORT).show()
             }
         }
 
-        binding.btnConfirm.setOnClickListener {
+        binding.close.setOnClickListener {
             viewModel.pileList = ArrayList<ChargingPile>(adapter.currentList)
-            if (viewModel.pileList.size == 0) {
-                setFragmentResult(
-                    AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE,
-                    bundleOf("IS_OK" to false)
-                )
-            } else {
-                setFragmentResult(
-                    AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE,
-                    bundleOf("IS_OK" to true)
-                )
-            }
+            setFragmentResult(
+                AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE,
+                bundleOf()
+            )
             navigateUp()
         }
 
-    }
-
-    private fun initIfChange() {
-        setFragmentResultListener(ModifyStationFragment.CHANGE_STATION) { _, _ ->
-            adapter.submitList(viewModel.pileList) // 如果是修改的，就将viewModel中的pile List添加到adapter中
+        binding.btnConfirm.setOnClickListener {
+            viewModel.pileList = ArrayList<ChargingPile>(adapter.currentList)
+            Log.i(TAG, "curList = ${viewModel.pileList}")
+            setFragmentResult(
+                AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE,
+                bundleOf()
+            )
         }
     }
 
     private fun navigateUp() {
         findNavController().navigateUp()
+    }
+    
+    companion object {
+        const val TAG = "AddPileFragment"
     }
 
 

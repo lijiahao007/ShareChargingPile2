@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
+import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,12 +45,41 @@ class ChargingPileStationRepository @Inject constructor(
         return chargingPileStationService.uploadStationPics(builder.build())
     }
 
+    suspend fun uploadStationInfo(
+        stationInfo: StationInfoRequest, // 充电站信息
+        files: List<File> // 充电站图片
+    ): String {
+        val picPartList: ArrayList<MultipartBody.Part> = ArrayList()
+        files.forEach {
+            val part = MultipartBody.Part.createFormData(
+                "stationPic",
+                it.name,
+                it.asRequestBody("multipart/form-data".toMediaType())
+            )
+            picPartList.add(part)
+            Log.i(AddStationFragment.TAG, "${it.name} + $part")
+        }
+        var file:File? = null
+        if (files.isEmpty()) {
+            file = File.createTempFile("temp", ".temp", context.filesDir)
+            val emptyPart = MultipartBody.Part.createFormData(
+                "stationPic",
+                file.name,
+                file.asRequestBody("multipart/form-data".toMediaType())
+            )
+            picPartList.add(emptyPart)
+        }
+        val res = chargingPileStationService.uploadStationAllInfo(stationInfo, picPartList)
+        file?.delete()
+        return res
+    }
+
 
     suspend fun modifyStationInfo(
         stationInfo: StationInfoRequest,
-        remotePicUris: ArrayList<String>,
-        files: List<File>
-    ): String {
+        remotePicUris: ArrayList<String>, // 远程已存在图片(可以是空列表)
+        files: List<File>  // 新添加图片(可以是空列表)
+    ): ModifyStationResponse {
         val picPartList: ArrayList<MultipartBody.Part> = ArrayList()
         files.forEach {
             val part = MultipartBody.Part.createFormData(
@@ -63,13 +93,21 @@ class ChargingPileStationRepository @Inject constructor(
         if (remotePicUris.isEmpty()) {
             remotePicUris.add("")
         }
-
-
-        return if(files.isEmpty()) {
-            chargingPileStationService.modifyStationInfo(stationInfo, remotePicUris)
-        } else {
-            chargingPileStationService.modifyStationInfo(stationInfo, remotePicUris, picPartList)
+        var file: File? = null
+        if (files.isEmpty()) {
+            val file = File.createTempFile("temp", ".temp", context.filesDir)
+            val length = file.length()
+            val emptyPart = MultipartBody.Part.createFormData(
+                "newPics",
+                file.name,
+                file.asRequestBody("multipart/form-data".toMediaType())
+            )
+            picPartList.add(emptyPart)
         }
+
+        val res = chargingPileStationService.modifyStationInfo(stationInfo, remotePicUris, picPartList)
+        file?.delete()
+        return res
     }
 
 

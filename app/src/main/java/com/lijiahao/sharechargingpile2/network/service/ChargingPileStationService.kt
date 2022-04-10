@@ -2,6 +2,7 @@ package com.lijiahao.sharechargingpile2.network.service
 
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
+import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
@@ -56,10 +57,20 @@ interface ChargingPileStationService {
     suspend fun subtractStationCollection(@Query("stationId") stationId: Int): String
 
     @POST("chargingPileStation/uploadStationInfo")
+    // 单独上传Station信息
     suspend fun uploadStationInfo(@Body stationInfo: StationInfoRequest): String
 
     @POST("chargingPileStation/uploadStationPic")
+    // 单独上传Station图片
     suspend fun uploadStationPics(@Body body:MultipartBody) : String
+
+    @Multipart
+    @POST("chargingPileStation/uploadStationAllInfo")
+    // 将图片连同信息一起上传
+    suspend fun uploadStationAllInfo(
+        @Part("stationInfo") stationInfo:StationInfoRequest,
+        @Part stationPics:List<MultipartBody.Part>
+    ):String
 
     @Multipart
     @POST("chargingPileStation/modifyStationInfo")
@@ -67,15 +78,7 @@ interface ChargingPileStationService {
         @Part("stationInfo") stationInfo: StationInfoRequest,
         @Part("remotePicsUris") remotePicUris: List<String>,
         @Part newPics:List<MultipartBody.Part>  // 注意MultipartBody.Part 的Part在这里不需要标注value，具体的变量名是在MultipartBody构建的时候写入的
-    ):String
-
-    @Multipart
-    @POST("chargingPileStation/modifyStationInfoWithoutNewPic")
-    suspend fun modifyStationInfo(
-        @Part("stationInfo") stationInfo: StationInfoRequest,
-        @Part("remotePicsUris") remotePicUris: List<String>,
-    ):String
-
+    ):ModifyStationResponse
 
 
 

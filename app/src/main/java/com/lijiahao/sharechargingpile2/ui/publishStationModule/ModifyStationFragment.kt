@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.FragmentModifyStationBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
@@ -62,6 +63,7 @@ class ModifyStationFragment : Fragment() {
     private val stationId: String by lazy {
         args.stationId
     }
+    private var createViewNumber = 0
 
     @Inject
     lateinit var chargingPileStationService: ChargingPileStationService
@@ -138,6 +140,7 @@ class ModifyStationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        createViewNumber++
         initUI()
         return binding.root
     }
@@ -147,12 +150,11 @@ class ModifyStationFragment : Fragment() {
         initUIListener()
         initTimePick()
         initSubmit()
-
-        setFragmentResult(CHANGE_STATION, bundleOf())
     }
 
-    // 将对应充电站信息加载到对应View中
+    // 将对应充电站信息加载到对应View中 (!!!巨坑呀，这里只能执行一次。)
     private fun putInfoToView() {
+        if (createViewNumber != 1) return
 
         val userStationInfo = viewModelStationManager.userStationInfo.value
         userStationInfo?.let { info ->
@@ -213,7 +215,8 @@ class ModifyStationFragment : Fragment() {
                     }
                 }
             }
-            val aver = openTimeList?.sumOf { it.electricCharge.toDouble()/openTimeList.size } ?: 0.0
+            val aver =
+                openTimeList?.sumOf { it.electricCharge.toDouble() / openTimeList.size } ?: 0.0
             viewModel.chargeFee = aver
 
             // 4. 设置地点
@@ -336,16 +339,12 @@ class ModifyStationFragment : Fragment() {
             navigateToAddPileFragment()
         }
 
-        setFragmentResultListener(AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE) { _, bundle ->
-            val isok = bundle.getBoolean("IS_OK")
-            if (isok) {
-                val dcNum = viewModel.pileList.count { it.electricType == "直流" }
-                val acNum = viewModel.pileList.size - dcNum
-                binding.dcNum.text = dcNum.toString()
-                binding.acNum.text = acNum.toString()
-            } else {
-                Snackbar.make(binding.root, "未添加充电桩", Snackbar.LENGTH_SHORT).show()
-            }
+        setFragmentResultListener(AddStationFragment.ADD_PILE_TO_ADD_STATION_BUNDLE) { _, _ ->
+            Log.i(TAG, "curList = ${viewModel.pileList}")
+            val dcNum = viewModel.pileList.count { it.electricType == "直流" }
+            val acNum = viewModel.pileList.size - dcNum
+            binding.dcNum.text = dcNum.toString()
+            binding.acNum.text = acNum.toString()
         }
 
         binding.remark.editText?.addTextChangedListener {
@@ -397,8 +396,6 @@ class ModifyStationFragment : Fragment() {
             }
         }
 
-
-
         cardList.forEachIndexed { index, card ->
             card.setOnLongClickListener {
                 viewModel.removeImage(index)
@@ -408,9 +405,57 @@ class ModifyStationFragment : Fragment() {
 
     }
 
+    // 在提交时校验提交的充电站数据是否正确
+    private fun verify(stationInfoRequest: StationInfoRequest): Boolean {
+
+        // 1. 校验开放日期
+        if (stationInfoRequest.openDayInWeek.size <= 0) {
+            Snackbar.make(binding.root, "请选择开放日期", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        // 2. 校验开放时间
+        if (stationInfoRequest.openTime.size <= 0) {
+            Snackbar.make(binding.root, "请选择开放时间", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        // 3. 校验充电站数据
+        val station = stationInfoRequest.station
+        // 3.1 位置信息
+        if (station.latitude == 0.0 || station.longitude == 0.0 || station.posDescription == "") {
+            Snackbar.make(binding.root, "位置未选取", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.2 充电名字
+        if (station.name == "") {
+            Snackbar.make(binding.root, "充电站名字为选取", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.3 停车费用
+        if (station.parkFee < 0) {
+            Snackbar.make(binding.root, "停车未用未填写", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.4 充电费用
+        stationInfoRequest.openTimeCharge.forEach {
+            if (it < 0) {
+                Snackbar.make(binding.root, "充电费用填写错误", Snackbar.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        // 3.5 充电桩数量
+        if (stationInfoRequest.chargingPiles.isEmpty()) {
+            Snackbar.make(binding.root, "请添加至少一个充电桩", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
 
     private fun initSubmit() {
         binding.btnSubmit.setOnClickListener {
+
             // 1. 保存日期
             val dayList = ArrayList<String>()
             binding.chipGroupDayPick.checkedChipIds.forEach { chipId ->
@@ -434,7 +479,7 @@ class ModifyStationFragment : Fragment() {
                         dayList.add("周六")
                     }
                     R.id.chip_Sun -> {
-                        dayList.add("周七")
+                        dayList.add("周日")
                     }
                 }
             }
@@ -459,6 +504,11 @@ class ModifyStationFragment : Fragment() {
                 sharedPreferenceData.userId
             )
 
+
+            // 3.5 校验数据是否符合规定
+            if (!verify(stationInfoRequest)) return@setOnClickListener
+
+
             // 4. 获取剩余remotePics
             val remoteUrls = ArrayList(viewModel.stationPicRemoteUriList.value!!)
             // 4.1 取出remoteUrls中url=后面的内容摘出来
@@ -470,17 +520,20 @@ class ModifyStationFragment : Fragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     var fileList = ArrayList<File>()
                     try {// 5. 获取本地图片文件
-                        fileList = FileUtils.getLocalPicsFromUris(requireActivity(), it) as ArrayList<File>
+                        fileList =
+                            FileUtils.getLocalPicsFromUris(requireActivity(), it) as ArrayList<File>
 
                         // 6. 网络请求
-                        val res = chargingPileStationRepository.modifyStationInfo(
+                        val modifyStationResponse = chargingPileStationRepository.modifyStationInfo(
                             stationInfoRequest,
                             remoteUrls,
                             fileList
                         )
-                        Log.i(TAG, "修改结果 RES = $res")
 
                         withContext(Dispatchers.Main) {
+                            // 7. 更新当前充电桩
+                            val curPiles = modifyStationResponse.curChargingPiles
+                            viewModel.pileList = ArrayList(modifyStationResponse.curChargingPiles)
                             Snackbar.make(binding.root, "修改上传成功", Snackbar.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {

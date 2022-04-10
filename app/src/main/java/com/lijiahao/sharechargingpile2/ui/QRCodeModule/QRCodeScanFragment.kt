@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.snackbar.Snackbar
 import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.hmsscankit.WriterException
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption
@@ -76,6 +77,7 @@ class QRCodeScanFragment : Fragment() {
             val obj = data.getParcelableExtra(ScanUtil.RESULT) as HmsScan?
             obj?.let {
                 Log.i(TAG, "originalValue：${it.originalValue}") // 获取二维码数据。
+                Snackbar.make(binding.root, it.originalValue, Snackbar.LENGTH_LONG).show()
             }
 
         }

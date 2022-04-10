@@ -67,7 +67,7 @@ class AddStationFragment : Fragment() {
     private lateinit var albumLauncher: ActivityResultLauncher<Unit>
 
     // 图片相关的View
-    private val imgList:Array<ImageView> by lazy {
+    private val imgList: Array<ImageView> by lazy {
         arrayOf(
             binding.imStationPic1,
             binding.stationPic2,
@@ -76,7 +76,7 @@ class AddStationFragment : Fragment() {
             binding.stationPic5
         )
     }
-    private val cardList:Array<MaterialCardView> by lazy{
+    private val cardList: Array<MaterialCardView> by lazy {
         arrayOf(
             binding.cardStationPic1,
             binding.cardStationPic2,
@@ -115,6 +115,7 @@ class AddStationFragment : Fragment() {
 
         // 注意上面的registerForActivityResult必须在super.onCreate()上方
         super.onCreate(savedInstanceState)
+        viewModel.clear()
     }
 
     override fun onCreateView(
@@ -191,16 +192,11 @@ class AddStationFragment : Fragment() {
         }
 
         // 获取充电桩添加情况
-        setFragmentResultListener(ADD_PILE_TO_ADD_STATION_BUNDLE) { _, bundle ->
-            val isok = bundle.getBoolean("IS_OK")
-            if (isok) {
-                val dcNum = viewModel.pileList.count { it.electricType == "直流" }
-                val acNum = viewModel.pileList.size - dcNum
-                binding.dcNum.text = dcNum.toString()
-                binding.acNum.text = acNum.toString()
-            } else {
-                Snackbar.make(binding.root, "未添加充电桩", Snackbar.LENGTH_SHORT).show()
-            }
+        setFragmentResultListener(ADD_PILE_TO_ADD_STATION_BUNDLE) { _, _ ->
+            val dcNum = viewModel.pileList.count { it.electricType == "直流" }
+            val acNum = viewModel.pileList.size - dcNum
+            binding.dcNum.text = dcNum.toString()
+            binding.acNum.text = acNum.toString()
         }
 
         binding.cardAddPic.setOnClickListener {
@@ -247,6 +243,53 @@ class AddStationFragment : Fragment() {
         }
     }
 
+    private fun verify(stationInfoRequest: StationInfoRequest): Boolean {
+
+        // 1. 校验开放日期
+        if (stationInfoRequest.openDayInWeek.size <= 0) {
+            Snackbar.make(binding.root, "请选择开放日期", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        // 2. 校验开放时间
+        if (stationInfoRequest.openTime.size <= 0) {
+            Snackbar.make(binding.root, "请选择开放时间", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        // 3. 校验充电站数据
+        val station = stationInfoRequest.station
+        // 3.1 位置信息
+        if (station.latitude == 0.0 || station.longitude == 0.0 || station.posDescription == "") {
+            Snackbar.make(binding.root, "位置未选取", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.2 充电名字
+        if (station.name == "") {
+            Snackbar.make(binding.root, "充电站名字为选取", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.3 停车费用
+        if (station.parkFee < 0) {
+            Snackbar.make(binding.root, "停车未用未填写", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+        // 3.4 充电费用
+        stationInfoRequest.openTimeCharge.forEach {
+            if (it < 0) {
+                Snackbar.make(binding.root, "充电费用填写错误", Snackbar.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        // 3.5 充电桩数量
+        if (stationInfoRequest.chargingPiles.isEmpty()) {
+            Snackbar.make(binding.root, "请添加至少一个充电桩", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
     private fun initSubmit() {
         binding.btnSubmit.setOnClickListener {
             // 保存日期
@@ -272,7 +315,7 @@ class AddStationFragment : Fragment() {
                         dayList.add("周六")
                     }
                     R.id.chip_Sun -> {
-                        dayList.add("周七")
+                        dayList.add("周日")
                     }
                 }
             }
@@ -288,8 +331,16 @@ class AddStationFragment : Fragment() {
             }
             Log.i(TAG, "$dayList\n$timeList")
 
+            val stationInfoRequest = StationInfoRequest(
+                dayList,
+                timeList,
+                timeCharge,
+                viewModel.getStation(),
+                viewModel.pileList,
+                sharedPreferenceData.userId
+            )
 
-            // 图片uri
+            if (!verify(stationInfoRequest)) return@setOnClickListener
 
             // 这里有一个巨坑！！！！！ fileList在IO线程中的数据不会更新到主线程中，因为两者是同步的，IO线程还需要
             lifecycleScope.launch(Dispatchers.IO) {
@@ -298,28 +349,21 @@ class AddStationFragment : Fragment() {
                 try {
                     // 根据uri获取文件
                     uris?.let {
-                        fileList = FileUtils.getLocalPicsFromUris(requireActivity(), it) as ArrayList<File>
+                        fileList =
+                            FileUtils.getLocalPicsFromUris(requireActivity(), it) as ArrayList<File>
                     }
-                    val stationInfoRequest = StationInfoRequest(
-                        dayList,
-                        timeList,
-                        timeCharge,
-                        viewModel.getStation(),
-                        viewModel.pileList,
-                        sharedPreferenceData.userId
-                    )
+
 
                     try {
-                        val stationId =
-                            chargingPileStationService.uploadStationInfo(stationInfoRequest)
-                        Log.i(TAG, "stationId = $stationId")
-                        val res =
-                            chargingPileStationRepository.uploadStationPics(stationId, fileList)
+                        val res = chargingPileStationRepository.uploadStationInfo(
+                            stationInfoRequest,
+                            fileList
+                        )
 
                         withContext(Dispatchers.Main) {
                             Snackbar.make(
                                 binding.root,
-                                "上传结果：stationId:$1 + filesize=$res ",
+                                "上传结果：$res ",
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
