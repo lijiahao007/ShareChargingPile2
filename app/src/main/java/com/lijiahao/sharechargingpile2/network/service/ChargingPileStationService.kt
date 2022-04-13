@@ -3,6 +3,8 @@ package com.lijiahao.sharechargingpile2.network.service
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
+import com.lijiahao.sharechargingpile2.network.response.StationAllInfo
+import com.lijiahao.sharechargingpile2.network.response.StationInfo
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
@@ -42,10 +44,13 @@ interface ChargingPileStationService {
     suspend fun getStationOpenDay(): Map<String, List<OpenDayInWeek>>
 
     @GET("chargingPileStation/getStationInfo")
-    suspend fun getStationAllInfo() :StationAllInfo
+    suspend fun getStationAllInfo() : StationAllInfo
 
     @GET("chargingPileStation/getStationInfoByUserId")
     suspend fun getStationInfoByUserId(@Query("userId") userId: String): StationAllInfo
+
+    @GET("chargingPileStation/getStationInfoByStationId")
+    suspend fun getStationInfoByStationId(@Query("stationId") stationId:String): StationInfo
 
     @GET("chargingPileStation/getStationPicUrl")
     suspend fun getStationPicUrl(@Query("stationId") stationId: Int): List<String>

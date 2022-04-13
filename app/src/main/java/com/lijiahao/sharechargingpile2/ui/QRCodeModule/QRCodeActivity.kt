@@ -15,7 +15,9 @@ import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
 import com.lijiahao.sharechargingpile2.databinding.ActivityQrcodeBinding
 import com.lijiahao.sharechargingpile2.utils.PermissionTool
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class QRCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrcodeBinding

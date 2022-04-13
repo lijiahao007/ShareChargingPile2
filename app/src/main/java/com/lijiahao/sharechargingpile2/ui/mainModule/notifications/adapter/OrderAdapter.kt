@@ -30,7 +30,7 @@ class OrderAdapter:ListAdapter<Order, OrderAdapter.OrderViewHolder>(OrderDiffIte
 
     class OrderViewHolder(val binding: ItemOrderListBinding):RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
-            binding.tvStationName.text = order.stationId
+            binding.tvStationName.text = order.pileId
             binding.tvState.text = order.state
             binding.tvCreateTime.text = order.createTime
         }

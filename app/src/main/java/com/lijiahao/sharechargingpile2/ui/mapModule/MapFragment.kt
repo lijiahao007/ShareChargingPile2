@@ -57,6 +57,7 @@ class MapFragment : Fragment() {
     private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
     private var firstFlag = true
     private var isStationMarkerShowed: Boolean = true
+    private lateinit var mapViewObserver:MapViewObserver
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -121,8 +122,8 @@ class MapFragment : Fragment() {
         setAMapListener()
 
         // 6. 使用 MapViewObserver 来管理MapView的生命周期
-        val mapViewObserver = MapViewObserver(mapView)
-        lifecycle.addObserver(mapViewObserver)
+        mapViewObserver = MapViewObserver(mapView)
+        viewLifecycleOwner.lifecycle.addObserver(mapViewObserver)
     }
 
     // 设置和AMap地图相关的Listener
@@ -402,6 +403,8 @@ class MapFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
+        viewLifecycleOwner.lifecycle.removeObserver(mapViewObserver)
+
     }
 
     companion object {

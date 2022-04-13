@@ -9,5 +9,34 @@
         android:id="@+id/QRCodeScanFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeScanFragment"
         android:label="QRCodeScanFragment"
-        tools:layout="@layout/fragment_q_r_code_scan"/>
+        tools:layout="@layout/fragment_q_r_code_scan">
+        <action
+            android:id="@+id/action_QRCodeScanFragment_to_generateOrderFragment"
+            app:destination="@id/generateOrderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/generateOrderFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.GenerateOrderFragment"
+        android:label="GenerateOrderFragment"
+        tools:layout="@layout/fragment_generate_order">
+        <argument android:name="stationId"
+            app:argType="string"/>
+        <argument android:name="pileId"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_generateOrderFragment_to_pileUsingFragment"
+            app:destination="@id/pileUsingFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/pileUsingFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.PileUsingFragment"
+        android:label="PileUsingFragment"
+        tools:layout="@layout/fragment_pile_using">
+        <argument android:name="stationId"
+            app:argType="string"/>
+        <argument android:name="pileId"
+            app:argType="string"/>
+    </fragment>
 </navigation>

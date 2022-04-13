@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
-import com.lijiahao.sharechargingpile2.data.StationAllInfo
+import com.lijiahao.sharechargingpile2.network.response.StationAllInfo
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

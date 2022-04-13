@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.network.service
 
+import androidx.lifecycle.LiveData
 import com.lijiahao.sharechargingpile2.data.UserExtendInfo
 import com.lijiahao.sharechargingpile2.network.request.ModifyExtendInfoRequest
 import com.lijiahao.sharechargingpile2.network.request.ModifyPwdRequest
@@ -13,6 +14,7 @@ interface UserService {
 
     @GET("user/userInfo")
     suspend fun getUserInfo(@Query("userId") userId: String): UserInfoResponse
+
 
     @POST("user/modifyPwd")
     // response =  "success" -> 修改成功；  "failed" -> 旧密码错误

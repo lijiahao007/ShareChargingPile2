@@ -103,4 +103,23 @@
     <string name="title_activity_map_module">MapModuleActivity</string>
     <string name="modify_station_info">修改充电站信息</string>
     <string name="clear">清空</string>
+    <string name="station_info_1">充电站信息</string>
+    <string name="money_unit">￥</string>
+    <string name="current_electric_fee">当前电费</string>
+    <string name="pile_cur_state">当前状态</string>
+    <string name="charging_power_rate">充电功率</string>
+    <string name="kwh">kw/h</string>
+    <string name="use_charging_pile">使用充电桩</string>
+    <string name="charging_pile_info">充电桩信息</string>
+    <string name="owner_info">桩主信息</string>
+    <string name="phone_num">手机号</string>
+    <string name="begin_use">开始使用</string>
+    <string name="per_degree">/度</string>
+    <string name="order_info">订单信息</string>
+    <string name="order_id">订单号</string>
+    <string name="order_create_time">下单时间</string>
+    <string name="cur_used_time">使用时间</string>
+    <string name="finish_using">结束使用</string>
+    <string name="predict_fee">预计费用</string>
+    <string name="begin_charge_time">开始充电时间</string>
 </resources>

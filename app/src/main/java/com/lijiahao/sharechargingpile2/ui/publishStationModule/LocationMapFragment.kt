@@ -58,6 +58,7 @@ class LocationMapFragment : Fragment() {
     private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
     private lateinit var adapter: AddressListAdapter
     private var firstFlag = true
+    private lateinit var mapViewObserver: MapViewObserver
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -81,7 +82,8 @@ class LocationMapFragment : Fragment() {
         mapView = binding.mapViewForPublishStation
         mapView.onCreate(savedInstanceState)
         firstFlag = true
-        lifecycle.addObserver(MapViewObserver(mapView))
+        mapViewObserver = MapViewObserver(mapView)
+        viewLifecycleOwner.lifecycle.addObserver(mapViewObserver)
         viewModel // 加载一下viewModel
         initUI()
         return binding.root
@@ -284,5 +286,6 @@ class LocationMapFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         mapView.onDestroy()
+        viewLifecycleOwner.lifecycle.removeObserver(mapViewObserver)
     }
 }

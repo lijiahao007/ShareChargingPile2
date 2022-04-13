@@ -5,10 +5,7 @@ import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.di.annotation.HttpConnect
 import com.lijiahao.sharechargingpile2.di.annotation.WebSocketConnect
 import com.lijiahao.sharechargingpile2.network.interceptor.TokenHeaderInterceptor
-import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.service.LoginService
-import com.lijiahao.sharechargingpile2.network.service.MessageService
-import com.lijiahao.sharechargingpile2.network.service.UserService
+import com.lijiahao.sharechargingpile2.network.service.*
 import com.lijiahao.sharechargingpile2.utils.SERVER_BASE_HTTP_URL
 import com.lijiahao.sharechargingpile2.utils.SERVER_BASE_WEB_SOCKET_URL
 import dagger.Module
@@ -89,6 +86,11 @@ class NetworkModule {
     @Provides
     fun provideUserService(retrofit2: Retrofit): UserService {
         return retrofit2.create(UserService::class.java)
+    }
+
+    @Provides
+    fun provideOrderService(retrofit2: Retrofit): OrderService {
+        return retrofit2.create(OrderService::class.java)
     }
 
 }

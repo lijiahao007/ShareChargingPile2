@@ -87,9 +87,11 @@ class AddStationFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 带有类型安全的Activity结果返回。（即能够限制返回类型）
         albumLauncher = registerForActivityResult(
             object : ActivityResultContract<Unit, Uri?>() {
                 override fun createIntent(context: Context, input: Unit): Intent {
+                    // 创建需要跳转Activity的Intent
                     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
                     intent.addCategory(Intent.CATEGORY_OPENABLE)
                     intent.type = "image/*"
@@ -97,6 +99,7 @@ class AddStationFragment : Fragment() {
                 }
 
                 override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+                    // 在从跳转Activity返回后，从intent中获取结果
                     if (resultCode == Activity.RESULT_OK) {
                         intent?.data?.let { uri ->
                             Log.i(TAG, "uri=$uri \n encodePath=${uri.encodedPath}")
@@ -107,6 +110,9 @@ class AddStationFragment : Fragment() {
                 }
             }
         ) {
+
+
+            // 通过parseResult中获取的结果后，执行具体的处理逻辑
             it?.let {
                 viewModel.addLocalUri(it)
                 Log.i(TAG, "uriList size = ${viewModel.stationPicUriList.value?.size}")

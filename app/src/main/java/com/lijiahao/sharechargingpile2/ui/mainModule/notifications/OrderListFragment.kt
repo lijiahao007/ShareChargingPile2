@@ -35,12 +35,7 @@ class OrderListFragment : Fragment() {
         }
 
         binding.orderRecyclerview.adapter = adapter
-        val list = ArrayList<Order>()
-        list.apply {
-            add(Order("1", "16:56", "已完成", "熊本熊的充电桩"))
-            add(Order("2", "19:32", "进行中", "唐老鸭的充电桩"))
-        }
-        adapter.submitList(list)
+
 
 
 

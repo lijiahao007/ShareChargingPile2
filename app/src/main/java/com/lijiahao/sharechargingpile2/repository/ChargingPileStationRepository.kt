@@ -2,9 +2,9 @@ package com.lijiahao.sharechargingpile2.repository
 
 import android.content.Context
 import android.util.Log
-import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
+import com.lijiahao.sharechargingpile2.network.response.StationAllInfo
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,7 +14,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.nio.file.Files
 import javax.inject.Inject
 import javax.inject.Singleton
 
