@@ -8,4 +8,11 @@ interface OrderService {
 
     @GET("order/generateOrder")
     suspend fun generateOrder(@Query("pileId") pileId:String, @Query("userId") userId:String):GenerateOrderResponse
+
+
+    @GET("order/finishOrder")
+    suspend fun finishOrder(@Query("orderId") orderId:String) :GenerateOrderResponse
+
+    @GET("order/payOrder")
+    suspend fun payOrder(@Query("orderId") orderId:String):String
 }

@@ -24,8 +24,14 @@ class MapViewModel @Inject constructor(
     var stationPileMap: Map<String, List<ChargingPile>> = HashMap<String, List<ChargingPile>>()
     var stationOpenTimeMap: Map<String, List<OpenTime>> = HashMap<String, List<OpenTime>>()
     var stationOpenDayMap: Map<String, List<OpenDayInWeek>> = HashMap()
-    private val _isReady: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
-    val isReady: LiveData<Boolean> = _isReady
+    var stationElectricChargePeriodMap: Map<String, List<ElectricChargePeriod>> = HashMap()
+    private val _isRemoteDataReady: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val isRemoteDataReady: LiveData<Boolean> = _isRemoteDataReady
+    private val _isLocationReady:MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLocationReady: LiveData<Boolean> = _isLocationReady
+
+
+    // 全部信息都在这里
     val stationInfoMap: HashMap<String, StationListItemViewModel> =
         HashMap<String, StationListItemViewModel>()
 
@@ -33,8 +39,12 @@ class MapViewModel @Inject constructor(
     val finishNavi:MutableLiveData<Boolean> = MutableLiveData()
 
 
-    fun ready() {
-        _isReady.postValue(true);
+    fun dataReady() {
+        _isRemoteDataReady.postValue(true);
+    }
+
+    fun locationReady() {
+        _isLocationReady.postValue(true);
     }
 
 
@@ -86,6 +96,14 @@ class MapViewModel @Inject constructor(
             val openTimeTask = async {
                 try {
                     val stationOpenTime = chargingPileStationService.getStationOpenTime()
+
+                    stationOpenTime.forEach { (key, value) ->
+                        value.forEach {
+                            it.beginTime = it.beginTime.substring(0, 5)
+                            it.endTime = it.endTime.substring(0, 5)
+                        }
+                    }
+
                     stationOpenTimeMap = stationOpenTime
                     stationOpenTime.forEach { (id, list) ->
                         Log.i(TAG, "id=$id, $list")
@@ -109,11 +127,32 @@ class MapViewModel @Inject constructor(
                 }
             }
 
+            val electricChargeTask = async {
+                try {
+                    val stationElectricChargePeriod = chargingPileStationService.getStationElectricCharge()
+
+                    stationElectricChargePeriod.forEach { key, value ->
+                        value.forEach { period ->
+                            period.beginTime = period.beginTime.substring(0, 5)
+                            period.endTime = period.endTime.substring(0, 5)
+                        }
+                    }
+                    stationElectricChargePeriodMap = stationElectricChargePeriod
+                    stationElectricChargePeriod.forEach { (id, list) ->
+                        Log.i(TAG, "id=$id, $list")
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.e("openTimeTask", "网络请求出错 chargingPileStationService.getStationElectricCharges")
+                }
+            }
+
             stationTask.await()
             tagsTask.await()
             pileTask.await()
             openTimeTask.await()
             openDayTask.await()
+            electricChargeTask.await()
 
             stationList.forEach { station ->
                 val id = station.id.toString()
@@ -121,10 +160,11 @@ class MapViewModel @Inject constructor(
                 val piles = stationPileMap[id] ?: ArrayList<ChargingPile>()
                 val openTimes = stationOpenTimeMap[id] ?: ArrayList<OpenTime>()
                 val openDays = stationOpenDayMap[id] ?: ArrayList<OpenDayInWeek>()
-                val itemViewModel = StationListItemViewModel(station, tags, piles, openTimes, openDays,0.0f)
+                val electricCharges = stationElectricChargePeriodMap[id]?: ArrayList()
+                val itemViewModel = StationListItemViewModel(station, tags, piles, openTimes, openDays, electricCharges,0.0f)
                 stationInfoMap[id] = itemViewModel
             }
-            ready() // 准备好了
+            dataReady() // 准备好了
 
         }
     }

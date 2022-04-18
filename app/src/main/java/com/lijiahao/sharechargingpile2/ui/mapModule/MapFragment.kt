@@ -26,7 +26,6 @@ import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentMapBinding
 import com.lijiahao.sharechargingpile2.databinding.MapActivityBottomSheetBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.ui.mapModule.listener.BaseOnRouteSearchListener
 import com.lijiahao.sharechargingpile2.ui.mapModule.observer.MapViewObserver
 import com.lijiahao.sharechargingpile2.ui.mapModule.overlay.DrivingRouteOverlay
@@ -133,6 +132,7 @@ class MapFragment : Fragment() {
         aMap.addOnMyLocationChangeListener { location ->
             // 获取当前定位蓝点位置信息
             viewModel.bluePointPos = LatLng(location.latitude, location.longitude)
+            viewModel.locationReady()
             if (firstFlag) {
                 aMap.animateCamera(CameraUpdateFactory.newLatLng(viewModel.bluePointPos))
                 firstFlag = false
@@ -273,7 +273,7 @@ class MapFragment : Fragment() {
 
     // 初始化地图上的UI， 如圆，如标点
     private fun initMarker() {
-        viewModel.isReady.observe(this) {
+        viewModel.isRemoteDataReady.observe(this) {
             Log.i("initMarker", "viewModel.stationList.size=${viewModel.stationList.size}")
             // 添加标点
             setStationMarker()

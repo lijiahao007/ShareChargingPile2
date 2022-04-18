@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.lijiahao.sharechargingpile2.databinding.FragmentHomeBinding
 import com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeActivity
 import com.lijiahao.sharechargingpile2.ui.mapModule.MapModuleActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.PublishStationActivity
+import java.time.Duration
+import java.time.LocalDateTime
 
 class HomeFragment : Fragment() {
 
@@ -21,7 +25,8 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
+    private var exitFlag = false
+    private var lastClickTime:LocalDateTime = LocalDateTime.now()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +60,28 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
+        setNavigateUpBehavior()
         return root
     }
+
+
+    private fun setNavigateUpBehavior() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            val now = LocalDateTime.now()
+            val millis = Duration.between(lastClickTime, now).toMillis()
+            if (exitFlag && millis <= 2000) {
+                exitFlag = false
+                requireActivity().finishAffinity()
+                requireActivity().finish()
+                android.os.Process.killProcess(android.os.Process.myPid())
+            } else {
+                exitFlag = true
+                lastClickTime = now
+                Toast.makeText(context, "再次返回退出应用", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

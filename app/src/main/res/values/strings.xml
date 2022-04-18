@@ -122,4 +122,14 @@
     <string name="finish_using">结束使用</string>
     <string name="predict_fee">预计费用</string>
     <string name="begin_charge_time">开始充电时间</string>
+    <string name="total_sum">总共费用</string>
+    <string name="pay">支付</string>
+    <string name="need_to_pay">需支付:</string>
+    <string name="monty_unit_chn">元</string>
+    <string name="wechat_pay">微信支付</string>
+    <string name="alipay">支付宝支付</string>
+    <string name="electric_charge">电费:</string>
+    <string name="add">添加</string>
+    <string name="confirm">确定</string>
+    <string name="electric_charge1">电费</string>
 </resources>

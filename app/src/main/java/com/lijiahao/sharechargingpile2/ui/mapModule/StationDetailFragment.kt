@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -21,12 +20,12 @@ import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationServic
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
-import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.StationDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class StationDetailFragment : Fragment() {
@@ -46,7 +45,6 @@ class StationDetailFragment : Fragment() {
     lateinit var userService: UserService
 
 
-    private val viewModel: StationDetailViewModel by viewModels()
     private val mapViewModel: MapViewModel by activityViewModels()
     private val messageListViewModel: MessageListViewModel by activityViewModels()
     private val stationId: Int by lazy {
@@ -136,6 +134,14 @@ class StationDetailFragment : Fragment() {
                 }
             }
         }
+
+        binding.ivToElectricCharge.setOnClickListener {
+            val action = StationDetailFragmentDirections.actionStationDetailFragmentToElectricChargeFragment(stationId)
+            findNavController().navigate(action)
+        }
+
+
+
     }
 
 

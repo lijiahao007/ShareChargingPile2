@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.utils.TimeUtils
 
@@ -31,7 +32,7 @@ class OpenTimeWithChargeFeeLayout(
         tvChargeFee.text = chargeFee
     }
 
-    fun setOpenTime(openTime:OpenTime) {
+    fun setOpenTime(openTime:ElectricChargePeriod) {
         initView(TimeUtils.getOpenTimeString(openTime), openTime.electricCharge.toString())
     }
 

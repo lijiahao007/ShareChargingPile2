@@ -46,6 +46,7 @@ class QRCodeScanFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != RESULT_OK || data == null) {
+            requireActivity().finish()
             return
         }
 
@@ -61,9 +62,9 @@ class QRCodeScanFragment : Fragment() {
                     val action = QRCodeScanFragmentDirections.actionQRCodeScanFragmentToGenerateOrderFragment(stationId, pileId)
                     findNavController().navigate(action)
                 }
-
             }
-
+        } else {
+            requireActivity().finish()
         }
     }
 

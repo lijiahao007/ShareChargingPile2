@@ -8,4 +8,10 @@ data class ChargingPile(
     val stationId: Int = 0,
     val state:String = "",
     val qrcodeUrl:String? = null,
-)
+) {
+    companion object {
+        const val STATE_USING = "使用中"
+        const val STATE_FREE = "空闲"
+        const val STATE_SUSPEND = "暂停营业"
+    }
+}

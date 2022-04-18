@@ -6,6 +6,7 @@ import com.lijiahao.sharechargingpile2.utils.INVISIBLE
 import com.lijiahao.sharechargingpile2.utils.VISIBLE
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalTime
 
 class StationListItemViewModel(
     val station: ChargingPileStation,
@@ -13,6 +14,7 @@ class StationListItemViewModel(
     val piles: List<ChargingPile>,
     val openTimes: List<OpenTime>,
     val openDays: List<OpenDayInWeek>,
+    private val electricChargePeriods: List<ElectricChargePeriod>,
     var distance:Float
     ) : ViewModel() {
     val stationId = station.id
@@ -29,7 +31,19 @@ class StationListItemViewModel(
     val tag3Visible = if (tag3Name == "") VISIBLE else INVISIBLE
     val tag4Name = if (tags.size >= 4) tags[3].text else ""
     val tag4Visible = if (tag4Name == "") VISIBLE else INVISIBLE
-    val electricCharge = BigDecimal((if (openTimes.isEmpty()) 0.0 else openTimes.sumOf { it.electricCharge.toDouble() } / openTimes.size)).setScale(2, RoundingMode.HALF_UP).toDouble().toString()
+    val electricCharge = electricChargePeriods.let { list ->
+        val now = LocalTime.now()
+        var charge:Float = 0f
+        list.forEach { electricCharge ->
+            val beginTime = LocalTime.parse(electricCharge.beginTime)
+            val endTime = LocalTime.parse(electricCharge.endTime)
+            if (!now.isBefore(beginTime) && !now.isAfter(endTime)) {
+                charge = electricCharge.electricCharge
+                return@forEach
+            }
+        }
+        charge.toString()
+    }
     val acVisible = if (acNum > 0) VISIBLE else INVISIBLE
     val dcVisible = if (dcNum > 0) VISIBLE else INVISIBLE
     val parkFeeStr = station.parkFee.toString()

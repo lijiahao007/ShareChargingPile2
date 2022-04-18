@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_AddStationFragment_to_AddPileFragment"
             app:destination="@id/AddPileFragment" />
+        <action
+            android:id="@+id/action_AddStationFragment_to_setElectricPeriodChargeFragment"
+            app:destination="@id/setElectricPeriodChargeFragment" />
     </fragment>
 
 
@@ -64,6 +67,9 @@
         <argument
             android:name="stationId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_modifyStationFragment_to_setElectricPeriodChargeFragment"
+            app:destination="@id/setElectricPeriodChargeFragment" />
     </fragment>
 
     <fragment
@@ -74,6 +80,11 @@
         <argument app:argType="string"
                 android:name="qrcodeUrl"/>
     </fragment>
+    <fragment
+        android:id="@+id/setElectricPeriodChargeFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.publishStationModule.SetElectricPeriodChargeFragment"
+        android:label="SetElectricPeriodChargeFragment"
+        tools:layout="@layout/fragment_set_electric_period_charge"/>
 
 
 </navigation>

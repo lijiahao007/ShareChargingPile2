@@ -50,8 +50,7 @@ class StationListFragment : Fragment() {
     private fun initRecyclerView() {
         binding.stationRecyclerview.adapter = adapter
         adapter.submitList(ArrayList<StationListItemViewModel>())
-
-        mapViewModel.isReady.observe(viewLifecycleOwner) {
+        mapViewModel.isLocationReady.observe(viewLifecycleOwner) {
             val viewModelList = ArrayList<StationListItemViewModel>();
             mapViewModel.stationInfoMap.forEach{ (_, viewModel) ->
                 val curPos = LatLng(viewModel.station.latitude, viewModel.station.longitude)

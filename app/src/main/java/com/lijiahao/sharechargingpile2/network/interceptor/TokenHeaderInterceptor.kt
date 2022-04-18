@@ -18,7 +18,9 @@ class TokenHeaderInterceptor(val context: Context) : Interceptor {
         val token = sharedPreferences.getString("token", null)
         Log.i(TAG, "token=$token")
         val response = token?.let {
-            val request = chain.request().newBuilder().header("token", token).build()
+            val request = chain.request().newBuilder()
+                .header("token", token)
+                .build()
             chain.proceed(request)
         } ?: chain.proceed(chain.request())
 

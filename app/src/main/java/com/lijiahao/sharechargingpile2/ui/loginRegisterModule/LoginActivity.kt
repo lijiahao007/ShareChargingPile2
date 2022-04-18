@@ -41,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun autoLogin() {
         // 自动登录
+        // TODO: 将这里修改成验证token的合法性，而不是网络请求。
         viewScope.launch(Dispatchers.IO) {
             try {
                 val response = loginService.login(LoginRequest(sharedPreferenceData.account, sharedPreferenceData.password))

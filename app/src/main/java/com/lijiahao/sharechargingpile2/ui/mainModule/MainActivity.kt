@@ -9,15 +9,20 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.addCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
 import com.lijiahao.sharechargingpile2.ui.service.MessageWebSocketService
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.WebSocket
+import java.time.Duration
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -34,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         initBottomNav()
         initService()
     }
+
 
 
     private fun initBottomNav() {

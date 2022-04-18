@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.ChargingPileStation
+import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,11 +31,11 @@ class AddStationViewModel @Inject constructor(
     var posDescription: String = ""
     var pileList: ArrayList<ChargingPile> = ArrayList<ChargingPile>()
     var stationName: String = ""
-    var chargeFee: Double = -1.0
     var parkFee: Double = -1.0
     var remark: String = ""
     var stationId = 0
     var stationCollection = 0
+    var electricPeriodChargeList: ArrayList<ElectricChargePeriod> = ArrayList()
 
 
     // 下面四个LiveData用于图片的显示（其中RemoteUriList主要用于Station信息修改界面的远程图片显示）
@@ -52,13 +53,13 @@ class AddStationViewModel @Inject constructor(
         posDescription = ""
         pileList = ArrayList<ChargingPile>()
         stationName = ""
-        chargeFee = -1.0
         parkFee = -1.0
         remark = ""
         stationId = 0
         stationCollection = 0
         _stationPicUriList.value = ArrayList<Uri>()
         _stationPicRemoteUriList.value = ArrayList<String>()
+        electricPeriodChargeList = ArrayList()
     }
 
 

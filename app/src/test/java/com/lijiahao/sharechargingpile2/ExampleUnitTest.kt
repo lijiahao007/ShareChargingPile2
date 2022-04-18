@@ -1,5 +1,7 @@
 package com.lijiahao.sharechargingpile2
 
+import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
+import com.lijiahao.sharechargingpile2.data.OpenTime
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -19,5 +21,19 @@ class ExampleUnitTest {
     fun sumOfTest() {
         val list = listOf<Double>(1.0, 2.0, 3.0, 4.0)
         println(list.sumOf { it })
+    }
+
+    @Test
+    fun openTimeTest() {
+        val openTime = OpenTime(0, "00:00", "10:00", 1)
+        val electricChargePeriods = ArrayList<ElectricChargePeriod>()
+        electricChargePeriods.add(ElectricChargePeriod(0, "00:00", "03:00", 1, 1.0f))
+        electricChargePeriods.add(ElectricChargePeriod(0, "03:00", "06:00", 1, 2.0f))
+        electricChargePeriods.add(ElectricChargePeriod(0, "06:00", "09:00", 1, 3.0f))
+        electricChargePeriods.add(ElectricChargePeriod(0, "09:00", "12:00", 1, 4f))
+        val res = openTime.toElectricChargePeriods(electricChargePeriods)
+        res.forEach {
+            println(it)
+        }
     }
 }

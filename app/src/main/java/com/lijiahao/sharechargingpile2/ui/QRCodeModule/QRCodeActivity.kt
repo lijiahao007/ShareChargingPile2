@@ -58,7 +58,6 @@ class QRCodeActivity : AppCompatActivity() {
                 it.onActivityResult(requestCode, resultCode, data)
             }
         }
-
     }
 
     companion object {

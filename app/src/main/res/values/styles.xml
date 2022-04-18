@@ -57,4 +57,13 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+
+<!--    支付界面RadioButton自定义样式-->
+    <style name="PayWayRadioButton">
+        <item name="background">@drawable/radiobutton_selector</item>
+
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

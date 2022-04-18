@@ -342,23 +342,6 @@
                     />
 
 
-
-
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_charge_fee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:textColor="@color/black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toEndOf="@+id/textView24"
-                    app:layout_constraintTop_toBottomOf="@+id/materialDivider5"
-                    android:layout_marginTop="@dimen/add_station_edittext_top_margin"
-                    android:layout_marginStart="8dp"
-                    android:hint="1" />
-
-
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/materialDivider6"
                     android:layout_width="match_parent"
@@ -379,17 +362,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/materialDivider4"
                     app:layout_constraintVertical_bias="0.5" />
-
-                <TextView
-                    android:id="@+id/textView34"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="26dp"
-                    android:text="@string/yuan_per_kwh"
-                    app:layout_constraintBottom_toBottomOf="@+id/materialDivider6"
+                <ImageView
+                    android:id="@+id/iv_to_set_electric_charge"
+                    android:layout_width="33dp"
+                    android:layout_height="38dp"
+                    android:contentDescription="@string/choose_position_1"
+                    app:layout_constraintBottom_toTopOf="@+id/materialDivider6"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/materialDivider5"
-                    app:layout_constraintVertical_bias="0.5" />
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/materialDivider5"
+                    app:layout_constraintVertical_bias="0.5"
+                    app:srcCompat="@drawable/ic_right" />
 
 
                 <TextView

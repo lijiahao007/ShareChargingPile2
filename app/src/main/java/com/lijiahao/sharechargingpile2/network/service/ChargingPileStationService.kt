@@ -43,6 +43,9 @@ interface ChargingPileStationService {
     @GET("chargingPileStation/getStationOpenDay")
     suspend fun getStationOpenDay(): Map<String, List<OpenDayInWeek>>
 
+    @GET("chargingPileStation/getStationElectricCharge")
+    suspend fun getStationElectricCharge(): Map<String, List<ElectricChargePeriod>>
+
     @GET("chargingPileStation/getStationInfo")
     suspend fun getStationAllInfo() : StationAllInfo
 

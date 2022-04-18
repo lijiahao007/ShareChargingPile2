@@ -169,6 +169,12 @@ class ModifyStationFragment : Fragment() {
                 viewModel.remark = it.remark ?: ""
                 viewModel.stationCollection = it.collection
                 viewModel.stationId = it.id
+                val electricChargePeriods = info.electricChargePeriodMap[it.id.toString()]
+                electricChargePeriods?.let { list ->
+                    viewModel.electricPeriodChargeList = ArrayList(list)
+                } ?: {
+                    viewModel.electricPeriodChargeList = ArrayList()
+                }
             }
 
             // 2. 设置开放星期数
@@ -215,9 +221,7 @@ class ModifyStationFragment : Fragment() {
                     }
                 }
             }
-            val aver =
-                openTimeList?.sumOf { it.electricCharge.toDouble() / openTimeList.size } ?: 0.0
-            viewModel.chargeFee = aver
+
 
             // 4. 设置地点
             station?.let {
@@ -231,20 +235,12 @@ class ModifyStationFragment : Fragment() {
             // 6. 设置停车费
             binding.etParkFee.setText(station?.parkFee.toString())
 
-            // 7. 设置电费
-            val openTimes = info.openTimeMap[stationId]
-            openTimes?.let {
-                if (it.isNotEmpty()) {
-                    binding.etChargeFee.setText(it[0].electricCharge.toString())
-                }
-            }
-
-            // 8.设置remark
+            // 7.设置remark
             station?.let {
                 binding.remark.editText?.setText(it.remark)
             }
 
-            // 9. 设置充电站中的充电桩
+            // 8. 设置充电站中的充电桩
             val list = info.pileMap[stationId]
             list?.let {
                 viewModel.pileList = ArrayList(list)
@@ -303,21 +299,6 @@ class ModifyStationFragment : Fragment() {
             }
         }
 
-        binding.etChargeFee.addTextChangedListener {
-            it?.let {
-
-                try {
-                    viewModel.chargeFee = binding.etChargeFee.text.toString().toDouble()
-                } catch (e: NumberFormatException) {
-                    e.printStackTrace()
-                    Snackbar.make(
-                        binding.root,
-                        "充电费用格式错误 ${binding.etChargeFee.text.toString()}",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
 
         binding.etParkFee.addTextChangedListener {
             it?.let {
@@ -403,6 +384,12 @@ class ModifyStationFragment : Fragment() {
             }
         }
 
+
+        binding.ivToSetElectricCharge.setOnClickListener {
+            val action = ModifyStationFragmentDirections.actionModifyStationFragmentToSetElectricPeriodChargeFragment()
+            findNavController().navigate(action)
+        }
+
     }
 
     // 在提交时校验提交的充电站数据是否正确
@@ -437,13 +424,13 @@ class ModifyStationFragment : Fragment() {
             Snackbar.make(binding.root, "停车未用未填写", Snackbar.LENGTH_SHORT).show()
             return false
         }
-        // 3.4 充电费用
-        stationInfoRequest.openTimeCharge.forEach {
-            if (it < 0) {
-                Snackbar.make(binding.root, "充电费用填写错误", Snackbar.LENGTH_SHORT).show()
-                return false
-            }
+
+        // 3.4 各时间段电费
+        if (stationInfoRequest.electricChargePeriods.isEmpty()) {
+            Snackbar.make(binding.root, "请设置各时间段电费", Snackbar.LENGTH_SHORT).show()
+            return false
         }
+
         // 3.5 充电桩数量
         if (stationInfoRequest.chargingPiles.isEmpty()) {
             Snackbar.make(binding.root, "请添加至少一个充电桩", Snackbar.LENGTH_SHORT).show()
@@ -486,11 +473,9 @@ class ModifyStationFragment : Fragment() {
 
             // 2. 保存时间
             val timeList = ArrayList<String>()
-            val timeCharge = ArrayList<Float>()
             binding.chipGroupTime.children.forEach { view ->
                 val timeText = (view as Chip).text.toString()
                 timeList.add(timeText)
-                timeCharge.add(viewModel.chargeFee.toFloat())
             }
             Log.i(AddStationFragment.TAG, "$dayList\n$timeList")
 
@@ -498,9 +483,9 @@ class ModifyStationFragment : Fragment() {
             val stationInfoRequest = StationInfoRequest(
                 dayList,
                 timeList,
-                timeCharge,
                 viewModel.getStation(),
                 viewModel.pileList,
+                viewModel.electricPeriodChargeList,
                 sharedPreferenceData.userId
             )
 

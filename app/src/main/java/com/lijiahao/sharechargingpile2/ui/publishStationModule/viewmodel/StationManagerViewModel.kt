@@ -28,8 +28,20 @@ class StationManagerViewModel @Inject constructor(
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
             val info = chargingPileStationService.getStationInfoByUserId(sharedPreferenceData.userId)
+            preProcess(info)
             userStationInfo.postValue(info)
             Log.i("StationManagerViewModel", "当前用户充电站信息:$info")
+        }
+    }
+
+    // 预处理信息，来符合应用数据格式要求
+    private fun preProcess (info: StationAllInfo) {
+        // 1. LocalTime 采取 00:00 这种格式
+        info.electricChargePeriodMap.forEach { (_, value) ->
+            value.forEach { electricChargePeriod ->
+                electricChargePeriod.beginTime = electricChargePeriod.beginTime.substring(0, 5)
+                electricChargePeriod.endTime = electricChargePeriod.endTime.substring(0, 5)
+            }
         }
     }
 

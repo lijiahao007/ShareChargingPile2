@@ -11,4 +11,11 @@ data class Order(
     val pileId:String,
     val userId:String,
     val uuid:String
-)
+) {
+    companion object {
+        const val STATE_USING = "待完成"
+        const val STATE_FINISH = "已完成"
+        const val STATE_CANCEL = "已取消"
+        const val STATE_UNPAID = "待支付"
+    }
+}

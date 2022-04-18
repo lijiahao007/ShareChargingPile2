@@ -15,7 +15,8 @@
             android:layout_height="64dp"
             android:gravity="center"
             android:text="消息列表"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            android:background="@color/white"/>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_message"

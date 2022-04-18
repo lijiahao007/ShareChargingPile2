@@ -9,5 +9,6 @@ data class StationAllInfo(
     val pileMap: Map<String, List<ChargingPile>>,
     val openTimeMap: Map<String, List<OpenTime>>,
     val openDayMap: Map<String, List<OpenDayInWeek>>,
-    val picMap: Map<String, List<String>>
+    val picMap: Map<String, List<String>>,
+    val electricChargePeriodMap: Map<String, List<ElectricChargePeriod>>
 )

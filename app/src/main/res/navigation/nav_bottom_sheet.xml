@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_StationDetailFragment_to_openTimeFragment"
             app:destination="@id/openTimeFragment" />
+        <action
+            android:id="@+id/action_StationDetailFragment_to_electricChargeFragment"
+            app:destination="@id/electricChargeFragment" />
 
     </fragment>
     <fragment
@@ -54,6 +57,15 @@
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.OpenTimeFragment"
         android:label="OpenTimeFragment"
         tools:layout="@layout/fragment_open_time">
+        <argument
+            android:name="stationId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/electricChargeFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ElectricChargeFragment"
+        android:label="ElectricChargeFragment"
+        tools:layout="@layout/fragment_electric_charge">
         <argument
             android:name="stationId"
             app:argType="integer" />

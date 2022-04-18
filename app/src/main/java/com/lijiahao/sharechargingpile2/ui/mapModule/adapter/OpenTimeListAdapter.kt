@@ -32,7 +32,6 @@ class OpenTimeListAdapter :
                 5
             ) + "~" + openTime.endTime.substring(0, 5)
             binding.tvTime.text = time
-            binding.tvCharge.text = openTime.electricCharge.toString()
         }
 
     }

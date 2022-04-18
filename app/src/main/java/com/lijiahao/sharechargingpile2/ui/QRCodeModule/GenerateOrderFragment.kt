@@ -1,21 +1,17 @@
 package com.lijiahao.sharechargingpile2.ui.QRCodeModule
 
 import android.os.Bundle
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.FragmentGenerateOrderBinding
@@ -23,7 +19,6 @@ import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationServic
 import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
-import com.lijiahao.sharechargingpile2.utils.TimeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,7 +60,14 @@ class GenerateOrderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         initUI()
+        setBackPress()
         return binding.root
+    }
+
+    private fun setBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+            requireActivity().finish()
+        }
     }
 
     private fun initUI() {
@@ -114,7 +116,7 @@ class GenerateOrderFragment : Fragment() {
         viewModel.stationInfo.observe(viewLifecycleOwner) { stationInfo ->
             binding.itStationName.text = stationInfo.station.name
             binding.tvStationParkFee.text = stationInfo.station.parkFee.toString()
-            setOpenTime(stationInfo.openTimeList)
+            setOpenTime(stationInfo.openTimeList, stationInfo.chargePeriodList)
         }
 
         viewModel.pileInfo.observe(viewLifecycleOwner) { pile ->
@@ -129,14 +131,16 @@ class GenerateOrderFragment : Fragment() {
         }
     }
 
-    private fun setOpenTime(openTimes: List<OpenTime>) {
+    private fun setOpenTime(openTimes: List<OpenTime>, electricChargePeriods: List<ElectricChargePeriod>) {
         val linearLayout = binding.openTimeLinearLayout
         linearLayout.removeAllViews()
         context?.let {
             openTimes.forEach { openTime ->
-                val content = OpenTimeWithChargeFeeLayout(it)
-                content.setOpenTime(openTime)
-                linearLayout.addView(content)
+                openTime.toElectricChargePeriods(electricChargePeriods).forEach { period ->
+                    val content = OpenTimeWithChargeFeeLayout(it)
+                    content.setOpenTime(period)
+                    linearLayout.addView(content)
+                }
             }
         }
 

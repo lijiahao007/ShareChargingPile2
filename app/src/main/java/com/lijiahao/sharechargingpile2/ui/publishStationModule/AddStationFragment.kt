@@ -86,6 +86,10 @@ class AddStationFragment : Fragment() {
         )
     }
 
+    // TODO: 将每个时间段的价钱 和 开放时间的设置分开
+    // TODO: 时间段需要覆盖全天，且给出所有时间段的收费。  开放时间则不需要。
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // 带有类型安全的Activity结果返回。（即能够限制返回类型）
         albumLauncher = registerForActivityResult(
@@ -161,21 +165,6 @@ class AddStationFragment : Fragment() {
 
         }
 
-        binding.etChargeFee.addTextChangedListener {
-            it?.let {
-
-                try {
-                    viewModel.chargeFee = binding.etChargeFee.text.toString().toDouble()
-                } catch (e: NumberFormatException) {
-                    e.printStackTrace()
-                    Snackbar.make(
-                        binding.root,
-                        "充电费用格式错误 ${binding.etChargeFee.text.toString()}",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
 
         binding.etParkFee.addTextChangedListener {
             it?.let {
@@ -247,6 +236,12 @@ class AddStationFragment : Fragment() {
                 true
             }
         }
+
+        binding.ivToSetElectricCharge.setOnClickListener {
+            val action = AddStationFragmentDirections.actionAddStationFragmentToSetElectricPeriodChargeFragment()
+            findNavController().navigate(action)
+
+        }
     }
 
     private fun verify(stationInfoRequest: StationInfoRequest): Boolean {
@@ -280,19 +275,17 @@ class AddStationFragment : Fragment() {
             Snackbar.make(binding.root, "停车未用未填写", Snackbar.LENGTH_SHORT).show()
             return false
         }
-        // 3.4 充电费用
-        stationInfoRequest.openTimeCharge.forEach {
-            if (it < 0) {
-                Snackbar.make(binding.root, "充电费用填写错误", Snackbar.LENGTH_SHORT).show()
-                return false
-            }
-        }
-        // 3.5 充电桩数量
+
+        // 3.4 充电桩数量
         if (stationInfoRequest.chargingPiles.isEmpty()) {
             Snackbar.make(binding.root, "请添加至少一个充电桩", Snackbar.LENGTH_SHORT).show()
             return false
         }
 
+        // 3.5 各时间段电费
+        if (stationInfoRequest.electricChargePeriods.isEmpty()) {
+            return false
+        }
         return true
     }
 
@@ -329,20 +322,18 @@ class AddStationFragment : Fragment() {
 
             // 保存时间
             val timeList = ArrayList<String>()
-            val timeCharge = ArrayList<Float>()
             binding.chipGroupTime.children.forEach { view ->
                 val timeText = (view as Chip).text.toString()
                 timeList.add(timeText)
-                timeCharge.add(viewModel.chargeFee.toFloat())
             }
             Log.i(TAG, "$dayList\n$timeList")
 
             val stationInfoRequest = StationInfoRequest(
                 dayList,
                 timeList,
-                timeCharge,
                 viewModel.getStation(),
                 viewModel.pileList,
+                viewModel.electricPeriodChargeList,
                 sharedPreferenceData.userId
             )
 
@@ -372,6 +363,9 @@ class AddStationFragment : Fragment() {
                                 "上传结果：$res ",
                                 Snackbar.LENGTH_SHORT
                             ).show()
+                            if (res == "success") {
+                                findNavController().navigateUp() // 如果成功，则返回列表列
+                            }
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -412,7 +406,6 @@ class AddStationFragment : Fragment() {
                 }
             }
         }
-
 
         binding.btnSelectTime.setOnClickListener {
             val pickBeginTime = MaterialTimePicker.Builder()
