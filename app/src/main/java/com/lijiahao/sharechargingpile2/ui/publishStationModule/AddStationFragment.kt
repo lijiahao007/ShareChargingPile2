@@ -86,10 +86,6 @@ class AddStationFragment : Fragment() {
         )
     }
 
-    // TODO: 将每个时间段的价钱 和 开放时间的设置分开
-    // TODO: 时间段需要覆盖全天，且给出所有时间段的收费。  开放时间则不需要。
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // 带有类型安全的Activity结果返回。（即能够限制返回类型）
         albumLauncher = registerForActivityResult(

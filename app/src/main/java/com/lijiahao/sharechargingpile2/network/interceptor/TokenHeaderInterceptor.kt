@@ -28,6 +28,8 @@ class TokenHeaderInterceptor(val context: Context) : Interceptor {
         if (response.code == 401) {
             // 登录失效，跳转登录界面
             val intent = Intent(context, LoginActivity::class.java)
+            intent.putExtra(LoginActivity.NEW_INTENT_EXTRA, LoginActivity.TOKENINTERCEPTOR_TO_LOGINACTIVITY)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }
 

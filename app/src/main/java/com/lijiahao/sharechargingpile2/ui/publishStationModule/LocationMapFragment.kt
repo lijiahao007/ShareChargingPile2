@@ -155,7 +155,6 @@ class LocationMapFragment : Fragment() {
 
         geocodeSearch.setOnGeocodeSearchListener(object : GeocodeSearch.OnGeocodeSearchListener {
             override fun onRegeocodeSearched(p0: RegeocodeResult?, p1: Int) {
-                TODO("Not yet implemented")
             }
 
             override fun onGeocodeSearched(result: GeocodeResult?, code: Int) {

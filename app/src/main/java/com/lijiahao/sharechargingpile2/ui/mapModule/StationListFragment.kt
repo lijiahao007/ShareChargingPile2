@@ -81,11 +81,11 @@ class StationListFragment : Fragment() {
                 true
             }
             R.id.opt_score -> {
-                TODO()
+                TODO("根据评分排序")
                 true
             }
             R.id.opt_used_time -> {
-                TODO()
+                TODO("根据使用次数排序")
                 true
             }
             else -> super.onContextItemSelected(item)

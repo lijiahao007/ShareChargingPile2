@@ -69,6 +69,20 @@ class TimeUtils {
             return (!isBefore(begin) && !isAfter(end))
         }
 
+        // 将Long -》 LocalDataTime
+        @JvmStatic
+        fun longToLocalDateTime(timestamp: Long): LocalDateTime {
+            val instant = Instant.ofEpochMilli(timestamp)
+            val zone = ZoneId.of("Asia/Shanghai")
+            return LocalDateTime.ofInstant(instant, zone)
+        }
+
+        @JvmStatic
+        fun localDateTimeToLong(localDateTime: LocalDateTime): Long {
+            val zone = ZoneId.of("Asia/Shanghai")
+            val instant = localDateTime.atZone(zone).toInstant()
+            return instant.toEpochMilli()
+        }
 
     }
 }

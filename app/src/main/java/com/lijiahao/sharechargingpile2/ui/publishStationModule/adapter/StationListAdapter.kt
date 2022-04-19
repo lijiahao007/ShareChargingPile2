@@ -52,9 +52,6 @@ class StationListAdapter(val fragment: Fragment) :
         }
     }
 
-
-
-
     class StationViewHolder(val binding: ItemStationManagerBinding, val adapter:StationListAdapter) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(station: ChargingPileStation) {

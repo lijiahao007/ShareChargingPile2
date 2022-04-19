@@ -47,13 +47,13 @@ interface ChargingPileStationService {
     suspend fun getStationElectricCharge(): Map<String, List<ElectricChargePeriod>>
 
     @GET("chargingPileStation/getStationInfo")
-    suspend fun getStationAllInfo() : StationAllInfo
+    suspend fun getStationAllInfo(): StationAllInfo
 
     @GET("chargingPileStation/getStationInfoByUserId")
     suspend fun getStationInfoByUserId(@Query("userId") userId: String): StationAllInfo
 
     @GET("chargingPileStation/getStationInfoByStationId")
-    suspend fun getStationInfoByStationId(@Query("stationId") stationId:String): StationInfo
+    suspend fun getStationInfoByStationId(@Query("stationId") stationId: String): StationInfo
 
     @GET("chargingPileStation/getStationPicUrl")
     suspend fun getStationPicUrl(@Query("stationId") stationId: Int): List<String>
@@ -70,24 +70,32 @@ interface ChargingPileStationService {
 
     @POST("chargingPileStation/uploadStationPic")
     // 单独上传Station图片
-    suspend fun uploadStationPics(@Body body:MultipartBody) : String
+    suspend fun uploadStationPics(@Body body: MultipartBody): String
+
+    @Multipart
+    @POST("chargingPileStation/uploadRemainStationIds")
+    // 上传剩余stationIds, 让服务器删除剩余stationIds
+    suspend fun uploadRemainStationIds(
+        @Part("stationIds") stationIds: List<Int>,
+        @Part("userId") userId: Int
+    ): String
+
 
     @Multipart
     @POST("chargingPileStation/uploadStationAllInfo")
     // 将图片连同信息一起上传
     suspend fun uploadStationAllInfo(
-        @Part("stationInfo") stationInfo:StationInfoRequest,
-        @Part stationPics:List<MultipartBody.Part>
-    ):String
+        @Part("stationInfo") stationInfo: StationInfoRequest,
+        @Part stationPics: List<MultipartBody.Part>
+    ): String
 
     @Multipart
     @POST("chargingPileStation/modifyStationInfo")
     suspend fun modifyStationInfo(
         @Part("stationInfo") stationInfo: StationInfoRequest,
         @Part("remotePicsUris") remotePicUris: List<String>,
-        @Part newPics:List<MultipartBody.Part>  // 注意MultipartBody.Part 的Part在这里不需要标注value，具体的变量名是在MultipartBody构建的时候写入的
-    ):ModifyStationResponse
-
+        @Part newPics: List<MultipartBody.Part>  // 注意MultipartBody.Part 的Part在这里不需要标注value，具体的变量名是在MultipartBody构建的时候写入的
+    ): ModifyStationResponse
 
 
 }

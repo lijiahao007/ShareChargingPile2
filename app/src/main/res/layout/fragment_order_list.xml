@@ -13,7 +13,7 @@
             android:id="@+id/heading"
             style="@style/TextView.Heading"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="50dp"
             android:gravity="center"
             android:text="我的订单"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,16 +31,21 @@
             app:layout_constraintLeft_toLeftOf="@id/heading"
             app:layout_constraintTop_toTopOf="@id/heading" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/order_recyclerview"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_paper"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/heading"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_order_list"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

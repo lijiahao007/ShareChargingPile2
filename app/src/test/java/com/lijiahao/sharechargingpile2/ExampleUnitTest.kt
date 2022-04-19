@@ -2,6 +2,7 @@ package com.lijiahao.sharechargingpile2
 
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.OpenTime
+import com.lijiahao.sharechargingpile2.data.TokenInfo
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -36,4 +37,12 @@ class ExampleUnitTest {
             println(it)
         }
     }
+
+    @Test
+    fun tokenTest() {
+        val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxIiwiZXhwIjoxNjUwNDQyMzE0LCJpYXQiOjE2NTAzNTU5MTR9.XPazDDvOGJhRFFKzzypqSYEzQZXVpeW7wRlJiV4jRss";
+        val info = TokenInfo.getTokenInfoFromToken(token)
+        println(info)
+    }
+
 }

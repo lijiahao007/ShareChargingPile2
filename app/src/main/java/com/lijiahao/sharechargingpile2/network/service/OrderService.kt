@@ -1,6 +1,7 @@
 package com.lijiahao.sharechargingpile2.network.service
 
 import com.lijiahao.sharechargingpile2.network.response.GenerateOrderResponse
+import com.lijiahao.sharechargingpile2.network.response.QueryOrderResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -15,4 +16,7 @@ interface OrderService {
 
     @GET("order/payOrder")
     suspend fun payOrder(@Query("orderId") orderId:String):String
+
+    @GET("order/queryOrder")
+    suspend fun queryOrder(@Query("userId") userId:Int): QueryOrderResponse
 }

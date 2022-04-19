@@ -214,7 +214,6 @@ class PileUsingFragment : Fragment() {
 
     /**
      * 计算同一天 beginTime ~ endTime 的充电费用
-     * TODO: 在添加ElectricChargePeriod之后，将下面的OpenTime修改为ElectricChargePeriod
      * @param electricChargePeriod 充电桩营业时间
      * @param beginTime 充电开始时间
      * @param endTime   充电结束时间

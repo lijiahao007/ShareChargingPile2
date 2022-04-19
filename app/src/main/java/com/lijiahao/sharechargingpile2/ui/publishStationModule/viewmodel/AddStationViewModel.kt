@@ -25,7 +25,6 @@ class AddStationViewModel @Inject constructor(
     val sharedPreferenceData: SharedPreferenceData
 ) : ViewModel() {
 
-    // TODO: 将下面属性包含到一个ChargingStation中
     var latitude: Double = 0.0
     var longitude: Double = 0.0
     var posDescription: String = ""

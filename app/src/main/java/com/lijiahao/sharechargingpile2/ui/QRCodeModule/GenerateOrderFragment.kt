@@ -19,10 +19,12 @@ import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationServic
 import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
+import com.lijiahao.sharechargingpile2.utils.TimeUtils.Companion.isBetween
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -75,7 +77,13 @@ class GenerateOrderFragment : Fragment() {
 
         binding.btnBeginUse.setOnClickListener {
             // 先请求看能不能生成订单
-            // TODO: 判断是否在营业时间中
+            // 判断是否在营业时间中
+            val openTimes = viewModel.stationInfo.value?.openTimeList?: ArrayList<OpenTime>()
+            if (!isNowInOpenTime(openTimes)) {
+                Snackbar.make(binding.root, "当前不在该充电站营业时间内", Snackbar.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 val userId = sharedPreferenceData.userId
                 try {
@@ -143,7 +151,20 @@ class GenerateOrderFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun isNowInOpenTime(openTimes: List<OpenTime>):Boolean {
+        val now = LocalTime.now()
+        var flag = false
+        openTimes.forEach {
+            val curBegin = LocalTime.parse(it.beginTime)
+            val curEnd = LocalTime.parse(it.endTime)
+            if (now.isBetween(curBegin, curEnd)) {
+                flag = true
+                return@forEach
+            }
+        }
+        return flag
     }
 
 

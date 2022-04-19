@@ -70,6 +70,7 @@ class NotificationsFragment : Fragment() {
             }
             // 2. 跳转到LoginActivity
             val intent = Intent(context, LoginActivity::class.java)
+            intent.putExtra(LoginActivity.NEW_INTENT_EXTRA, LoginActivity.NOTIFICATIONFRAGMENT_TO_LOGINACTIVITY)
             startActivity(intent)
         }
 

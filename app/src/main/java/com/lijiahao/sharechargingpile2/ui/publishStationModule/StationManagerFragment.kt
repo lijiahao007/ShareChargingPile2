@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,7 +10,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.FragmentStationManagerBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
@@ -18,6 +21,7 @@ import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.Station
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +34,12 @@ class StationManagerFragment : Fragment() {
     private val viewModel: StationManagerViewModel by activityViewModels()
     private val adapter = StationListAdapter(this)
 
+    @Inject
+    lateinit var chargingPileStationService: ChargingPileStationService
+
+    @Inject
+    lateinit var sharedPreferenceData: SharedPreferenceData
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +49,7 @@ class StationManagerFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initUI() {
         binding.addStation.setOnClickListener {
             val action =
@@ -58,12 +69,40 @@ class StationManagerFragment : Fragment() {
 
         binding.ibtnConfirm.setOnClickListener {
             checkMode()
-            // TODO: 上传删除逻辑，将除了当前列表以外的充电站从数据库中删除。
             val stationIds = ArrayList<Int>()
             adapter.currentList.forEach {
                 stationIds.add(it.id)
             }
             Log.i(TAG, "remain stationIds = $stationIds")
+            val userId = sharedPreferenceData.userId.toInt()
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val res = chargingPileStationService.uploadRemainStationIds(stationIds, userId)
+                    if (res == "success") {
+                        withContext(Dispatchers.Main) {
+                            // 删除ViewModel中删除了的Station信息
+                            val allStationInfo = viewModel.userStationInfo.value
+                            allStationInfo?.deleteStationNotIn(stationIds)
+                            Snackbar.make(binding.root, "修改成功", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        // 恢复列表
+                        val allStationInfo = viewModel.userStationInfo.value
+                        allStationInfo?.let {
+                            adapter.submitList(it.stations)
+                            adapter.notifyDataSetChanged()
+                        }
+                        Snackbar.make(binding.root, "网络异常", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        binding.close.setOnClickListener {
+            findNavController().navigateUp()
         }
 
     }
