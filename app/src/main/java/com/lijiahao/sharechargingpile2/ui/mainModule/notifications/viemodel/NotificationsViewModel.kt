@@ -1,18 +1,14 @@
-package com.lijiahao.sharechargingpile2.ui.mainModule.notifications
+package com.lijiahao.sharechargingpile2.ui.mainModule.notifications.viemodel
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.annotation.MainThread
 import androidx.lifecycle.*
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.data.UserExtendInfo
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.UserService
-import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
-import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES
+import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.NotificationsFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject

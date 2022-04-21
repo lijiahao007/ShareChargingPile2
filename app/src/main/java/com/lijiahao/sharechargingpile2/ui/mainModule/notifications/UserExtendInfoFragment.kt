@@ -11,12 +11,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.UserExtendInfo
 import com.lijiahao.sharechargingpile2.databinding.FragmentUserExtendInfoBinding
 import com.lijiahao.sharechargingpile2.network.request.ModifyExtendInfoRequest
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.adapter.UserExtendInfoAdapter
+import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.viemodel.NotificationsViewModel
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
 import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES
 import dagger.hilt.android.AndroidEntryPoint

@@ -18,12 +18,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentModifyUserInfoBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.request.ModifyUserInfoRequest
-import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.service.UserService
+import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.viemodel.NotificationsViewModel
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
 import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES

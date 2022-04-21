@@ -1,5 +1,7 @@
 package com.lijiahao.sharechargingpile2.network.service
 
+import androidx.room.Index
+import com.lijiahao.sharechargingpile2.data.Order
 import com.lijiahao.sharechargingpile2.network.response.GenerateOrderResponse
 import com.lijiahao.sharechargingpile2.network.response.QueryOrderResponse
 import retrofit2.http.GET
@@ -17,6 +19,9 @@ interface OrderService {
     @GET("order/payOrder")
     suspend fun payOrder(@Query("orderId") orderId:String):String
 
-    @GET("order/queryOrder")
-    suspend fun queryOrder(@Query("userId") userId:Int): QueryOrderResponse
+    @GET("order/queryOrderByUserId")
+    suspend fun queryOrderByUserId(@Query("userId") userId:Int): QueryOrderResponse
+
+    @GET("order/queryOrderByOrderId")
+    suspend fun queryOrderByOrderId(@Query("orderId") orderId:Int): Order
 }

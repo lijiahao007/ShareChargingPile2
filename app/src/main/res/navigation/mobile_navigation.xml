@@ -6,6 +6,48 @@
     app:startDestination="@+id/navigation_home">
 
     <fragment
+        android:id="@+id/pileUsingFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.PileUsingFragment"
+        android:label="PileUsingFragment"
+        tools:layout="@layout/fragment_pile_using">
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+        <argument
+            android:name="pileId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_pileUsingFragment_to_orderPayFragment"
+            app:destination="@id/orderPayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderPayFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.OrderPayFragment"
+        android:label="OrderPayFragment"
+        tools:layout="@layout/fragment_order_pay">
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+        <argument
+            android:name="pileId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_orderPayFragment_to_payFragment"
+            app:destination="@id/payFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/payFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.PayFragment"
+        android:label="PayFragment"
+        tools:layout="@layout/fragment_pay">
+        <argument
+            android:name="price"
+            app:argType="float" />
+        <argument
+            android:name="orderId"
+            app:argType="string" />
+    </fragment>
+    <fragment
         android:id="@+id/navigation_home"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.home.HomeFragment"
         android:label="@string/title_home"
@@ -16,7 +58,7 @@
         android:name="com.lijiahao.sharechargingpile2.ui.chatModule.MessageListFragment"
         android:label="navigation_message"
         tools:layout="@layout/fragment_message_list">
-            <action
+        <action
             android:id="@+id/action_messageListFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
@@ -25,7 +67,7 @@
         android:id="@+id/navigation_notifications"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" >
+        tools:layout="@layout/fragment_notifications">
         <action
             android:id="@+id/action_navigation_notifications_to_modifyPwdFragment"
             app:destination="@id/modifyPwdFragment" />
@@ -44,9 +86,10 @@
         android:id="@+id/chatFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.chatModule.ChatFragment"
         android:label="ChatFragment"
-        tools:layout="@layout/fragment_chat" >
-        <argument android:name="userId"
-            app:argType="string"/>
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="userId"
+            app:argType="string" />
         <action
             android:id="@+id/action_chatFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
@@ -56,28 +99,51 @@
         android:id="@+id/modifyPwdFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.ModifyPwdFragment"
         android:label="ModifyPwdFragment"
-        tools:layout="@layout/fragment_modify_pwd"/>
+        tools:layout="@layout/fragment_modify_pwd" />
     <fragment
         android:id="@+id/userExtendInfoFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.UserExtendInfoFragment"
         android:label="UserExtendInfoFragment"
-        tools:layout="@layout/fragment_user_extend_info"/>
+        tools:layout="@layout/fragment_user_extend_info" />
     <fragment
         android:id="@+id/modifyUserInfoFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.ModifyUserInfoFragment"
         android:label="ModifyUserInfoFragment"
-        tools:layout="@layout/fragment_modify_user_info"/>
+        tools:layout="@layout/fragment_modify_user_info" />
     <fragment
         android:id="@+id/orderListFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderListFragment"
         android:label="OrderListFragment"
-        tools:layout="@layout/fragment_order_list"/>
+        tools:layout="@layout/fragment_order_list">
+        <action
+            android:id="@+id/action_orderListFragment_to_pileUsingFragment"
+            app:destination="@id/pileUsingFragment" />
+        <action
+            android:id="@+id/action_orderListFragment_to_orderPayFragment"
+            app:destination="@id/orderPayFragment" />
+        <action
+            android:id="@+id/action_orderListFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.chatModule.UserInfoFragment"
         android:label="UserInfoFragment"
         tools:layout="@layout/fragment_user_info">
-        <argument android:name="userId"
-            app:argType="string"/>
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderDetailFragment"
+        android:label="OrderDetailFragment"
+        tools:layout = "@layout/fragment_order_detail">
+        <argument
+            android:name="stationId"
+            app:argType="string" />
+        <argument
+            android:name="pileId"
+            app:argType="string" />
     </fragment>
 </navigation>

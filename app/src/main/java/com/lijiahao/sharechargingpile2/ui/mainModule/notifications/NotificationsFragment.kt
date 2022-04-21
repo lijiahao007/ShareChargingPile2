@@ -2,29 +2,20 @@ package com.lijiahao.sharechargingpile2.ui.mainModule.notifications
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.lijiahao.sharechargingpile2.databinding.FragmentNotificationsBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.loginRegisterModule.LoginActivity
+import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.viemodel.NotificationsViewModel
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
-import com.lijiahao.sharechargingpile2.utils.USER_ID_IN_PREFERENCES
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint

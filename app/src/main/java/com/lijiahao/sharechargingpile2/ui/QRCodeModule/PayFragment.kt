@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentPayBinding
@@ -85,7 +86,10 @@ class PayFragment : Fragment() {
                     Toast.makeText(context, "网络异常，支付失败", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
 
+        binding.close.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 

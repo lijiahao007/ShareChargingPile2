@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -53,7 +54,7 @@ class GenerateOrderFragment : Fragment() {
             stationId,
             pileId,
             chargingPileStationService,
-            userService
+            userService,
         )
     }
 
@@ -75,6 +76,10 @@ class GenerateOrderFragment : Fragment() {
     private fun initUI() {
         loadData()
 
+        binding.close.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         binding.btnBeginUse.setOnClickListener {
             // 先请求看能不能生成订单
             // 判断是否在营业时间中
@@ -94,8 +99,8 @@ class GenerateOrderFragment : Fragment() {
                                 viewModel.setOrder(generateOrderResponse.order)
                                 val action =
                                     GenerateOrderFragmentDirections.actionGenerateOrderFragmentToPileUsingFragment(
-                                        stationId,
-                                        pileId
+                                        stationId = stationId,
+                                        pileId = pileId,
                                     )
                                 findNavController().navigate(action)
                             }

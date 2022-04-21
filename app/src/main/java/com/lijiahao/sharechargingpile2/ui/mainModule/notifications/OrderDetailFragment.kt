@@ -1,87 +1,64 @@
-package com.lijiahao.sharechargingpile2.ui.QRCodeModule
+package com.lijiahao.sharechargingpile2.ui.mainModule.notifications
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.lijiahao.sharechargingpile2.R
+import com.lijiahao.sharechargingpile2.data.ChargingPileStation
 import com.lijiahao.sharechargingpile2.data.OpenTime
-import com.lijiahao.sharechargingpile2.databinding.FragmentOrderPayBinding
+import com.lijiahao.sharechargingpile2.databinding.FragmentOrderDetailBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
+import com.lijiahao.sharechargingpile2.ui.QRCodeModule.GenerateOrderViewModel
+import com.lijiahao.sharechargingpile2.ui.QRCodeModule.OrderPayFragmentArgs
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
 import com.lijiahao.sharechargingpile2.utils.TimeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class OrderPayFragment : Fragment() {
+class OrderDetailFragment : Fragment() {
 
-    private val binding:FragmentOrderPayBinding by lazy {
-        FragmentOrderPayBinding.inflate(layoutInflater)
+    private val binding:FragmentOrderDetailBinding by lazy {
+        FragmentOrderDetailBinding.inflate(layoutInflater)
     }
 
     private val args: OrderPayFragmentArgs by navArgs()
     private val stationId: String by lazy { args.stationId }
     private val pileId: String by lazy { args.pileId }
+    @Inject lateinit var chargingPileStationService:ChargingPileStationService
+    @Inject lateinit var userService:UserService
 
-    @Inject
-    lateinit var chargingPileStationService: ChargingPileStationService
-
-    @Inject
-    lateinit var userService: UserService
-
-    @Inject
-    lateinit var orderService: OrderService
-
-
-    private val viewModel:GenerateOrderViewModel by activityViewModels() {
+    private val viewModel: GenerateOrderViewModel by activityViewModels() {
         GenerateOrderViewModel.getGenerateOrderViewModelFactory(stationId, pileId, chargingPileStationService, userService)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        viewModel.getData() // 刷新数据
+    ): View? {
+        viewModel.getData()
         loadData()
-        initUI()
-        setBackPress()
+        initUIListener()
         return binding.root
     }
 
-    private fun setBackPress() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            Log.e(TAG, "requireActivity().finish() invoke!!")
-            requireActivity().finish()
-        }
-    }
-
-    private fun initUI() {
-        binding.btnPay.setOnClickListener {
-            // 跳转微信支付。
-            viewModel.order.value?.let {
-                val price = it.price
-                val action = OrderPayFragmentDirections.actionOrderPayFragmentToPayFragment(price, it.id)
-                findNavController().navigate(action)
-            }
-        }
-
+    private fun initUIListener() {
         binding.close.setOnClickListener {
-            requireActivity().onBackPressed()
+            findNavController().navigateUp()
+        }
+
+        binding.btnComment.setOnClickListener {
+            // 跳转评论界面
         }
     }
-
-
 
     private fun loadData() {
         viewModel.stationInfo.observe(viewLifecycleOwner) { stationInfo ->
@@ -129,10 +106,6 @@ class OrderPayFragment : Fragment() {
                 }
             }
         }
-    }
-
-    companion object {
-        const val TAG: String = "OrderPayFragment"
     }
 
 }

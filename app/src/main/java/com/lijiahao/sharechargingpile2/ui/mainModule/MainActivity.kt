@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun initBottomNav() {
         // 报错：没有设置ActionBar
         val navView: BottomNavigationView = binding.navView
@@ -51,13 +50,18 @@ class MainActivity : AppCompatActivity() {
         // 设置navView 在那些 destination 显示
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.chatFragment -> { navView.visibility = View.GONE}
+                R.id.chatFragment -> { navView.visibility = View.GONE }
                 R.id.userExtendInfoFragment -> { navView.visibility = View.GONE }
+                R.id.orderListFragment -> { navView.visibility = View.GONE }
+                R.id.userInfoFragment -> { navView.visibility = View.GONE }
+                R.id.pileUsingFragment -> {navView.visibility = View.GONE}
+                R.id.payFragment -> {navView.visibility = View.GONE}
+                R.id.orderPayFragment -> {navView.visibility = View.GONE}
+                R.id.orderDetailFragment -> {navView.visibility = View.GONE}
                 R.id.navigation_home -> {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 0.5F
                 }
-                R.id.userInfoFragment -> {navView.visibility = View.GONE}
                 else -> {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 1F
@@ -77,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val serviceConnection = object: ServiceConnection {
+    private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             webSocket = (service as MessageWebSocketService.WebSocketBinder).webSocket
             Log.i(TAG, "完成绑定 $webSocket")

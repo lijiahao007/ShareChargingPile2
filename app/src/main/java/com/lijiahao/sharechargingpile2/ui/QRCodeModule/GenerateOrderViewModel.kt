@@ -8,6 +8,7 @@ import com.lijiahao.sharechargingpile2.data.Order
 import com.lijiahao.sharechargingpile2.network.response.StationInfo
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -20,13 +21,14 @@ import java.lang.RuntimeException
 import java.lang.reflect.InvocationTargetException
 import javax.inject.Inject
 
+// 如果能够设置_order MutableLiveData的话，就不用设置orderId (默认设置为"0")
+// 如果不能够设置_order MutableLiveData的话，就直接传入一个orderId就好了。(一个大于0的数字符串)
 class GenerateOrderViewModel(
-    private val stationId: String,
-    private val pileId: String,
+    var stationId: String,
+    var pileId: String,
     private val chargingPileStationService: ChargingPileStationService,
-    private val userService: UserService
+    private val userService: UserService,
 ) : ViewModel() {
-
 
     // 1. 获取充电站信息
     private val _stationInfo: MutableLiveData<StationInfo> = MutableLiveData()
@@ -38,7 +40,7 @@ class GenerateOrderViewModel(
         station.pileList.find { it.id.toString() == pileId } ?: ChargingPile()
     }
 
-    // 3. 获取用户信息
+    // 3. 通过网络获取用户信息
     val userInfo: LiveData<UserInfoResponse> = _stationInfo.switchMap {
         val userId = it.station.userId
         liveData {
@@ -47,9 +49,8 @@ class GenerateOrderViewModel(
     }
 
     // 4. 订单信息
-    private val _order:MutableLiveData<Order> = MutableLiveData()
+    private val _order: MutableLiveData<Order> = MutableLiveData()
     val order: LiveData<Order> = _order
-
 
 
     init {
@@ -60,22 +61,27 @@ class GenerateOrderViewModel(
 
     fun getData() {
         viewModelScope.launch(Dispatchers.IO) {
+            // 1. 获取StationInfo
             val stationInfo = chargingPileStationService.getStationInfoByStationId(stationId)
             _stationInfo.postValue(stationInfo)
         }
     }
 
-    fun setOrder(order:Order) {
+
+    fun setOrder(order: Order) {
         _order.value = order
     }
 
 
     companion object {
+
+        const val DEFAULT_ORDER_ID = "0"
+
         fun getGenerateOrderViewModelFactory(
             stationId: String,
             pileId: String,
             chargingPileStationService: ChargingPileStationService,
-            userService: UserService
+            userService: UserService,
         ) = object : ViewModelProvider.NewInstanceFactory() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return if (modelClass.isAssignableFrom(GenerateOrderViewModel::class.java)) {
@@ -83,7 +89,7 @@ class GenerateOrderViewModel(
                         stationId,
                         pileId,
                         chargingPileStationService,
-                        userService
+                        userService,
                     ) as T
                 } else {
                     throw IllegalArgumentException("GenerateOrderViewModel 参数错误。 需要stationId&pileId")

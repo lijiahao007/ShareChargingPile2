@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,8 @@ class PileUsingFragment : Fragment() {
     @Inject
     lateinit var orderService: OrderService
 
+    private var timer:Timer? = null
+
     private val viewModel: GenerateOrderViewModel by activityViewModels() {
         GenerateOrderViewModel.getGenerateOrderViewModelFactory(
             stationId,
@@ -62,7 +65,7 @@ class PileUsingFragment : Fragment() {
     }
 
     private val orderId: String by lazy {
-        viewModel.order.value?.id ?: "0"
+        viewModel.order.value?.id.toString()
     }
 
     override fun onCreateView(
@@ -71,9 +74,7 @@ class PileUsingFragment : Fragment() {
     ): View? {
         viewModel.getData() // 刷新数据
         loadData()
-        calTimeAndMoney()
         initUI()
-
         return binding.root
     }
 
@@ -82,6 +83,7 @@ class PileUsingFragment : Fragment() {
             binding.itStationName.text = stationInfo.station.name
             binding.tvStationParkFee.text = stationInfo.station.parkFee.toString()
             setOpenTime(stationInfo.openTimeList)
+            calTimeAndMoney() // 计算时间和花费
         }
 
         viewModel.pileInfo.observe(viewLifecycleOwner) { pile ->
@@ -99,9 +101,12 @@ class PileUsingFragment : Fragment() {
             binding.tvOrderId.text = order.uuid.substring(0, 24)
             binding.tvOrderCreateTime.text = TimeUtils.getFormatTimeStr(order.createTime)
         }
+
     }
 
     private fun calTimeAndMoney() {
+        timer?.cancel()
+        timer = Timer() // 创建新的timer
         val order = viewModel.order.value
         order?.let {
             binding.tvOrderCreateTime.text = TimeUtils.getFormatTimeStr(it.beginChargeTime)
@@ -129,8 +134,6 @@ class PileUsingFragment : Fragment() {
                 }
             }
 
-
-            val timer = Timer()
             // 计算使用时间
             val calTimeTask = object : TimerTask() {
                 override fun run() {
@@ -159,9 +162,8 @@ class PileUsingFragment : Fragment() {
                     handler.obtainMessage(MONEY_UPDATE, totalPrice).sendToTarget()
                 }
             }
-
-            timer.schedule(calTimeTask, 0, 1000)
-            timer.schedule(calMoneyTask, 0, 3000) // 3秒更新一次价格
+            timer?.schedule(calTimeTask, 0, 1000)
+            timer?.schedule(calMoneyTask, 0, 3000) // 3秒更新一次价格
         }
     }
 
@@ -173,17 +175,16 @@ class PileUsingFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         viewModel.setOrder(finishOrderResponse.order)
                         val action =
-                            PileUsingFragmentDirections.actionPileUsingFragmentToOrderPayFragment(
-                                stationId,
-                                pileId
-                            )
+                            PileUsingFragmentDirections.actionPileUsingFragmentToOrderPayFragment(stationId, pileId)
                         findNavController().navigate(action)
                     }
                 }
             }
         }
 
-        setNavigateUpBehavior()
+        binding.close.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     // 设置返回操作（返回主页）
@@ -226,8 +227,13 @@ class PileUsingFragment : Fragment() {
         endTime: LocalTime,
         powerRate: Double
     ): Double {
-        var sumPrice = 0.0
 
+        if (electricChargePeriod.isEmpty()) {
+            Log.e(TAG, "PileUsingFragment.calChargingFee 中 electricChargePeriods.size == 0")
+            return 0.0
+        }
+
+        var sumPrice = 0.0
         // 1. 订单在同一天开始和结束
         var beginIndex = 0 // 开始时间段
         var endIndex = 0 // 结束时间段
@@ -294,6 +300,12 @@ class PileUsingFragment : Fragment() {
         endDateTime: LocalDateTime,
         powerRate: Double
     ): Double {
+
+        if (electricChargePeriods.isEmpty()) {
+            Log.e(TAG, "PileUsingFragment.calChargingFee 中 electricChargePeriods.size == 0")
+            return 0.0
+        }
+
         var sumPrice = 0.0
         val beginTime: LocalTime = beginDateTime.toLocalTime()
         val endTime: LocalTime = endDateTime.toLocalTime()
@@ -358,6 +370,8 @@ class PileUsingFragment : Fragment() {
         const val TAG = "PileUsingFragment"
         const val TIME_UPDATE: Int = 10086
         const val MONEY_UPDATE: Int = 10087
+        const val SET_ORDER_FRAGMENT_RESULT = "SET_ORDER"
+        const val ORDER_BUNDLE = "ORDER"
     }
 
 }

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.NotificationsViewModel" />
+            type="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.viemodel.NotificationsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
