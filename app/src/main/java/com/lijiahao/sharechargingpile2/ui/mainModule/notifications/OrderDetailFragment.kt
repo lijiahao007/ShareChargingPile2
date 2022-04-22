@@ -57,6 +57,8 @@ class OrderDetailFragment : Fragment() {
 
         binding.btnComment.setOnClickListener {
             // 跳转评论界面
+            val action = OrderDetailFragmentDirections.actionOrderDetailFragmentToCommentFragment(stationId, pileId)
+            findNavController().navigate(action)
         }
     }
 

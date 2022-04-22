@@ -170,187 +170,162 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="59dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="@dimen/station_detail_item_top_margin"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             app:cardBackgroundColor="@color/light_gray"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tv_station_score"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="未有评"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/space"
-                    app:layout_constraintHorizontal_bias="0.17"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.275"
-                    tools:ignore="MissingConstraints"
-                    tools:text="4.5" />
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/score_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_station_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/no_score"
+                            android:textStyle="bold"
+                            tools:text="4.5" />
+
+                        <TextView
+                            android:id="@+id/textView9"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="@string/score"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/score_layout"
+                        android:text="@string/station_score"
+                        android:textSize="11sp"
+                        android:layout_centerHorizontal="true"/>
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="分"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/tv_station_score"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.35
-"
-                    tools:ignore="MissingConstraints" />
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="44dp"
-                    android:layout_height="15dp"
-                    android:text="桩群评分"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/space"
-                    app:layout_constraintHorizontal_bias="0.17"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_station_score"
-                    app:layout_constraintVertical_bias="0.0" />
+                    <TextView
+                        android:id="@+id/tv_dc_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@{viewModel.dcNumStr}"
+                        android:textStyle="bold"
+                        tools:text="3" />
 
-                <TextView
-                    android:id="@+id/tv_dc_num"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_dc_num"
+                        android:text="@string/dc_sum"
+                        android:textSize="11sp"
+                        android:layout_centerHorizontal="true"/>
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.dcNumStr}"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/space"
-                    app:layout_constraintHorizontal_bias="0.80"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.30"
-                    tools:ignore="MissingConstraints"
-                    tools:text="3" />
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/tv_ac_num"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tv_ac_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="12dp"
+                        android:text="@{viewModel.acNumStr}"
+                        android:textStyle="bold"
+                        tools:text="3" />
+
+                    <TextView
+                        android:id="@+id/textView13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_ac_num"
+                        android:text="@string/ac_sum"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="11sp" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@{viewModel.acNumStr}"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.20"
-                    app:layout_constraintStart_toEndOf="@+id/space"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.30"
-                    tools:ignore="MissingConstraints"
-                    tools:text="3" />
+                    android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/textView12"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="直流总数"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/space"
-                    app:layout_constraintHorizontal_bias="0.887"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_dc_num"
-                    app:layout_constraintVertical_bias="0.0" />
+                    <LinearLayout
+                        android:id="@+id/electric_charge_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_centerHorizontal="true">
 
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="交流总数"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.222"
-                    app:layout_constraintStart_toEndOf="@+id/space"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_ac_num"
-                    app:layout_constraintVertical_bias="0.0" />
+                        <TextView
+                            android:id="@+id/tv_electric_charge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.electricCharge}"
+                            android:textStyle="bold"
+                            tools:text="0.88" />
 
-                <TextView
-                    android:id="@+id/textView19"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="电费"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.732"
-                    app:layout_constraintStart_toEndOf="@+id/space"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_electric_charge"
-                    app:layout_constraintVertical_bias="0.0"
-                    tools:ignore="MissingConstraints" />
+                        <TextView
+                            android:id="@+id/textView16"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/money_unit"
+                            android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/tv_electric_charge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="57dp"
-                    android:text="@{viewModel.electricCharge}"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.60"
-                    app:layout_constraintStart_toEndOf="@+id/space"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.30"
-                    tools:text="0.88" />
+                        <TextView
+                            android:id="@+id/textView17"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:text="@string/per_degree"
+                            android:textSize="11sp" />
+                    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textView16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="￥"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_electric_charge"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/tv_ac_num"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.35"
-                    tools:ignore="MissingConstraints" />
-
-                <TextView
-                    android:id="@+id/textView17"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:text="/度"
-                    android:textSize="10sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/tv_electric_charge"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.35"
-                    tools:ignore="MissingConstraints" />
-
-                <Space
-                    android:id="@+id/space"
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textView19"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/electric_charge_layout"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/electric_charge_1"
+                        android:textSize="11sp" />
+                </RelativeLayout>
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
 
@@ -501,7 +476,6 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout3"
             android:layout_width="0dp"
@@ -541,7 +515,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_right" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -716,6 +689,7 @@
                 android:gravity="start|center_vertical"
                 android:text="@string/used_time_info"
                 app:layout_constraintStart_toEndOf="@+id/imageView12"
+                app:layout_constraintTop_toTopOf="@+id/imageView12"
                 tools:layout_editor_absoluteY="0dp" />
 
             <TextView
@@ -726,6 +700,7 @@
                 android:gravity="start|center_vertical"
                 android:text="@string/no_start_data"
                 app:layout_constraintStart_toEndOf="@+id/textView31"
+                app:layout_constraintTop_toTopOf="@+id/imageView12"
                 tools:layout_editor_absoluteY="0dp"
                 tools:text="本周使用3次" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -740,6 +715,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout6" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout7"
             android:layout_width="0dp"
@@ -839,10 +815,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

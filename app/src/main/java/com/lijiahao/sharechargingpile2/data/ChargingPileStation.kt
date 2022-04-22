@@ -14,5 +14,6 @@ data class ChargingPileStation(
     var userId: Int,
     var createTime: String,
     var updateTime: String,
-    val remark:String?
+    val remark:String?,
+    val score: Double = 0.0  // 该属性只在服务端中根据评价修改，客户端其他操作，即时修改该属性也无效。
 )

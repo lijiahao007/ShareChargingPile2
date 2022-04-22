@@ -1,6 +1,7 @@
 package com.lijiahao.sharechargingpile2.network.service
 
 import com.lijiahao.sharechargingpile2.data.*
+import com.lijiahao.sharechargingpile2.network.request.CommentRequest
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
 import com.lijiahao.sharechargingpile2.network.response.StationAllInfo
@@ -96,6 +97,5 @@ interface ChargingPileStationService {
         @Part("remotePicsUris") remotePicUris: List<String>,
         @Part newPics: List<MultipartBody.Part>  // 注意MultipartBody.Part 的Part在这里不需要标注value，具体的变量名是在MultipartBody构建的时候写入的
     ): ModifyStationResponse
-
 
 }

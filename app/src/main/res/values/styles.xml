@@ -66,4 +66,14 @@
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
     </style>
+
+
+    <!--自定义RatingBar Color-->
+    <style name="RatingBar_CustomColor" parent="@android:style/Widget.Holo.RatingBar.Indicator">
+        <!--Background Color-->
+        <item name="colorControlNormal">#D7D7D7</item>
+        <!--Progress Color-->
+        <item name="colorControlActivated">#F49800</item>
+    </style>
+
 </resources>

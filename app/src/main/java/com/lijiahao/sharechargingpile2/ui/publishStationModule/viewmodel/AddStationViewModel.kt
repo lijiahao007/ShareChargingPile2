@@ -125,7 +125,7 @@ class AddStationViewModel @Inject constructor(
             sharedPreferenceData.userId.toInt(),
             "",
             "",
-            remark
+            remark,
         )
     }
 }

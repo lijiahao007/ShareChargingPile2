@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.payFragment -> {navView.visibility = View.GONE}
                 R.id.orderPayFragment -> {navView.visibility = View.GONE}
                 R.id.orderDetailFragment -> {navView.visibility = View.GONE}
+                R.id.commentFragment -> {navView.visibility = View.GONE}
                 R.id.navigation_home -> {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 0.5F

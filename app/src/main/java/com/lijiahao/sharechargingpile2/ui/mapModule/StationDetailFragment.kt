@@ -19,6 +19,7 @@ import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
+import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.CommentViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,7 @@ class StationDetailFragment : Fragment() {
     private val stationId: Int by lazy {
         args.stationId
     }
+    private val commentViewModel:CommentViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -140,8 +142,19 @@ class StationDetailFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+        binding.ivToComment.setOnClickListener {
+            val action = StationDetailFragmentDirections.actionStationDetailFragmentToCommentListFragment(stationId)
+            findNavController().navigate(action)
+        }
 
+        loadComment()
+    }
 
+    private fun loadComment() {
+        commentViewModel.setStationId(stationId)
+        commentViewModel.score.observe(viewLifecycleOwner) {
+            binding.tvStationScore.text = String.format("%.1f", it)
+        }
     }
 
 

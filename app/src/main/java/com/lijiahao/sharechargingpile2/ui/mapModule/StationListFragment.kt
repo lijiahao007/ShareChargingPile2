@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -51,6 +52,7 @@ class StationListFragment : Fragment() {
         binding.stationRecyclerview.adapter = adapter
         adapter.submitList(ArrayList<StationListItemViewModel>())
         mapViewModel.isLocationReady.observe(viewLifecycleOwner) {
+            // TODO("这里的adapter.submit会让排序失效")
             val viewModelList = ArrayList<StationListItemViewModel>();
             mapViewModel.stationInfoMap.forEach{ (_, viewModel) ->
                 val curPos = LatLng(viewModel.station.latitude, viewModel.station.longitude)
@@ -73,11 +75,13 @@ class StationListFragment : Fragment() {
         inflater?.inflate(R.menu.station_list_sored_strategy, menu)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.opt_dis -> {
                 val list = adapter.currentList.sortedBy { it.distance }
                 adapter.submitList(list)
+                adapter.notifyDataSetChanged()
                 true
             }
             R.id.opt_score -> {

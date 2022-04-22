@@ -93,4 +93,9 @@ class NetworkModule {
         return retrofit2.create(OrderService::class.java)
     }
 
+    @Provides
+    fun provideCommentService(retrofit2: Retrofit): CommentService {
+        return retrofit2.create(CommentService::class.java)
+    }
+
 }

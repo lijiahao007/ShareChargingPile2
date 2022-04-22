@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_StationDetailFragment_to_electricChargeFragment"
             app:destination="@id/electricChargeFragment" />
+        <action
+            android:id="@+id/action_StationDetailFragment_to_commentListFragment"
+            app:destination="@id/commentListFragment" />
 
     </fragment>
     <fragment
@@ -69,6 +72,15 @@
         <argument
             android:name="stationId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentListFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.CommentListFragment"
+        android:label="CommentListFragment"
+        tools:layout="@layout/fragment_comment_list">
+        <argument
+            android:name="stationId"
+            app:argType="integer"/>
     </fragment>
 
 </navigation>
