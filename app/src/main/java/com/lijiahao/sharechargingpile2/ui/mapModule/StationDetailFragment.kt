@@ -51,7 +51,6 @@ class StationDetailFragment : Fragment() {
     private val stationId: Int by lazy {
         args.stationId
     }
-    private val commentViewModel:CommentViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -147,16 +146,8 @@ class StationDetailFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        loadComment()
-    }
 
-    private fun loadComment() {
-        commentViewModel.setStationId(stationId)
-        commentViewModel.score.observe(viewLifecycleOwner) {
-            binding.tvStationScore.text = String.format("%.1f", it)
-        }
     }
-
 
     private fun loadImg() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {

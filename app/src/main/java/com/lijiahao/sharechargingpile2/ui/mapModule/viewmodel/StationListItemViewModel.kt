@@ -47,6 +47,9 @@ class StationListItemViewModel(
     val acVisible = if (acNum > 0) VISIBLE else INVISIBLE
     val dcVisible = if (dcNum > 0) VISIBLE else INVISIBLE
     val parkFeeStr = station.parkFee.toString()
+    val scoreStr = station.score.toString()
+    val usedTimeStr = "总共被使用${station.usedTime.toString()}次"
+
 
     fun getDistanceStr():String {
         return BigDecimal((distance/1000).toDouble()).setScale(1, RoundingMode.HALF_UP).toString()// km单位

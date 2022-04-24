@@ -15,5 +15,6 @@ data class ChargingPileStation(
     var createTime: String,
     var updateTime: String,
     val remark:String?,
-    val score: Double = 0.0  // 该属性只在服务端中根据评价修改，客户端其他操作，即时修改该属性也无效。
+    val score: Double = 0.0,  // score & userdTime 属性的修改都放在了服务端。
+    val usedTime: Int = 0
 )

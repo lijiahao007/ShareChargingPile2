@@ -493,7 +493,6 @@ class ModifyStationFragment : Fragment() {
             // 3.5 校验数据是否符合规定
             if (!verify(stationInfoRequest)) return@setOnClickListener
 
-
             // 4. 获取剩余remotePics
             val remoteUrls = ArrayList(viewModel.stationPicRemoteUriList.value!!)
             // 4.1 取出remoteUrls中url=后面的内容摘出来

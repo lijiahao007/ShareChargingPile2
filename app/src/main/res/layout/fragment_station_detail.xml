@@ -149,7 +149,7 @@
 
         <TextView
             android:id="@+id/tv_station"
-            android:layout_width="27dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:gravity="start|center_vertical"
             android:text="@{viewModel.getDistanceStr()}"
@@ -204,7 +204,7 @@
                             android:id="@+id/tv_station_score"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/no_score"
+                            android:text="@{viewModel.scoreStr}"
                             android:textStyle="bold"
                             tools:text="4.5" />
 
@@ -698,7 +698,7 @@
                 android:layout_height="27dp"
                 android:layout_weight="1"
                 android:gravity="start|center_vertical"
-                android:text="@string/no_start_data"
+                android:text="@{viewModel.usedTimeStr}"
                 app:layout_constraintStart_toEndOf="@+id/textView31"
                 app:layout_constraintTop_toTopOf="@+id/imageView12"
                 tools:layout_editor_absoluteY="0dp"

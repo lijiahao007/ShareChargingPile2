@@ -150,7 +150,6 @@ class LocationMapFragment : Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
             Log.i("LocationMapFragment", "address:$address")
             geocodeSearch.getFromLocationNameAsyn(GeocodeQuery(address, "shantou"))
-
         }
 
         geocodeSearch.setOnGeocodeSearchListener(object : GeocodeSearch.OnGeocodeSearchListener {

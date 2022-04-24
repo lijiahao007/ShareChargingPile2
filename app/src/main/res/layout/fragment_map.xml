@@ -4,52 +4,82 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.mapModule.MapActivity">
-
-        <com.amap.api.maps.MapView
-            android:id="@+id/map_view"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:context=".ui.mapModule.MapActivity">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/map_location_btn"
-            android:elevation="20dp"
-            app:backgroundTint="@color/white"
-            app:fabCustomSize="@dimen/location_btn_size"
-            app:pressedTranslationZ="2dp"
-            app:srcCompat="@drawable/ic_location_button_img" />
+            <com.amap.api.maps.MapView
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_insert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/map_location_btn"
-            android:elevation="20dp"
-            android:visibility="gone"
-            app:backgroundTint="@color/white"
-            app:fabCustomSize="@dimen/location_btn_size"
-            app:pressedTranslationZ="2dp"
-            app:srcCompat="@drawable/ic_default_avatar" />
-
-
-        <!--        这里是 BottomSheet的样式-->
-        <include
-            android:id="@+id/bottom_sheet_include"
-            layout="@layout/map_activity_bottom_sheet"
-            app:elevation="5dp" />
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center"
+                android:orientation="vertical">
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/map_location_btn"
+                    android:elevation="20dp"
+                    app:backgroundTint="@color/white"
+                    app:fabCustomSize="@dimen/location_btn_size"
+                    app:pressedTranslationZ="2dp"
+                    app:srcCompat="@drawable/ic_location_button_img" />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:backgroundTint="@color/white"
+                    app:fabCustomSize="@dimen/location_btn_size"
+                    app:pressedTranslationZ="2dp"
+                    android:elevation="20dp"
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/ic_search"
+                    />
+            </LinearLayout>
 
 
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_insert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|top"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/map_location_btn"
+                android:elevation="20dp"
+                android:visibility="gone"
+                app:backgroundTint="@color/white"
+                app:fabCustomSize="@dimen/location_btn_size"
+                app:pressedTranslationZ="2dp"
+                app:srcCompat="@drawable/ic_default_avatar" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tf_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/input_address"
+                app:startIconDrawable="@drawable/ic_find"
+                app:endIconDrawable="@drawable/ic_to"
+                app:endIconMode="custom"
+                app:boxBackgroundColor="@color/white"
+                android:layout_gravity="bottom"
+                android:visibility="visible">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--        这里是 BottomSheet的样式-->
+            <include
+                android:id="@+id/bottom_sheet_include"
+                layout="@layout/map_activity_bottom_sheet"
+                app:elevation="5dp" />
+
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

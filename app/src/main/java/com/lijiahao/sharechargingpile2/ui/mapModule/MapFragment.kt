@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import androidx.navigation.findNavController
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.maps.*
 import com.amap.api.maps.model.*
+import com.amap.api.services.core.AMapException
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.ServiceSettings
 import com.amap.api.services.geocoder.*
@@ -30,6 +32,7 @@ import com.lijiahao.sharechargingpile2.ui.mapModule.listener.BaseOnRouteSearchLi
 import com.lijiahao.sharechargingpile2.ui.mapModule.observer.MapViewObserver
 import com.lijiahao.sharechargingpile2.ui.mapModule.overlay.DrivingRouteOverlay
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
+import com.lijiahao.sharechargingpile2.utils.SoftKeyBoardUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,7 +59,7 @@ class MapFragment : Fragment() {
     private lateinit var geocodeSearch: GeocodeSearch // 地址 <-> 经纬度 转换工具
     private var firstFlag = true
     private var isStationMarkerShowed: Boolean = true
-    private lateinit var mapViewObserver:MapViewObserver
+    private lateinit var mapViewObserver: MapViewObserver
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -132,7 +135,6 @@ class MapFragment : Fragment() {
         aMap.addOnMyLocationChangeListener { location ->
             // 获取当前定位蓝点位置信息
             viewModel.bluePointPos = LatLng(location.latitude, location.longitude)
-            viewModel.locationReady()
             if (firstFlag) {
                 aMap.animateCamera(CameraUpdateFactory.newLatLng(viewModel.bluePointPos))
                 firstFlag = false
@@ -152,6 +154,7 @@ class MapFragment : Fragment() {
                     setCenterMarkerPosition(p0.target)
                 }
                 viewModel.projection = aMap.projection
+                viewModel.locationReady()
                 Log.i("Projection", "projection = ${viewModel.projection}")
                 Log.i("Projection", "visibleRegion = ${viewModel.projection.visibleRegion}")
                 Log.i(
@@ -195,6 +198,54 @@ class MapFragment : Fragment() {
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(viewModel.bluePointPos, 12f))
             Log.i("AMapLocation", "FAB click")
         }
+
+        // 查询地点按钮
+        binding.btnSearch.setOnClickListener {
+            // 1. 隐藏底部BottomSheet
+            bottomSheetBehavior.isHideable = true
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            // 2. 显示搜索文本框
+            binding.tfSearch.visibility = View.VISIBLE
+            binding.tfSearch.setEndIconOnClickListener {
+                SoftKeyBoardUtils.hideKeyBoard(requireActivity())
+
+                val address = binding.tfSearch.editText?.text.toString()
+
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val resList =
+                            geocodeSearch.getFromLocationName(GeocodeQuery(address, "shantou"))
+                        val loc = resList[0]
+                        withContext(Dispatchers.Main) {
+                            aMap.animateCamera(
+                                CameraUpdateFactory.newLatLng(
+                                    LatLng(
+                                        loc.latLonPoint.latitude,
+                                        loc.latLonPoint.longitude
+                                    )
+                                )
+                            )
+                            binding.tfSearch.visibility = View.GONE
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                            bottomSheetBehavior.isHideable = false
+                            binding.tfSearch.editText?.text?.clear()
+                        }
+                    } catch (e: AMapException) {
+                        e.printStackTrace()
+                        Log.e(TAG, "AMap 地址->定位 获取失败, address=$address")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "无该地址", Toast.LENGTH_SHORT).show()
+                            binding.tfSearch.editText?.text?.clear()
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        // 测试插入按钮
         binding.btnInsert.setOnClickListener {
             mapCenterMarker?.position?.let {
                 lifecycleScope.launch(Dispatchers.IO) {
