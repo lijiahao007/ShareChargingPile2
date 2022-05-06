@@ -7,8 +7,6 @@ import android.os.IBinder
 import android.util.Log
 import com.google.gson.Gson
 import com.lijiahao.sharechargingpile2.dao.MessageDao
-import com.lijiahao.sharechargingpile2.data.ImageMsgBody
-import com.lijiahao.sharechargingpile2.data.MsgType
 import com.lijiahao.sharechargingpile2.di.annotation.WebSocketConnect
 import com.lijiahao.sharechargingpile2.network.request.MessageRequest
 import com.lijiahao.sharechargingpile2.utils.MESSAGE_ARRIVED_BROADCAST_ACTION

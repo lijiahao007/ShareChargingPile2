@@ -10,8 +10,6 @@
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.StationListFragment"
         android:label="StationListFragment"
         tools:layout="@layout/fragment_station_list">
-
-
         <action
             android:id="@+id/action_StationListFragment_to_StationDetailFragment"
             app:destination="@id/StationDetailFragment"
@@ -20,6 +18,9 @@
                 android:name="stationId"
                 android:defaultValue="-1" />
         </action>
+        <action
+            android:id="@+id/action_StationListFragment_to_screenFragment"
+            app:destination="@id/screenFragment" />
     </fragment>
 
     <fragment
@@ -43,8 +44,11 @@
         <action
             android:id="@+id/action_StationDetailFragment_to_commentListFragment"
             app:destination="@id/commentListFragment" />
-
+        <action
+            android:id="@+id/action_StationDetailFragment_to_bookPileFragment"
+            app:destination="@id/bookPileFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/chargingPileListFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ChargingPileListFragment"
@@ -53,8 +57,8 @@
         <argument
             android:name="stationId"
             app:argType="integer" />
-
     </fragment>
+
     <fragment
         android:id="@+id/openTimeFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.OpenTimeFragment"
@@ -64,6 +68,7 @@
             android:name="stationId"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/electricChargeFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ElectricChargeFragment"
@@ -73,6 +78,7 @@
             android:name="stationId"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/commentListFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.CommentListFragment"
@@ -80,7 +86,13 @@
         tools:layout="@layout/fragment_comment_list">
         <argument
             android:name="stationId"
-            app:argType="integer"/>
+            app:argType="integer" />
     </fragment>
+
+    <fragment
+        android:id="@+id/screenFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ScreenFragment"
+        android:label="ScreenFragment"
+        tools:layout="@layout/fragment_screen" />
 
 </navigation>

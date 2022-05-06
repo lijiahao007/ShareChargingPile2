@@ -1,12 +1,9 @@
 package com.lijiahao.sharechargingpile2.ui.mainModule.notifications.adapter
 
-import android.text.InputType
 import android.text.method.KeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter

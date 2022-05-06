@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
-
+    <!--    app:startDestination="@+id/testFragment"-->
+    <!--    app:startDestination="@+id/navigation_home"-->
     <fragment
         android:id="@+id/pileUsingFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.PileUsingFragment"
@@ -138,7 +139,7 @@
         android:id="@+id/orderDetailFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderDetailFragment"
         android:label="OrderDetailFragment"
-        tools:layout = "@layout/fragment_order_detail">
+        tools:layout="@layout/fragment_order_detail">
         <argument
             android:name="stationId"
             app:argType="string" />
@@ -161,4 +162,9 @@
             android:name="pileId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.TestFragment"
+        android:label="TestFragment"
+        tools:layout="@layout/fragment_test" />
 </navigation>

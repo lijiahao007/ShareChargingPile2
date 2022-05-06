@@ -5,14 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigator
-import androidx.navigation.fragment.FragmentNavigator
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.R
@@ -21,7 +16,6 @@ import com.lijiahao.sharechargingpile2.data.Order
 import com.lijiahao.sharechargingpile2.databinding.ItemOrderDividerBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemOrderListBinding
 import com.lijiahao.sharechargingpile2.ui.QRCodeModule.GenerateOrderViewModel
-import com.lijiahao.sharechargingpile2.ui.QRCodeModule.PileUsingFragment
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.MyOrderFragment
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderListFragment
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.OrderListFragmentDirections

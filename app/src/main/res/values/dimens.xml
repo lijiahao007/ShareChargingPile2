@@ -13,4 +13,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="order_text_view_height">30dp</dimen>
+    <dimen name="book_time_width">40dp</dimen>
+    <dimen name="book_time_column_width">40dp</dimen>
+    <dimen name="book_time_height">200dp</dimen>
+    <dimen name="book_time_margin">0dp</dimen>
 </resources>

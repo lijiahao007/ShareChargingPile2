@@ -1,13 +1,12 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentElectricChargeBinding
 import com.lijiahao.sharechargingpile2.ui.mapModule.adapter.ElectricChargeAdapter
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel

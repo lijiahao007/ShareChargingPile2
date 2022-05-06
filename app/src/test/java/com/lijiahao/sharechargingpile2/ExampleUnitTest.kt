@@ -2,10 +2,12 @@ package com.lijiahao.sharechargingpile2
 
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.OpenTime
+import com.lijiahao.sharechargingpile2.data.TimeBarData
 import com.lijiahao.sharechargingpile2.data.TokenInfo
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.time.LocalTime
 
 /**
  * Example local unit test, which will execute on the development machine (host).

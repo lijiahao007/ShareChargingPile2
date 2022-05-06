@@ -2,17 +2,9 @@ package com.lijiahao.sharechargingpile2.ui.QRCodeModule
 
 import android.Manifest
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import com.huawei.hms.hmsscankit.ScanUtil
-import com.huawei.hms.ml.scan.HmsScan
+import androidx.appcompat.app.AppCompatActivity
 import com.lijiahao.sharechargingpile2.R
-import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
 import com.lijiahao.sharechargingpile2.databinding.ActivityQrcodeBinding
 import com.lijiahao.sharechargingpile2.utils.PermissionTool
 import dagger.hilt.android.AndroidEntryPoint

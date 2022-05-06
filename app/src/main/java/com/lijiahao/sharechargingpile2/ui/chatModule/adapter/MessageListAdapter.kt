@@ -7,7 +7,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.lijiahao.sharechargingpile2.data.Message
 import com.lijiahao.sharechargingpile2.data.MessageListItem
 import com.lijiahao.sharechargingpile2.data.MsgType
 import com.lijiahao.sharechargingpile2.data.TextMsgBody

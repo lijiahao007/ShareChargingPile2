@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.amap.api.maps.Projection
 import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.LatLngBounds
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,7 +20,7 @@ class MapViewModel @Inject constructor(
 ) : ViewModel() {
     var mapCenterPos: LatLng = LatLng(0.0, 0.0) // 屏幕中心位置
     var bluePointPos: LatLng = LatLng(0.0, 0.0) // 定位蓝点位置（当前位置, 在addOnMyLocationChangeListener 中赋予值）
-    lateinit var projection: Projection
+    val projection: MutableLiveData<Projection> = MutableLiveData()
     var stationList: List<ChargingPileStation> = ArrayList<ChargingPileStation>()
     var stationTagMap: Map<String, List<Tags>> = HashMap<String, List<Tags>>()
     var stationPileMap: Map<String, List<ChargingPile>> = HashMap<String, List<ChargingPile>>()
@@ -27,7 +29,7 @@ class MapViewModel @Inject constructor(
     var stationElectricChargePeriodMap: Map<String, List<ElectricChargePeriod>> = HashMap()
     private val _isRemoteDataReady: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val isRemoteDataReady: LiveData<Boolean> = _isRemoteDataReady
-    private val _isLocationReady:MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _isLocationReady: MutableLiveData<Boolean> = MutableLiveData(false)
     val isLocationReady: LiveData<Boolean> = _isLocationReady
 
 
@@ -35,8 +37,59 @@ class MapViewModel @Inject constructor(
     val stationInfoMap: HashMap<String, StationListItemViewModel> =
         HashMap<String, StationListItemViewModel>()
 
-    val naviEndPoint:MutableLiveData<LatLng> = MutableLiveData()
-    val finishNavi:MutableLiveData<Boolean> = MutableLiveData()
+    private val conditions: ArrayList<Pair<Int, (StationListItemViewModel) -> Boolean>> =
+        ArrayList()
+
+    fun addCondition(condition: Pair<Int, (StationListItemViewModel) -> Boolean>) { // lambda返回某个StationListItemViewModel是否应该显示在列表中
+        if (conditions.find { it.first == condition.first } == null) {
+            conditions.add(condition)
+        }
+    }
+
+    fun removeCondition(id: Int) {
+        conditions.removeIf {
+            it.first == id
+        }
+    }
+
+    fun getConditionCheckId(): List<Int> {
+        return conditions.map {
+            it.first
+        }
+    }
+
+    val stationInfoMapInProjection: LiveData<List<StationListItemViewModel>> =
+        projection.switchMap { projection ->
+            liveData {
+                val list = ArrayList<StationListItemViewModel>()
+                val bound = projection.visibleRegion.latLngBounds
+                stationInfoMap.forEach { (_, stationListItemViewModel) ->
+                    var flag = true
+                    run {
+                        conditions.forEach { pair ->
+                            val checkFun = pair.second
+                            flag = checkFun(stationListItemViewModel)
+                            Log.e(TAG, "condition = ${pair.first}  stationId = ${stationListItemViewModel.stationId}, flag=$flag  res = ${stationListItemViewModel.piles.find { it.electricType == "直流" } != null}")
+                            if(!flag) {
+                                return@run
+                            }
+                        }
+                    }
+                    if (flag && isInBounds(bound, stationListItemViewModel.station.latitude, stationListItemViewModel.station.longitude)) {
+                        list.add(stationListItemViewModel)
+                    }
+                }
+
+                list.forEach {
+                    Log.e(TAG, "final list = ${it.stationId}")
+                }
+                emit(list)
+                locationReady()
+            }
+        }
+
+    val naviEndPoint: MutableLiveData<LatLng> = MutableLiveData()
+    val finishNavi: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun dataReady() {
@@ -117,7 +170,7 @@ class MapViewModel @Inject constructor(
             val openDayTask = async {
                 try {
                     val stationOpenDay = chargingPileStationService.getStationOpenDay()
-                    stationOpenDayMap=  stationOpenDay
+                    stationOpenDayMap = stationOpenDay
                     stationOpenDay.forEach { (id, list) ->
                         Log.i(TAG, "id=$id, $list")
                     }
@@ -129,7 +182,8 @@ class MapViewModel @Inject constructor(
 
             val electricChargeTask = async {
                 try {
-                    val stationElectricChargePeriod = chargingPileStationService.getStationElectricCharge()
+                    val stationElectricChargePeriod =
+                        chargingPileStationService.getStationElectricCharge()
 
                     stationElectricChargePeriod.forEach { key, value ->
                         value.forEach { period ->
@@ -143,7 +197,10 @@ class MapViewModel @Inject constructor(
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Log.e("openTimeTask", "网络请求出错 chargingPileStationService.getStationElectricCharges")
+                    Log.e(
+                        "openTimeTask",
+                        "网络请求出错 chargingPileStationService.getStationElectricCharges"
+                    )
                 }
             }
 
@@ -160,13 +217,28 @@ class MapViewModel @Inject constructor(
                 val piles = stationPileMap[id] ?: ArrayList<ChargingPile>()
                 val openTimes = stationOpenTimeMap[id] ?: ArrayList<OpenTime>()
                 val openDays = stationOpenDayMap[id] ?: ArrayList<OpenDayInWeek>()
-                val electricCharges = stationElectricChargePeriodMap[id]?: ArrayList()
-                val itemViewModel = StationListItemViewModel(station, tags, piles, openTimes, openDays, electricCharges,0.0f)
+                val electricCharges = stationElectricChargePeriodMap[id] ?: ArrayList()
+                val itemViewModel = StationListItemViewModel(
+                    station,
+                    tags,
+                    piles,
+                    openTimes,
+                    openDays,
+                    electricCharges,
+                    0.0f
+                )
                 stationInfoMap[id] = itemViewModel
             }
             dataReady() // 准备好了
 
         }
+    }
+
+
+    private fun isInBounds(latLngBounds: LatLngBounds, lat: Double, lng: Double): Boolean {
+        val northEast = latLngBounds.northeast
+        val southWest = latLngBounds.southwest
+        return lat < northEast.latitude && lat > southWest.latitude && lng < northEast.longitude && lng > southWest.longitude
     }
 
     companion object {

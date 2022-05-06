@@ -1,6 +1,5 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule
 
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,24 +8,19 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.format.DateUtils
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.drawToBitmap
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import com.google.gson.Gson
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.FragmentPileQRCodeGenerateBinding
 import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.utils.GlideUtils
-import com.lijiahao.sharechargingpile2.utils.QRCodeUtils
 import java.io.File
 import java.io.IOException
-import java.io.OutputStream
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 

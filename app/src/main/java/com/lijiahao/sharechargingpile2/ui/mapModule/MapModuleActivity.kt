@@ -2,9 +2,9 @@ package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.Manifest
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapModuleBinding

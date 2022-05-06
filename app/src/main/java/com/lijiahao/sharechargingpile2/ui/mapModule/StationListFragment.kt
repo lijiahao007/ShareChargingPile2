@@ -2,6 +2,7 @@ package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -39,7 +40,6 @@ class StationListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         initUI()
         return binding.root;
     }
@@ -51,34 +51,35 @@ class StationListFragment : Fragment() {
         binding.sortMenu.setOnClickListener {
             it.performLongClick()
         }
+
+        binding.tvToScreen.setOnClickListener {
+            val action = StationListFragmentDirections.actionStationListFragmentToScreenFragment()
+            findNavController().navigate(action)
+        }
+
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initRecyclerView() {
         binding.stationRecyclerview.adapter = adapter
+
         adapter.submitList(ArrayList<StationListItemViewModel>())
 
-        mapViewModel.isRemoteDataReady.observe(viewLifecycleOwner) {
-            val viewModelList = ArrayList<StationListItemViewModel>();
-            mapViewModel.stationInfoMap.forEach { (_, value) ->
-                viewModelList.add(value)
-            }
-            adapter.submitList(viewModelList)
+        mapViewModel.stationInfoMapInProjection.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
         }
 
         mapViewModel.isLocationReady.observe(viewLifecycleOwner) {
-            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                val currentList = adapter.currentList
-                currentList.forEach { viewModel ->
-                    val curPos = LatLng(viewModel.station.latitude, viewModel.station.longitude)
-                    val distance =
-                        AMapUtils.calculateLineDistance(curPos, mapViewModel.mapCenterPos)
-                    viewModel.distance = distance
-                }
-                withContext(Dispatchers.Main) {
-                    adapter.submitList(currentList)
-                    adapter.notifyItemRangeChanged(0, currentList.size)
-                }
+            val currentList = adapter.currentList
+            Log.e(TAG, "location cal distance: currentLi $currentList")
+            currentList.forEach { viewModel ->
+                val curPos = LatLng(viewModel.station.latitude, viewModel.station.longitude)
+                val distance =
+                    AMapUtils.calculateLineDistance(curPos, mapViewModel.mapCenterPos)
+                viewModel.distance = distance
             }
+            adapter.submitList(currentList)
+            adapter.notifyItemRangeChanged(0, currentList.size)
         }
     }
 

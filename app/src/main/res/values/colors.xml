@@ -19,7 +19,10 @@
     <color name="sign_out">#D7F81414</color>
     <color name="user_info_background">#F5F5F5</color>
     <color name="pay_money_red">#F44336</color>
-
+    <color name="green">#2FCD35</color>
+    <color name="red">#F44336</color>
+    <color name="popup_window_background">#646464</color>
+    <color name="blue">#0D47A1</color>
 
 
 </resources>

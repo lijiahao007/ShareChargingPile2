@@ -28,7 +28,7 @@ class NetworkModule {
     @HttpConnect
     @Provides
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
-        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         return OkHttpClient.Builder()
             .addInterceptor(logger) // 添加日志拦截器
             .addNetworkInterceptor(TokenHeaderInterceptor(context)) // 给请求头添加token
@@ -41,7 +41,7 @@ class NetworkModule {
     fun provideWebSocketOkHttpClient(
         @ApplicationContext context: Context,
     ): OkHttpClient {
-        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         return OkHttpClient.Builder()
             .addInterceptor(logger)
             .addNetworkInterceptor(TokenHeaderInterceptor(context))
@@ -96,6 +96,11 @@ class NetworkModule {
     @Provides
     fun provideCommentService(retrofit2: Retrofit): CommentService {
         return retrofit2.create(CommentService::class.java)
+    }
+
+    @Provides
+    fun provideAppointmentService(retrofit2: Retrofit): AppointmentService {
+        return retrofit2.create(AppointmentService::class.java)
     }
 
 }

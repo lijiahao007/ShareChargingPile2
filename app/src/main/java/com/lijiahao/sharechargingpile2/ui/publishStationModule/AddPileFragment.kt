@@ -2,29 +2,23 @@ package com.lijiahao.sharechargingpile2.ui.publishStationModule
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
-import androidx.room.util.UUIDUtil
-import com.amap.api.maps.CameraUpdateFactory
-import com.amap.api.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.databinding.FragmentAddPileBinding
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.adapter.ChargingPileListAdapter
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStationViewModel
-import com.lijiahao.sharechargingpile2.utils.QRCodeUtils
 import com.lijiahao.sharechargingpile2.utils.SoftKeyBoardUtils
-import java.lang.NumberFormatException
 import java.util.*
 import kotlin.collections.ArrayList
 

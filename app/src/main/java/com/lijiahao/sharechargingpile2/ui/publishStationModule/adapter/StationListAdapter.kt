@@ -1,24 +1,17 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule.adapter
 
-import android.content.Context
-import android.nfc.Tag
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ChargingPileStation
-import com.lijiahao.sharechargingpile2.databinding.FragmentStationManagerBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemStationManagerBinding
-import com.lijiahao.sharechargingpile2.ui.publishStationModule.StationManagerFragment
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.StationManagerFragmentDirections
 
 class StationListAdapter(val fragment: Fragment) :

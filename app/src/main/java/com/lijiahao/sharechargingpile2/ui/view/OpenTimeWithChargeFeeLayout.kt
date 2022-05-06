@@ -2,13 +2,11 @@ package com.lijiahao.sharechargingpile2.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
-import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.utils.TimeUtils
 
 class OpenTimeWithChargeFeeLayout(
@@ -16,6 +14,8 @@ class OpenTimeWithChargeFeeLayout(
     attrs: AttributeSet? = null,
     defStyleAttr:Int = 0 // 0 表示使用Style
 ) : LinearLayout(mContext, attrs, defStyleAttr) {
+
+
 
     init{
         inflate()

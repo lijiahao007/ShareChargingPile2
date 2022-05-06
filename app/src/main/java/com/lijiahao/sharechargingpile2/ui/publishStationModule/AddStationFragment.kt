@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
@@ -31,19 +31,16 @@ import com.google.android.material.timepicker.TimeFormat
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.databinding.FragmentAddStationBinding
-import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
+import com.lijiahao.sharechargingpile2.repository.ChargingPileStationRepository
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStationViewModel
 import com.lijiahao.sharechargingpile2.utils.FileUtils
-import com.lijiahao.sharechargingpile2.utils.FileUtils.Companion.getLocalPicsFromUris
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
-import java.lang.NumberFormatException
 import javax.inject.Inject
 
 @AndroidEntryPoint

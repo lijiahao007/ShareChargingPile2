@@ -3,19 +3,17 @@ package com.lijiahao.sharechargingpile2.ui.QRCodeModule
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.huawei.hms.hmsscankit.ScanUtil
-import com.lijiahao.sharechargingpile2.databinding.FragmentQRCodeScanBinding
 import com.huawei.hms.ml.scan.HmsScan
-
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions
 import com.lijiahao.sharechargingpile2.data.QRCodeContent
+import com.lijiahao.sharechargingpile2.databinding.FragmentQRCodeScanBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

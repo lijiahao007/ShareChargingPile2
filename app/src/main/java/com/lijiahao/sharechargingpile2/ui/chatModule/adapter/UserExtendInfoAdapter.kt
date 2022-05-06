@@ -1,19 +1,13 @@
 package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
-import android.text.InputType
-import android.text.method.KeyListener
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.UserExtendInfo
-import com.lijiahao.sharechargingpile2.databinding.ItemUserExtendInfoBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemUserExtendInfoOnlyReadBinding
 
 class UserExtendInfoAdapter :

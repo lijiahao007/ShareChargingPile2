@@ -3,12 +3,12 @@ package com.lijiahao.sharechargingpile2.ui.mapModule
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -60,6 +60,8 @@ class MapFragment : Fragment() {
     private var firstFlag = true
     private var isStationMarkerShowed: Boolean = true
     private lateinit var mapViewObserver: MapViewObserver
+    private lateinit var prevLatLngBounds: LatLngBounds
+    private var isAfterGetStationList:Boolean = false
 
     // AMap 隐私相关授权
     private fun privacyInit() {
@@ -87,8 +89,6 @@ class MapFragment : Fragment() {
         bottomSheetBehavior.saveFlags = BottomSheetBehavior.SAVE_ALL
         mapView.onCreate(savedInstanceState)
         init()
-
-        Log.i(TAG, "binding=$binding, 初始化完成了")
         return binding.root
     }
 
@@ -126,6 +126,7 @@ class MapFragment : Fragment() {
         // 6. 使用 MapViewObserver 来管理MapView的生命周期
         mapViewObserver = MapViewObserver(mapView)
         viewLifecycleOwner.lifecycle.addObserver(mapViewObserver)
+
     }
 
     // 设置和AMap地图相关的Listener
@@ -138,6 +139,7 @@ class MapFragment : Fragment() {
             if (firstFlag) {
                 aMap.animateCamera(CameraUpdateFactory.newLatLng(viewModel.bluePointPos))
                 firstFlag = false
+                viewModel.projection.value = aMap.projection
             }
         }
 
@@ -153,16 +155,30 @@ class MapFragment : Fragment() {
                 if (p0 != null) {
                     setCenterMarkerPosition(p0.target)
                 }
-                viewModel.projection = aMap.projection
-                viewModel.locationReady()
-                Log.i("Projection", "projection = ${viewModel.projection}")
-                Log.i("Projection", "visibleRegion = ${viewModel.projection.visibleRegion}")
-                Log.i(
-                    "Projection",
-                    "latLngBounds = ${viewModel.projection.visibleRegion.latLngBounds}"
-                )
+//                if (viewModel.projection.value == null || prevLatLngBounds != aMap.projection.visibleRegion.latLngBounds) {
+//                    prevLatLngBounds = aMap.projection.visibleRegion.latLngBounds
+//                    viewModel.projection.value = aMap.projection
+//                }
+                viewModel.projection.value = aMap.projection
+
+                viewModel.projection.value?.let {
+                    Log.i("Projection", "projection = $it")
+                    Log.i("Projection", "visibleRegion = ${it.visibleRegion}")
+                    Log.i(
+                        "Projection",
+                        "latLngBounds = ${it.visibleRegion.latLngBounds}"
+                    )
+                }
+                if (isAfterGetStationList) {
+                    viewModel.locationReady()
+                }
             }
         })
+
+        // 2.1 监视ViewModel 在Projection之后再更新位置
+        viewModel.stationInfoMapInProjection.observe(viewLifecycleOwner) {
+            isAfterGetStationList = true
+        }
 
         // 3. AMap.OnMapLoadedListener (最好这时才使用AMap和地图相关的属性)
         aMap.setOnMapLoadedListener {
@@ -242,7 +258,11 @@ class MapFragment : Fragment() {
                 }
             }
 
-
+            binding.tfSearch.setStartIconOnClickListener {
+                binding.tfSearch.visibility = View.GONE
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.isHideable = false
+            }
         }
 
         // 测试插入按钮
@@ -428,7 +448,7 @@ class MapFragment : Fragment() {
         } else {
             mapCenterMarker?.position = latLng
         }
-        Log.i("CenterMarker", "纬度latitude:${latLng.latitude}, 经度longitude:${latLng.longitude}")
+//        Log.i("CenterMarker", "纬度latitude:${latLng.latitude}, 经度longitude:${latLng.longitude}")
         viewModel.mapCenterPos = latLng
     }
 
@@ -455,7 +475,6 @@ class MapFragment : Fragment() {
         super.onDestroyView()
         mapView.onDestroy()
         viewLifecycleOwner.lifecycle.removeObserver(mapViewObserver)
-
     }
 
     companion object {

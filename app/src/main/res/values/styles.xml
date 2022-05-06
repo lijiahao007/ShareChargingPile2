@@ -10,9 +10,10 @@
     </style>
 
 
-<!--    Login in 界面用到的-->
+    <!--    Login in 界面用到的-->
     <style name="EditText">
-        <item name="android:digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</item>
+        <item name="android:digits">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+        </item>
         <item name="android:textSize">14sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:drawablePadding">8dp</item>
@@ -29,7 +30,7 @@
     </style>
 
     <!-- Color of disabled elements, always overlaying the background color or itself -->
-    <attr name="colorDisable" format="color"/>
+    <attr name="colorDisable" format="color" />
 
     <style name="Button">
         <item name="android:drawablePadding">16dp</item>
@@ -49,8 +50,9 @@
     </style>
 
 
-<!--    Sign Up界面用到的-->
-    <style name="TextView"/>
+    <!--    Sign Up界面用到的-->
+    <style name="TextView" />
+
     <style name="TextView.Heading">
         <item name="android:textColor">?android:colorPrimary</item>
         <item name="android:textStyle">bold</item>
@@ -59,7 +61,7 @@
     </style>
 
 
-<!--    支付界面RadioButton自定义样式-->
+    <!--    支付界面RadioButton自定义样式-->
     <style name="PayWayRadioButton">
         <item name="background">@drawable/radiobutton_selector</item>
 
@@ -74,6 +76,12 @@
         <item name="colorControlNormal">#D7D7D7</item>
         <!--Progress Color-->
         <item name="colorControlActivated">#F49800</item>
+    </style>
+
+    <!--    动画-->
+    <style name="anim_pop" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/anim_pop_show</item>
+        <item name="android:windowExitAnimation">@anim/anim_pop_hide</item>
     </style>
 
 </resources>

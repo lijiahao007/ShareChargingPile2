@@ -18,7 +18,7 @@ const val WEB_SOCKET_NORMAL_CLOSE_CODE = 1000 // webSocket完成任务正常关�
 const val MESSAGE_ARRIVED_BROADCAST_ACTION = "Broadcast Message Arrived Action"
 const val MESSAGE_BROADCAST_BUNDLE = "message"
 
-
+//
 //const val SERVER_BASE_DOMAIN_PORT="10.0.2.2:30000"
 //const val SERVER_BASE_HTTP_URL="http://$SERVER_BASE_DOMAIN_PORT/"
 //const val SERVER_BASE_WEB_SOCKET_URL="ws://$SERVER_BASE_DOMAIN_PORT/publishMessage/"

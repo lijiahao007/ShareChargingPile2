@@ -1,11 +1,8 @@
 package com.lijiahao.sharechargingpile2.dao
 
-import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.lijiahao.sharechargingpile2.data.*
-import java.io.*
-import java.util.*
 
 class Converters {
 

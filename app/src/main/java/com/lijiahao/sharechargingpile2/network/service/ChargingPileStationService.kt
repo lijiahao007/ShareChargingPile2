@@ -1,7 +1,6 @@
 package com.lijiahao.sharechargingpile2.network.service
 
 import com.lijiahao.sharechargingpile2.data.*
-import com.lijiahao.sharechargingpile2.network.request.CommentRequest
 import com.lijiahao.sharechargingpile2.network.request.StationInfoRequest
 import com.lijiahao.sharechargingpile2.network.response.ModifyStationResponse
 import com.lijiahao.sharechargingpile2.network.response.StationAllInfo

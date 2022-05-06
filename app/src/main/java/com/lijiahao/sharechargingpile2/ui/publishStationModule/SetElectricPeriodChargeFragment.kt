@@ -1,16 +1,15 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.databinding.FragmentSetElectricPeriodChargeBinding
 import com.lijiahao.sharechargingpile2.exception.TimeNotCoverAllDayException
@@ -19,7 +18,6 @@ import com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel.AddStat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.sql.Time
 import java.time.LocalTime
 
 class SetElectricPeriodChargeFragment : Fragment() {

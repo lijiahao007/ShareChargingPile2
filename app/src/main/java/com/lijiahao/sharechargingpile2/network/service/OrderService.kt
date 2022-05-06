@@ -1,6 +1,5 @@
 package com.lijiahao.sharechargingpile2.network.service
 
-import androidx.room.Index
 import com.lijiahao.sharechargingpile2.data.Order
 import com.lijiahao.sharechargingpile2.network.response.GenerateOrderResponse
 import com.lijiahao.sharechargingpile2.network.response.QueryOrderResponse

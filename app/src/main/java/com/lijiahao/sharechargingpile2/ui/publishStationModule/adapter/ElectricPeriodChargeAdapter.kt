@@ -17,7 +17,6 @@ import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.databinding.ItemAddLayoutBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemElectricPeriodChargeBinding
 import com.lijiahao.sharechargingpile2.exception.EndTimeBeforeBeginTimeException
-import java.lang.NumberFormatException
 import java.time.LocalTime
 import java.time.format.DateTimeParseException
 

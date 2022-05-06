@@ -3,7 +3,6 @@ package com.lijiahao.sharechargingpile2.network.request
 import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.ChargingPileStation
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
-import okhttp3.MultipartBody
 
 data class StationInfoRequest(
     val openDayInWeek: ArrayList<String>,

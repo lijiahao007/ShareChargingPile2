@@ -1,6 +1,5 @@
 package com.lijiahao.sharechargingpile2.ui.QRCodeModule
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.lijiahao.sharechargingpile2.data.ChargingPile
@@ -8,18 +7,9 @@ import com.lijiahao.sharechargingpile2.data.Order
 import com.lijiahao.sharechargingpile2.network.response.StationInfo
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
-import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
-import java.lang.reflect.InvocationTargetException
-import javax.inject.Inject
 
 // 如果能够设置_order MutableLiveData的话，就不用设置orderId (默认设置为"0")
 // 如果不能够设置_order MutableLiveData的话，就直接传入一个orderId就好了。(一个大于0的数字符串)

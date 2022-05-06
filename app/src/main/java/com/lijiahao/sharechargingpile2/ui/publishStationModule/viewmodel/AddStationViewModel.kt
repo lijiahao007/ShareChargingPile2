@@ -1,10 +1,7 @@
 package com.lijiahao.sharechargingpile2.ui.publishStationModule.viewmodel
 
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.annotation.MainThread
-import androidx.databinding.BaseObservable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,12 +9,7 @@ import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.ChargingPileStation
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
-import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel

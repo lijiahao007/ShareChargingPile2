@@ -1,7 +1,6 @@
 package com.lijiahao.sharechargingpile2.network.response
 
 import com.lijiahao.sharechargingpile2.data.*
-import kotlin.streams.toList
 
 data class StationAllInfo(
     // 该类时获取符合条件的所有充电站数据

@@ -9,20 +9,15 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.activity.addCallback
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMainBinding
 import com.lijiahao.sharechargingpile2.ui.service.MessageWebSocketService
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.WebSocket
-import java.time.Duration
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -50,15 +45,11 @@ class MainActivity : AppCompatActivity() {
         // 设置navView 在那些 destination 显示
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.chatFragment -> { navView.visibility = View.GONE }
-                R.id.userExtendInfoFragment -> { navView.visibility = View.GONE }
-                R.id.orderListFragment -> { navView.visibility = View.GONE }
-                R.id.userInfoFragment -> { navView.visibility = View.GONE }
-                R.id.pileUsingFragment -> {navView.visibility = View.GONE}
-                R.id.payFragment -> {navView.visibility = View.GONE}
-                R.id.orderPayFragment -> {navView.visibility = View.GONE}
-                R.id.orderDetailFragment -> {navView.visibility = View.GONE}
-                R.id.commentFragment -> {navView.visibility = View.GONE}
+                R.id.chatFragment, R.id.userExtendInfoFragment, R.id.orderListFragment,
+                R.id.userInfoFragment, R.id.pileUsingFragment, R.id.payFragment,
+                R.id.orderPayFragment, R.id.orderDetailFragment, R.id.commentFragment -> {
+                    navView.visibility = View.GONE
+                }
                 R.id.navigation_home -> {
                     navView.visibility = View.VISIBLE
                     navView.alpha = 0.5F

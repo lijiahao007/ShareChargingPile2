@@ -2,10 +2,10 @@ package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -19,7 +19,6 @@ import com.lijiahao.sharechargingpile2.di.GlideApp
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
-import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.CommentViewModel
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.MapViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -144,6 +143,11 @@ class StationDetailFragment : Fragment() {
         binding.ivToComment.setOnClickListener {
             val action = StationDetailFragmentDirections.actionStationDetailFragmentToCommentListFragment(stationId)
             findNavController().navigate(action)
+        }
+
+        binding.btnBook.setOnClickListener {
+            val action = MapFragmentDirections.actionMapFragmentToBookPileFragment(stationId)
+            requireActivity().findNavController(R.id.map_module_fragment_container).navigate(action)
         }
 
 

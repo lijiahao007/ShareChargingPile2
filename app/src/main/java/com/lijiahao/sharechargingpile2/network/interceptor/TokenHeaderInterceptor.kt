@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.lijiahao.sharechargingpile2.ui.loginRegisterModule.LoginActivity
-import com.lijiahao.sharechargingpile2.utils.LOGIN_OUT_OF_TIME
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -22,13 +21,19 @@ class TokenHeaderInterceptor(val context: Context) : Interceptor {
                 .header("token", token)
                 .build()
             chain.proceed(request)
-        } ?: chain.proceed(chain.request())
+        } ?: chain.proceed(
+            chain.request().newBuilder()
+                .build()
+        )
 
         Log.i(TAG, "response:$response, code: ${response.code}")
         if (response.code == 401) {
             // 登录失效，跳转登录界面
             val intent = Intent(context, LoginActivity::class.java)
-            intent.putExtra(LoginActivity.NEW_INTENT_EXTRA, LoginActivity.TOKENINTERCEPTOR_TO_LOGINACTIVITY)
+            intent.putExtra(
+                LoginActivity.NEW_INTENT_EXTRA,
+                LoginActivity.TOKENINTERCEPTOR_TO_LOGINACTIVITY
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }

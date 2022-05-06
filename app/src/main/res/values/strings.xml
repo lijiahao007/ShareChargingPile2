@@ -147,4 +147,8 @@
     <string name="dc_sum">直流总数</string>
     <string name="ac_sum">交流总数</string>
     <string name="electric_charge_1">电费</string>
+    <string name="screen_condition">筛选条件</string>
+    <string name="to_screen"><![CDATA[筛选 >]]></string>
+    <string name="one">一</string>
+    <string name="book_pile">预约充电桩</string>
 </resources>

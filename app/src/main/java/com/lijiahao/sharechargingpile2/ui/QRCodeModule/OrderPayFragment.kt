@@ -2,11 +2,11 @@ package com.lijiahao.sharechargingpile2.ui.QRCodeModule
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -20,7 +20,6 @@ import com.lijiahao.sharechargingpile2.utils.TimeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -109,7 +108,7 @@ class OrderPayFragment : Fragment() {
             val beginTime = LocalDateTime.parse(order.beginChargeTime)
             val completeTime = LocalDateTime.parse(order.completeTime)
             val duration = Duration.between(beginTime, completeTime)
-            val curUsedTime = String.format("%02d", duration.toHours()) + ":" + String.format("%02d", duration.toMinutes()) + ":" + String.format("%02d", duration.toMillis()/1000)
+            val curUsedTime = String.format("%02d", duration.toHours()) + ":" + String.format("%02d", duration.toMinutes()%60) + ":" + String.format("%02d", (duration.toMillis()/1000)%60)
             binding.curUsedTime.text = curUsedTime
             binding.totalFee.text = String.format("%.2f", order.price)
         }

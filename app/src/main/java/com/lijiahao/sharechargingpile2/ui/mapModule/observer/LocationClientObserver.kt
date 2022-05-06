@@ -1,6 +1,5 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule.observer
 
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.amap.api.location.AMapLocationClient

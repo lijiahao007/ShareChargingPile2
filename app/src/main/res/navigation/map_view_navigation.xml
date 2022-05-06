@@ -6,6 +6,18 @@
     app:startDestination="@id/mapFragment">
 
     <fragment
+        android:id="@+id/bookPileFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.BookPileFragment"
+        android:label="BookPileFragment"
+        tools:layout="@layout/fragment_book_pile">
+        <argument
+            android:name="stationId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_bookPileFragment_to_choosePileFragment"
+            app:destination="@id/choosePileFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/chatFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.chatModule.ChatFragment"
         android:label="ChatFragment"
@@ -35,6 +47,17 @@
         <action
             android:id="@+id/action_mapFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_bookPileFragment"
+            app:destination="@id/bookPileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/choosePileFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ChoosePileFragment"
+        android:label="ChoosePileFragment"
+        tools:layout="@layout/fragment_choose_pile">
+    <argument android:name="pileArray"
+        app:argType="com.lijiahao.sharechargingpile2.data.ChargingPile[]"/>
     </fragment>
 
 

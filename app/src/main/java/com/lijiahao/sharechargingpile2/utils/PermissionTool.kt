@@ -1,20 +1,14 @@
 package com.lijiahao.sharechargingpile2.utils
 
-import android.content.Context
-import android.content.pm.PackageManager
-
-import androidx.core.content.ContextCompat
-
-import androidx.core.app.ActivityCompat
-
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.lang.IllegalArgumentException
-import java.lang.StringBuilder
 
 
 /**

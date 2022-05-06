@@ -248,8 +248,10 @@ class ChatFragment : Fragment() {
         viewModel.picUrlList.observe(this) { uri ->
             lifecycleScope.launch(Dispatchers.IO) {
                 val inputStream = requireActivity().contentResolver.openInputStream(uri)
+                val imgPath = File("${context!!.filesDir}/imgs")
+                imgPath.mkdir()
                 val outputFile =
-                    File.createTempFile("chat", ".jpg", File("${context!!.filesDir}/imgs"))
+                    File.createTempFile("chat", ".jpg", imgPath)
                 val outputStream = FileOutputStream(outputFile)
                 try {
                     val buffer = ByteArray(1024)

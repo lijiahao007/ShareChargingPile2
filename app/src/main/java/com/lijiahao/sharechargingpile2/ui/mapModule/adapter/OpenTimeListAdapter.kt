@@ -5,10 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.databinding.ItemOpenTimeBinding
-import com.lijiahao.sharechargingpile2.databinding.PileListItemForAddPileBinding
 
 class OpenTimeListAdapter :
     ListAdapter<OpenTime, OpenTimeListAdapter.MyViewHolder>(OpenTimeDiffItemCallback()) {

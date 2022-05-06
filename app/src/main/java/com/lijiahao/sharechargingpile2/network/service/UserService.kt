@@ -1,7 +1,5 @@
 package com.lijiahao.sharechargingpile2.network.service
 
-import androidx.lifecycle.LiveData
-import com.lijiahao.sharechargingpile2.data.UserExtendInfo
 import com.lijiahao.sharechargingpile2.network.request.ModifyExtendInfoRequest
 import com.lijiahao.sharechargingpile2.network.request.ModifyPwdRequest
 import com.lijiahao.sharechargingpile2.network.request.ModifyUserInfoRequest

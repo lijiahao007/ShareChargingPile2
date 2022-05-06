@@ -5,11 +5,11 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,9 +28,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 import javax.inject.Inject
-import java.time.LocalTime
 
 
 @AndroidEntryPoint
@@ -138,9 +138,9 @@ class PileUsingFragment : Fragment() {
             val calTimeTask = object : TimerTask() {
                 override fun run() {
                     val duration = Duration.between(beginChargeTime, LocalDateTime.now())
-                    val hour = String.format("%02d", duration.toHours())
-                    val minute = String.format("%02d", duration.toMinutes())
-                    val second = String.format("%02d", duration.toMillis() / 1000 % 60)
+                    val hour = String.format("%d", duration.toHours())
+                    val minute = String.format("%02d", duration.toMinutes() % 60)
+                    val second = String.format("%02d", (duration.toMillis() / 1000) % 60)
                     val time = "$hour:$minute:$second"
                     handler.obtainMessage(TIME_UPDATE, time).sendToTarget()
                 }

@@ -6,7 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/user_info_background">
 
 
         <RelativeLayout
@@ -15,7 +16,8 @@
             android:layout_height="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/white">
 
             <TextView
                 android:id="@+id/tv_sort"
@@ -38,12 +40,21 @@
                 android:id="@+id/tv_sorted_way"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_toStartOf="@+id/tv_to_screen"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                android:textSize="11sp"
+                tools:text="按距离排序" />
+
+            <TextView
+                android:id="@+id/tv_to_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
-                tools:text="按距离排序"
-                android:textSize="11sp"
-                android:gravity="center_vertical"
-                />
+                android:gravity="center"
+                android:text="@string/to_screen"
+                android:textSize="14sp" />
 
 
         </RelativeLayout>
