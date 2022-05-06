@@ -282,8 +282,9 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    app:cardCornerRadius="5dp"
-                    android:background="@color/white">
+                    android:background="@color/white"
+                    app:cardCornerRadius="5dp">
+
                     <TextView
                         android:id="@+id/tv_to_choose_pile"
                         android:layout_width="match_parent"
@@ -294,7 +295,6 @@
                         android:textSize="15sp" />
 
                 </com.google.android.material.card.MaterialCardView>
-
 
 
                 <com.google.android.material.card.MaterialCardView
@@ -754,6 +754,26 @@
                         </GridLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </HorizontalScrollView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    app:cardCornerRadius="10dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        tools:listitem="@layout/item_appointment_in_book_pile"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        />
+                </com.google.android.material.card.MaterialCardView>
+
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="300dp" />

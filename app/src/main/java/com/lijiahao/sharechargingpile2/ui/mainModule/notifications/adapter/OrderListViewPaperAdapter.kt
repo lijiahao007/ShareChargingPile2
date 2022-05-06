@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.AppointmentListFragment
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.MyOrderFragment
 import com.lijiahao.sharechargingpile2.ui.mainModule.notifications.ServiceOrderFragment
 import java.lang.IndexOutOfBoundsException
@@ -12,7 +13,8 @@ class OrderListViewPaperAdapter(fragmentManager: FragmentManager, lifecycle: Lif
 
     private val tabFragmentMap = mapOf<Int, ()->Fragment>(
         MY_ORDER_FRAGMENT_INDEX to  {MyOrderFragment()},
-        SERVICE_ORDER_FRAGMENT_INDEX to {ServiceOrderFragment()}
+        SERVICE_ORDER_FRAGMENT_INDEX to {ServiceOrderFragment()},
+        APPOINTMENT_LIST_FRAGMENT_INDEX to {AppointmentListFragment()}
     )
 
     override fun getItemCount() = tabFragmentMap.size
@@ -24,6 +26,7 @@ class OrderListViewPaperAdapter(fragmentManager: FragmentManager, lifecycle: Lif
     companion object {
         const val MY_ORDER_FRAGMENT_INDEX = 0
         const val SERVICE_ORDER_FRAGMENT_INDEX = 1
+        const val APPOINTMENT_LIST_FRAGMENT_INDEX = 2
     }
 
 }

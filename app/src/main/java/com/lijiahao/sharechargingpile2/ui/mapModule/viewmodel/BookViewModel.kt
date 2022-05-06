@@ -36,6 +36,7 @@ class BookViewModel @Inject constructor(
                 try {
                     // 1. 获取未完成的预约信息
                     val curAppointments = appointmentService.getAppointmentByStationId(stationId)
+                    appointments.clear()
                     appointments.addAll(curAppointments)
 
                     // 2. 获取充电站点信息

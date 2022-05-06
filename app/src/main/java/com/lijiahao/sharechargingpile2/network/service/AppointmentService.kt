@@ -17,4 +17,9 @@ interface AppointmentService {
     @POST("appointment/addAppointment")
     suspend fun addAppointment(@Body request: AddAppointmentRequest): String
 
+    @GET("appointment/getAppointmentByUserId")
+    suspend fun getAppointmentByUserId(@Query("userId") userId: Int): List<Appointment>
+
+
+
 }

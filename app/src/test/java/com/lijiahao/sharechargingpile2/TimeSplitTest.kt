@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.data.TimeBarData
 import org.junit.Test
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class TimeSplitTest {
@@ -209,6 +210,22 @@ class TimeSplitTest {
     }
 
 
+    @Test
+    fun testTimeSort() {
+        val list = object:ArrayList<LocalDateTime>() {
+            init {
+                add(LocalDateTime.of(2022, 5, 5, 10, 10))
+                add(LocalDateTime.of(2022, 5, 6, 10, 10))
+                add(LocalDateTime.of(2022, 5, 7, 10, 10))
+                add(LocalDateTime.of(2022, 5, 7, 13, 10))
+            }
+        }
+
+        list.sortByDescending { it }
+        list.forEach {
+            println(it)
+        }
+    }
 
 
 }

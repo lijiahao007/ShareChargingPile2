@@ -50,7 +50,8 @@ class OrderListFragment : Fragment() {
         viewPaper.isSaveEnabled = false // 修复跳转返回后，ViewPaper中Fragment被销毁的问题
         val textMap = mapOf<Int, String>(
             OrderListViewPaperAdapter.MY_ORDER_FRAGMENT_INDEX to "使用订单",
-            OrderListViewPaperAdapter.SERVICE_ORDER_FRAGMENT_INDEX to "服务订单"
+            OrderListViewPaperAdapter.SERVICE_ORDER_FRAGMENT_INDEX to "服务订单",
+            OrderListViewPaperAdapter.APPOINTMENT_LIST_FRAGMENT_INDEX to "预约"
         )
         TabLayoutMediator(tabLayout, viewPaper) { tab, position ->
             tab.text = textMap[position]

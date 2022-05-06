@@ -18,7 +18,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.gson.Gson
@@ -28,6 +27,7 @@ import com.lijiahao.sharechargingpile2.databinding.FragmentBookPileBinding
 import com.lijiahao.sharechargingpile2.network.request.AddAppointmentRequest
 import com.lijiahao.sharechargingpile2.network.response.AddAppointmentResponse
 import com.lijiahao.sharechargingpile2.network.service.AppointmentService
+import com.lijiahao.sharechargingpile2.ui.mapModule.adapter.AppointmentInMapAdapter
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.BookViewModel
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
 import com.lijiahao.sharechargingpile2.ui.view.TimeBarLinearLayout
@@ -57,6 +57,7 @@ class BookPileFragment : Fragment() {
     }
     private var pileId = -1
     private lateinit var popWindow: PopupWindow
+    private val adapter = AppointmentInMapAdapter()
 
     @Inject
     lateinit var sharedPreferenceData: SharedPreferenceData
@@ -105,7 +106,9 @@ class BookPileFragment : Fragment() {
 
         setFragmentResultListener(CHOOSE_PILE_ID_RESULT_KEY) { _, bundle ->
             pileId = bundle.getInt(CHOOSE_PILE_ID_BUNDLE_KEY)
-            showPileInfoAndTimeBar()
+            bookViewModel.stationInfo.observe(viewLifecycleOwner) {
+                showPileInfoAndTimeBar()
+            }
         }
 
     }
@@ -233,6 +236,13 @@ class BookPileFragment : Fragment() {
         val curDate = nowDate.format(DateTimeFormatter.ofPattern("M月d日"))
         val lastDate = nowDate.plusDays(6).format(DateTimeFormatter.ofPattern("M月d日"))
         binding.dateRange.text = "$curDate~$lastDate"
+
+        // 5. 设置recyclerView
+        binding.recyclerView.adapter = adapter
+        val list = bookViewModel.appointments.filter {
+            it.userId == sharedPreferenceData.userId.toInt()
+        }
+        adapter.submitList(list.sortedByDescending { it.getBeginDateTime() })
     }
 
 
@@ -305,7 +315,6 @@ class BookPileFragment : Fragment() {
         // 5. 显示PopupWindow
         popWindow.showAsDropDown(anchorView)
     }
-
 
     // 根据anchorView 和 popupWindow的位置 自动调整PopUpWindow箭头的位置
     private fun autoAdjustArrowPos(popupWindow: PopupWindow, contentView: View, anchorView: View) {
@@ -385,10 +394,10 @@ class BookPileFragment : Fragment() {
                                         Toast.makeText(context, "预约信息错误", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                                // TODO : 刷新数据
                                 bookViewModel.getData()
-                                showPileInfoAndTimeBar()
-
+                                if (::popWindow.isInitialized) {
+                                    popWindow.dismiss()
+                                }
                             }
 
                         } catch (e: Exception) {

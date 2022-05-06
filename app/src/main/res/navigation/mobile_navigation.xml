@@ -125,6 +125,9 @@
         <action
             android:id="@+id/action_orderListFragment_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
+        <action
+            android:id="@+id/action_orderListFragment_to_bookPileFragment2"
+            app:destination="@id/bookPileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
@@ -167,4 +170,13 @@
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.TestFragment"
         android:label="TestFragment"
         tools:layout="@layout/fragment_test" />
+    <fragment
+        android:id="@+id/bookPileFragment2"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.BookPileFragment"
+        android:label="BookPileFragment"
+        tools:layout="@layout/fragment_book_pile"
+        >
+        <argument android:name="stationId"
+            app:argType="integer"/>
+    </fragment>
 </navigation>
