@@ -756,6 +756,7 @@
                 </HorizontalScrollView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_appointment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -763,14 +764,38 @@
                     android:layout_marginEnd="5dp"
                     app:cardCornerRadius="10dp">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        tools:listitem="@layout/item_appointment_in_book_pile"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/my_appointment"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:textSize="18sp"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:background="@color/user_info_background"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            tools:listitem="@layout/item_appointment_in_book_pile"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            />
+                    </LinearLayout>
+
+
                 </com.google.android.material.card.MaterialCardView>
 
 

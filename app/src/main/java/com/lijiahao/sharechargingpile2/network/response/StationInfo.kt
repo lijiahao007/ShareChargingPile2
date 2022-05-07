@@ -10,5 +10,6 @@ data class StationInfo(
     val openTimeList: List<OpenTime>,
     val openDayList: List<OpenDayInWeek>,
     val picList: List<String>,
-    val chargePeriodList: List<ElectricChargePeriod>
+    val chargePeriodList: List<ElectricChargePeriod>,
+    val appointmentList: List<Appointment>
 )

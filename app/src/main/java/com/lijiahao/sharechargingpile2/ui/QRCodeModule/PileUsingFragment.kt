@@ -22,6 +22,7 @@ import com.lijiahao.sharechargingpile2.network.service.OrderService
 import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
 import com.lijiahao.sharechargingpile2.utils.TimeUtils
+import com.lijiahao.sharechargingpile2.utils.TimeUtils.Companion.isBetween
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,6 +91,14 @@ class PileUsingFragment : Fragment() {
             binding.tvPileState.text = pile.state
             binding.tvElectricType.text = pile.electricType
             binding.tvPowerRate.text = pile.powerRate.toString()
+
+            viewModel.stationInfo.value?.run {
+                val appointments = appointmentList.filter { it.pileId == pile.id }
+                val isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } == null
+                if (isBooked) {
+                    binding.tvPileState.text = "被预约"
+                }
+            }
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->

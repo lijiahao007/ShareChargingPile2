@@ -5,7 +5,7 @@ import java.time.LocalTime
 data class TimeBarData(
     val beginTime: LocalTime,
     val endTime: LocalTime,
-    val state: String
+    var state: String
 ) {
 
     companion object {

@@ -3,7 +3,6 @@ package com.lijiahao.sharechargingpile2.ui.mapModule
 import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.ArrayMap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,12 +24,14 @@ import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.data.*
 import com.lijiahao.sharechargingpile2.databinding.FragmentBookPileBinding
 import com.lijiahao.sharechargingpile2.network.request.AddAppointmentRequest
+import com.lijiahao.sharechargingpile2.network.request.ModifyAppointmentRequest
 import com.lijiahao.sharechargingpile2.network.response.AddAppointmentResponse
 import com.lijiahao.sharechargingpile2.network.service.AppointmentService
 import com.lijiahao.sharechargingpile2.ui.mapModule.adapter.AppointmentInMapAdapter
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.BookViewModel
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
 import com.lijiahao.sharechargingpile2.ui.view.TimeBarLinearLayout
+import com.lijiahao.sharechargingpile2.utils.TimeUtils.Companion.isBetween
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,8 +57,9 @@ class BookPileFragment : Fragment() {
         args.stationId
     }
     private var pileId = -1
-    private lateinit var popWindow: PopupWindow
-    private val adapter = AppointmentInMapAdapter()
+    private lateinit var timeBarPopupWindow: PopupWindow
+    private val adapter = AppointmentInMapAdapter(this)
+    private lateinit var updateAppointmentPopupWindow: PopupWindow
 
     @Inject
     lateinit var sharedPreferenceData: SharedPreferenceData
@@ -68,10 +70,6 @@ class BookPileFragment : Fragment() {
     @Inject
     lateinit var appointmentService: AppointmentService
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,6 +77,7 @@ class BookPileFragment : Fragment() {
         WindowCompat.setDecorFitsSystemWindows(requireActivity().window, true) // 取消全屏显示
         binding.chargingPileInfo.visibility = View.GONE
         binding.cardChooseBookTime.visibility = View.GONE
+        binding.cardAppointment.visibility = View.GONE
         loadData()
         initUIListener()
 
@@ -86,17 +85,20 @@ class BookPileFragment : Fragment() {
     }
 
     private fun loadData() {
-        bookViewModel.stationInfo.observe(viewLifecycleOwner) { stationInfo ->
+        bookViewModel.pileDateTimeBarDataMap.observe(viewLifecycleOwner) {
             // 1. 设置充电站信息
-            binding.itStationName.text = stationInfo.station.name
-            binding.tvStationParkFee.text = stationInfo.station.parkFee.toString()
-            setOpenTime(stationInfo.openTimeList, stationInfo.chargePeriodList)
+            val stationInfo = bookViewModel.stationInfo
+            stationInfo?.let {
+                binding.itStationName.text = stationInfo.station.name
+                binding.tvStationParkFee.text = stationInfo.station.parkFee.toString()
+                setOpenTime(stationInfo.openTimeList, stationInfo.chargePeriodList)
+            }
         }
     }
 
     private fun initUIListener() {
         binding.tvToChoosePile.setOnClickListener {
-            bookViewModel.stationInfo.value?.let {
+            bookViewModel.stationInfo?.let {
                 val pileArray = it.pileList.toTypedArray()
                 val action =
                     BookPileFragmentDirections.actionBookPileFragmentToChoosePileFragment(pileArray)
@@ -106,97 +108,40 @@ class BookPileFragment : Fragment() {
 
         setFragmentResultListener(CHOOSE_PILE_ID_RESULT_KEY) { _, bundle ->
             pileId = bundle.getInt(CHOOSE_PILE_ID_BUNDLE_KEY)
-            bookViewModel.stationInfo.observe(viewLifecycleOwner) {
-                showPileInfoAndTimeBar()
+            bookViewModel.pileDateTimeBarDataMap.observe(viewLifecycleOwner) {
+                // !!!! 监听ViewModel的变化，一旦变化就更新UI
+                showOtherUI()
             }
         }
 
     }
 
-    // 在选择充电桩后显示TimeBar
-    private fun showPileInfoAndTimeBar() {
+    // 在选择pile之后，显示pile信息、TimeBar、用户预约。
+    private fun showOtherUI() {
 
         // 1. 设置pileInfo
-        val pile = bookViewModel.stationInfo.value?.let { stationInfo ->
+        val pile = bookViewModel.stationInfo?.let { stationInfo ->
             stationInfo.pileList.find { it.id == pileId }
         } ?: return
 
         binding.chargingPileInfo.visibility = View.VISIBLE
         binding.cardChooseBookTime.visibility = View.VISIBLE
+        binding.cardAppointment.visibility = View.VISIBLE
 
         binding.tvPileState.text = pile.state
         binding.tvElectricType.text = pile.electricType
         binding.tvPowerRate.text = pile.powerRate.toString()
-
-        // 2. 获取时间表数据
-        val openTimeList =
-            (bookViewModel.stationInfo.value?.openTimeList?.sortedWith(Comparator<OpenTime> { o1, o2 ->
-                val o1BeginTime = LocalTime.parse(o1.beginTime)
-                val o2BeginTime = LocalTime.parse(o2.beginTime)
-                if (o1BeginTime.isBefore(o2BeginTime)) {
-                    -1
-                } else if (o1BeginTime.isAfter(o2BeginTime)) {
-                    1
-                } else {
-                    0
-                }
-            })) ?: return
-
-        val appointments = bookViewModel.appointments.filter { appointment ->
-            appointment.pileId == pileId
-        }
-
-        val nowDate = LocalDate.now()
-        val timeBarDataMap = ArrayMap<LocalDate, ArrayList<TimeBarData>>()
-
-        // 2.1 显示未来7天的可预约时间
-        for (i in 0 until 7) { // [0,7)
-            val list = ArrayList<TimeBarData>()
-            val date = nowDate.plusDays(i.toLong())
-            timeBarDataMap[date] = list
-        }
-
-        // 2.2 预约切割营业时间
-        for (entry in timeBarDataMap) {
-            val date = entry.key
-            val list = entry.value
-
-            // （1） 获取今天的预约
-            val todayAppointment = appointments.filter { appointment ->
-                val beginDateTime = LocalDateTime.parse(appointment.beginDateTime)
-                val endDateTime = LocalDateTime.parse(appointment.endDateTime)
-                val beginDate = beginDateTime.toLocalDate()
-                val endDate = endDateTime.toLocalDate()
-                beginDate == date || endDate == date
-            }.sortedWith(Comparator<Appointment> { o1, o2 ->
-                val o1BeginDateTime = LocalDateTime.parse(o1.beginDateTime)
-                val o2BeginDateTime = LocalDateTime.parse(o2.beginDateTime)
-                if (o1BeginDateTime.isBefore(o2BeginDateTime)) {
-                    -1
-                } else if (o1BeginDateTime.isAfter(o2BeginDateTime)) {
-                    1
-                } else {
-                    0
-                }
-            })
-
-            // （2） 获取预约
-            val midAppointList = ArrayList<TimeBarData>()
-            todayAppointment.forEachIndexed { _, appointment ->
-                val beginTime = LocalDateTime.parse(appointment.beginDateTime).toLocalTime()
-                val endTime = LocalDateTime.parse(appointment.endDateTime).toLocalTime()
-                if (appointment.userId != sharedPreferenceData.userId.toInt()) {
-                    midAppointList.add(TimeBarData(beginTime, endTime, TimeBarData.APPOINTMENT))
-                } else {
-                    midAppointList.add(TimeBarData(beginTime, endTime, TimeBarData.MY_APPOINTMENT))
-                }
+        bookViewModel.stationInfo?.run {
+            val appointments = appointmentList.filter { it.pileId == pile.id }
+            val isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } == null
+            if (isBooked) {
+                binding.tvPileState.text = "被预约"
             }
-
-            // （3） 将Appointment放入OpenTime中，获得切割后的时间段
-            val res = splitTimeBarData(openTimeList, midAppointList)
-            list.clear()
-            list.addAll(res)
         }
+
+        //2. 获取TimeBarData
+        val nowDate = LocalDate.now()
+        val timeBarDataMap = bookViewModel.pileDateTimeBarDataMap.value?.get(pileId) ?: HashMap()
 
         // 3. 设置时间表UI
         val dayTextView = arrayOf(
@@ -245,8 +190,7 @@ class BookPileFragment : Fragment() {
         adapter.submitList(list.sortedByDescending { it.getBeginDateTime() })
     }
 
-
-    // 设置TimaBarView的点击时间，点击后弹出PopUpWindow
+    // 设置TimeBarView的点击时间，点击后弹出PopUpWindow
     private fun setTimeBarViewClickListener(timeBar: TimeBarLinearLayout) {
         val childViews = timeBar.children
         val date = timeBar.date
@@ -254,7 +198,7 @@ class BookPileFragment : Fragment() {
             view.setOnClickListener {
                 val timeBarData = gson.fromJson(view.tag as String, TimeBarData::class.java)
                 Log.e(TAG, "view:${it}, tag=${it.tag}, timeBarData=${timeBarData}")
-                showPopUpWindow(timeBarData, it, date)
+                showTimeBarPopUpWindow(timeBarData, it, date)
             }
         }
 
@@ -262,9 +206,13 @@ class BookPileFragment : Fragment() {
 
     // 参考 https://github.com/PopFisher/SmartPopupWindow
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
-    private fun showPopUpWindow(timeBarData: TimeBarData, anchorView: View, date: LocalDate) {
-        if (::popWindow.isInitialized) {
-            popWindow.dismiss()
+    private fun showTimeBarPopUpWindow(
+        timeBarData: TimeBarData,
+        anchorView: View,
+        date: LocalDate
+    ) {
+        if (::timeBarPopupWindow.isInitialized) {
+            timeBarPopupWindow.dismiss()
         }
 
         // 1. 加载布局
@@ -273,22 +221,22 @@ class BookPileFragment : Fragment() {
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
         // 2. 创建PopupWindow
-        popWindow = PopupWindow(
+        timeBarPopupWindow = PopupWindow(
             popupView,
             popupView.measuredWidth,
             popupView.measuredHeight,
             true
         )
-        popWindow.animationStyle = R.style.anim_pop
-        popWindow.isTouchable = true
-        popWindow.setBackgroundDrawable(ColorDrawable())
-        popWindow.isOutsideTouchable = true
+        timeBarPopupWindow.animationStyle = R.style.anim_pop
+        timeBarPopupWindow.isTouchable = true
+        timeBarPopupWindow.setBackgroundDrawable(ColorDrawable())
+        timeBarPopupWindow.isOutsideTouchable = true
 
         // 3. 动态设置箭头位置
         popupView.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 // 自动调整箭头的位置
-                autoAdjustArrowPos(popWindow, popupView, anchorView)
+                autoAdjustArrowPos(timeBarPopupWindow, popupView, anchorView)
                 popupView.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
@@ -309,12 +257,102 @@ class BookPileFragment : Fragment() {
         }
 
         btnCancel.setOnClickListener {
-            popWindow.dismiss()
+            timeBarPopupWindow.dismiss()
         }
 
         // 5. 显示PopupWindow
-        popWindow.showAsDropDown(anchorView)
+        timeBarPopupWindow.showAsDropDown(anchorView)
     }
+
+
+    @SuppressLint("SetTextI18n")
+    fun showDeletePopUpWindow(appointment: Appointment, anchorView: View) {
+        if (::updateAppointmentPopupWindow.isInitialized) {
+            updateAppointmentPopupWindow.dismiss()
+        }
+
+        // 1. 加载布局
+        val popupView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.popup_content_top_arrow_layout_update, null)
+        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+
+        // 2. 创建PopupWindow
+        updateAppointmentPopupWindow = PopupWindow(
+            popupView,
+            popupView.measuredWidth,
+            popupView.measuredHeight,
+            true
+        )
+        updateAppointmentPopupWindow.animationStyle = R.style.anim_pop
+        updateAppointmentPopupWindow.isTouchable = true
+        updateAppointmentPopupWindow.setBackgroundDrawable(ColorDrawable())
+        updateAppointmentPopupWindow.isOutsideTouchable = true
+
+        // 3. 动态设置箭头位置
+        popupView.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                // 自动调整箭头的位置
+                autoAdjustArrowPos(updateAppointmentPopupWindow, popupView, anchorView)
+                popupView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+
+        // 4. 设置UI
+        val tvDate: TextView = popupView.findViewById(R.id.tv_date)
+        val tvTime: TextView = popupView.findViewById(R.id.tv_time)
+        val tvState: TextView = popupView.findViewById(R.id.tv_state)
+        val tvModifyTime: TextView = popupView.findViewById(R.id.tv_modify_time)
+        val btnModify: Button = popupView.findViewById(R.id.btn_modify)
+        val btnDelete: Button = popupView.findViewById(R.id.btn_delete)
+        val btnCancel: Button = popupView.findViewById(R.id.btn_cancel)
+        tvDate.text = appointment.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        tvTime.text = "${appointment.getBeginTime().format(timeFormatter)}~${
+            appointment.getEndTime().format(timeFormatter)
+        }"
+        tvState.text = appointment.state
+        var isShowModifyTime = true
+        var range: Pair<LocalTime, LocalTime>? = null
+        // 4.1 获取可修改的最大范围
+        bookViewModel.pileDateTimeBarDataMap.value?.let { map ->
+            val timeBarList = map[pileId]?.get(appointment.getDate())
+            timeBarList ?: run { isShowModifyTime = false }
+            timeBarList?.let {
+                range = getMaxTimeInTimeBarList(it, appointment)
+                range?.let { range ->
+                    val beginTime = range.first
+                    val endTime = range.second
+                    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                    tvModifyTime.text =
+                        "${beginTime.format(formatter)}~${endTime.format(formatter)}"
+                }
+            }
+        }
+
+        if (!isShowModifyTime) {
+            popupView.findViewById<LinearLayout>(R.id.modify_range_layout).visibility = View.GONE
+        } else {
+            popupView.findViewById<LinearLayout>(R.id.modify_range_layout).visibility = View.VISIBLE
+        }
+
+
+        btnModify.setOnClickListener {
+            modifyPile(appointment, range)
+        }
+
+        btnDelete.setOnClickListener {
+            deletePile(appointment)
+        }
+
+        btnCancel.setOnClickListener {
+            updateAppointmentPopupWindow.dismiss()
+        }
+
+
+        // 5. 显示PopupWindow
+        updateAppointmentPopupWindow.showAsDropDown(anchorView)
+    }
+
 
     // 根据anchorView 和 popupWindow的位置 自动调整PopUpWindow箭头的位置
     private fun autoAdjustArrowPos(popupWindow: PopupWindow, contentView: View, anchorView: View) {
@@ -395,8 +433,8 @@ class BookPileFragment : Fragment() {
                                     }
                                 }
                                 bookViewModel.getData()
-                                if (::popWindow.isInitialized) {
-                                    popWindow.dismiss()
+                                if (::timeBarPopupWindow.isInitialized) {
+                                    timeBarPopupWindow.dismiss()
                                 }
                             }
 
@@ -415,122 +453,109 @@ class BookPileFragment : Fragment() {
         }
     }
 
+    private fun modifyPile(appointment: Appointment, range: Pair<LocalTime, LocalTime>?) {
+        var timeRange = ""
+        range?.let {
+            timeRange = "(${range.first}~${range.second})"
+        }
 
-    // 根据某一天的营业时间、预约时间获取当前的TimeBarData
-    private fun splitTimeBarData(
-        openTimeList: List<OpenTime>,
-        midAppointList: List<TimeBarData>
-    ): List<TimeBarData> {
+        val pickBeginTime = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(appointment.getBeginTime().hour)
+            .setMinute(appointment.getBeginTime().minute)
+            .setTitleText("选择开始时间: $timeRange")
+            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+            .build()
+        pickBeginTime.show(parentFragmentManager, "beginTimePicker")
+        pickBeginTime.addOnPositiveButtonClickListener {
+            val pickEndTime = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(appointment.getEndTime().hour)
+                .setMinute(appointment.getEndTime().minute)
+                .setTitleText("选择结束时间: $timeRange")
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .build()
+            pickEndTime.show(parentFragmentManager, "endTimePicker")
+            pickEndTime.addOnPositiveButtonClickListener {
+                val beginTime = LocalTime.of(pickBeginTime.hour, pickBeginTime.minute)
+                val endTime = LocalTime.of(pickEndTime.hour, pickEndTime.minute)
+                val date = appointment.getDate()
+                val appointmentBeginTime = appointment.getBeginTime()
+                val appointmentEndTime = appointment.getEndTime()
+                val beginDateTime = LocalDateTime.of(date, beginTime)
+                val endDateTime = LocalDateTime.of(date, endTime)
 
-        val freeTime = ArrayList(splitTimeSegment(openTimeList, midAppointList))
-        freeTime.addAll(midAppointList)
+                // verify
+                if ((range != null && beginTime.isBetween(
+                        range.first,
+                        range.second
+                    ) && endTime.isBetween(beginTime, range.second)) ||
+                    (range == null && beginTime.isBetween(
+                        appointmentBeginTime,
+                        appointmentEndTime
+                    ) && endTime.isBetween(beginTime, appointmentEndTime))
+                ) {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val request =
+                                ModifyAppointmentRequest(appointment.id, beginDateTime.toString(), endDateTime.toString())
+                            val res = appointmentService.modifyAppointment(request)
+                            withContext(Dispatchers.Main) {
+                                var msg = ""
+                                when (res) {
+                                    AddAppointmentResponse.SUCCESS -> {
+                                        msg = "修改成功"
+                                    }
+                                    AddAppointmentResponse.FAIL -> {
+                                        msg = "修改失败"
+                                    }
+                                    AddAppointmentResponse.CONFLICT -> {
+                                        msg = "时间发生冲突了"
+                                    }
+                                }
+                                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                                bookViewModel.getData()
+                                updateAppointmentPopupWindow.dismiss()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            Log.e(TAG, "修改是发生网络错误")
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), "网络异常", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "时间不合法,请填写范围内时间", Toast.LENGTH_SHORT).show()
+                }
 
-        for (i in 0 until openTimeList.lastIndex) {
-            val prevEndTime = LocalTime.parse(openTimeList[i].endTime)
-            val nextBeginTime = LocalTime.parse(openTimeList[i + 1].beginTime)
-            if (prevEndTime != nextBeginTime) {
-                freeTime.add(TimeBarData(prevEndTime, nextBeginTime, TimeBarData.STATE_SUSPEND))
             }
         }
-
-        if (LocalTime.of(0, 0, 0) != LocalTime.parse(openTimeList[0].beginTime)) {
-            freeTime.add(
-                TimeBarData(
-                    LocalTime.of(0, 0, 0),
-                    LocalTime.parse(openTimeList[0].beginTime),
-                    TimeBarData.STATE_SUSPEND
-                )
-            )
-        }
-
-        if (LocalTime.of(23, 59, 59) != LocalTime.parse(openTimeList.last().endTime)) {
-            freeTime.add(
-                TimeBarData(
-                    LocalTime.parse(openTimeList.last().endTime),
-                    LocalTime.of(23, 59, 59),
-                    TimeBarData.STATE_SUSPEND
-                )
-            )
-        }
-
-        freeTime.sortWith { o1, o2 ->
-            if (o1.beginTime.isBefore(o2.beginTime)) {
-                -1
-            } else if (o1.beginTime.isAfter(o1.beginTime)) {
-                1
-            } else {
-                0
-            }
-        }
-        return freeTime
     }
 
-    private fun splitTimeSegment(
-        openTimeList: List<OpenTime>,
-        midAppointList: List<TimeBarData>
-    ): List<TimeBarData> {
-        val midOpenTimeList = ArrayList<TimeBarData>()
-
-        if (midAppointList.isEmpty()) {
-            openTimeList.forEach { openTime ->
-                val openTimeBeginTime = LocalTime.parse(openTime.beginTime)
-                val openTimeEndTime = LocalTime.parse(openTime.endTime)
-                midOpenTimeList.add(
-                    TimeBarData(
-                        openTimeBeginTime,
-                        openTimeEndTime,
-                        TimeBarData.STATE_FREE
-                    )
-                )
-            }
-        } else {
-            // 如果不为空，则需要切割营业时间
-            var appointIndex = 0
-            openTimeList.forEach { openTime ->
-                openTime.beginTime
-                val openTimeBeginTime = LocalTime.parse(openTime.beginTime)
-                val openTimeEndTime = LocalTime.parse(openTime.endTime)
-                var appointBeginTime = midAppointList[appointIndex].beginTime
-                var appointEndTime = midAppointList[appointIndex].endTime
-                var curBeginTime = openTimeBeginTime
-
-
-                while (curBeginTime.isBefore(openTimeEndTime) &&  // 预约结束时间在营业时间之前
-                    appointBeginTime.isBefore(openTimeEndTime) && // 预约开始时间在营业结束时间之前
-                    appointIndex < midAppointList.size // appoint 未遍历完
-                ) {
-                    if (curBeginTime != appointBeginTime) {
-                        midOpenTimeList.add(
-                            TimeBarData(
-                                curBeginTime,
-                                appointBeginTime,
-                                TimeBarData.STATE_FREE
-                            )
-                        )
+    private fun deletePile(appointment: Appointment) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val res = appointmentService.deleteAppointment(appointment.id)
+                withContext(Dispatchers.Main) {
+                    val msg: String
+                    msg = when (res) {
+                        "success" -> {
+                            "删除成功"
+                        }
+                        else -> {
+                            "删除失败"
+                        }
                     }
-
-                    curBeginTime = appointEndTime
-                    appointIndex++
-                    if (appointIndex < midAppointList.size) {
-                        appointBeginTime = midAppointList[appointIndex].beginTime
-                        appointEndTime = midAppointList[appointIndex].endTime
-                    }
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    bookViewModel.getData()
+                    updateAppointmentPopupWindow.dismiss()
                 }
-
-                if (curBeginTime.isBefore(openTimeEndTime) && (appointIndex == midAppointList.size ||   // appoint 遍历完了
-                            !appointBeginTime.isBefore(openTimeEndTime))
-                ) {  // 当下一次预约开始时间在这段营业时间之后
-                    midOpenTimeList.add(
-                        TimeBarData(
-                            curBeginTime,
-                            openTimeEndTime,
-                            TimeBarData.STATE_FREE
-                        )
-                    )
-                }
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                Log.e(TAG, "删除预约发生网络异常")
             }
         }
-        return midOpenTimeList
     }
 
 
@@ -549,6 +574,40 @@ class BookPileFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    fun getMaxTimeInTimeBarList(
+        timeBarDataList: List<TimeBarData>,
+        appointment: Appointment
+    ): Pair<LocalTime, LocalTime>? {
+        val indexOfAppointment =
+            timeBarDataList.indexOfFirst { it.beginTime == appointment.getBeginTime() && it.endTime == appointment.getEndTime() }
+        if (indexOfAppointment == -1) return null
+
+        var curIndex = indexOfAppointment
+        var beginTime: LocalTime = appointment.getBeginTime()
+        var endTime: LocalTime = appointment.getEndTime()
+        while (curIndex > 0) {
+            val timeBarData = timeBarDataList[curIndex - 1]
+            if (timeBarData.state == TimeBarData.STATE_FREE) {
+                beginTime = timeBarData.beginTime
+            } else {
+                break
+            }
+            curIndex--
+        }
+        curIndex = indexOfAppointment
+        while (curIndex < timeBarDataList.lastIndex) {
+            val timeBarData = timeBarDataList[curIndex + 1]
+            if (timeBarData.state == TimeBarData.STATE_FREE) {
+                endTime = timeBarData.endTime
+            } else {
+                break
+            }
+            curIndex++
+        }
+        return Pair(beginTime, endTime)
     }
 
     companion object {

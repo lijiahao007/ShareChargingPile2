@@ -17,5 +17,6 @@ data class ChargingPile(
         const val STATE_USING = "使用中"
         const val STATE_FREE = "空闲"
         const val STATE_SUSPEND = "暂停营业"
+        const val STATE_APPOINTMENT = "预约中"
     }
 }

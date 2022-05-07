@@ -68,19 +68,6 @@ class StationListFragment : Fragment() {
         mapViewModel.stationInfoMapInProjection.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
-
-        mapViewModel.isLocationReady.observe(viewLifecycleOwner) {
-            val currentList = adapter.currentList
-            Log.e(TAG, "location cal distance: currentLi $currentList")
-            currentList.forEach { viewModel ->
-                val curPos = LatLng(viewModel.station.latitude, viewModel.station.longitude)
-                val distance =
-                    AMapUtils.calculateLineDistance(curPos, mapViewModel.mapCenterPos)
-                viewModel.distance = distance
-            }
-            adapter.submitList(currentList)
-            adapter.notifyItemRangeChanged(0, currentList.size)
-        }
     }
 
 

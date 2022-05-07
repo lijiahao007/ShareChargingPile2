@@ -2,6 +2,7 @@ package com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.Projection
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
@@ -29,8 +30,6 @@ class MapViewModel @Inject constructor(
     var stationElectricChargePeriodMap: Map<String, List<ElectricChargePeriod>> = HashMap()
     private val _isRemoteDataReady: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val isRemoteDataReady: LiveData<Boolean> = _isRemoteDataReady
-    private val _isLocationReady: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLocationReady: LiveData<Boolean> = _isLocationReady
 
 
     // 全部信息都在这里
@@ -76,6 +75,12 @@ class MapViewModel @Inject constructor(
                         }
                     }
                     if (flag && isInBounds(bound, stationListItemViewModel.station.latitude, stationListItemViewModel.station.longitude)) {
+                        // 计算距离
+                        val station = stationListItemViewModel.station
+                        val stationPos = LatLng(station.latitude, station.longitude)
+                        val distance =
+                            AMapUtils.calculateLineDistance(stationPos, mapCenterPos)
+                        stationListItemViewModel.distance = distance
                         list.add(stationListItemViewModel)
                     }
                 }
@@ -84,7 +89,6 @@ class MapViewModel @Inject constructor(
                     Log.e(TAG, "final list = ${it.stationId}")
                 }
                 emit(list)
-                locationReady()
             }
         }
 
@@ -96,9 +100,6 @@ class MapViewModel @Inject constructor(
         _isRemoteDataReady.postValue(true);
     }
 
-    fun locationReady() {
-        _isLocationReady.postValue(true);
-    }
 
 
     init {

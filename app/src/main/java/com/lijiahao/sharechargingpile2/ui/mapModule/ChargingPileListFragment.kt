@@ -41,6 +41,7 @@ class ChargingPileListFragment : Fragment() {
         val singlePiles =
             ArrayList<ChargingPile>() // 每个ChargingPile分来，例如2个直流12kw/h 变成 1个直流12kw/h, 1个直流12kw/h
         piles?.forEach {
+
             val pile = ChargingPile(it.id, it.electricType, it.powerRate, it.stationId, it.state, null)
             singlePiles.add(pile)
         }

@@ -155,23 +155,7 @@ class MapFragment : Fragment() {
                 if (p0 != null) {
                     setCenterMarkerPosition(p0.target)
                 }
-//                if (viewModel.projection.value == null || prevLatLngBounds != aMap.projection.visibleRegion.latLngBounds) {
-//                    prevLatLngBounds = aMap.projection.visibleRegion.latLngBounds
-//                    viewModel.projection.value = aMap.projection
-//                }
                 viewModel.projection.value = aMap.projection
-
-                viewModel.projection.value?.let {
-                    Log.i("Projection", "projection = $it")
-                    Log.i("Projection", "visibleRegion = ${it.visibleRegion}")
-                    Log.i(
-                        "Projection",
-                        "latLngBounds = ${it.visibleRegion.latLngBounds}"
-                    )
-                }
-                if (isAfterGetStationList) {
-                    viewModel.locationReady()
-                }
             }
         })
 

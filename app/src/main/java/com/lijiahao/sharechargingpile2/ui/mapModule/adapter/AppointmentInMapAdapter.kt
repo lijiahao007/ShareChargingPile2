@@ -11,8 +11,9 @@ import com.lijiahao.sharechargingpile2.data.Appointment
 import com.lijiahao.sharechargingpile2.databinding.ItemAppointmentInBookPileBinding
 import java.time.format.DateTimeFormatter
 import android.animation.AnimatorSet
+import com.lijiahao.sharechargingpile2.ui.mapModule.BookPileFragment
 
-class AppointmentInMapAdapter : RecyclerView.Adapter<AppointmentInMapAdapter.AppointmentViewHolder>() {
+class AppointmentInMapAdapter(val fragment: BookPileFragment) : RecyclerView.Adapter<AppointmentInMapAdapter.AppointmentViewHolder>() {
 
     private val list = ArrayList<Appointment>()
 
@@ -45,6 +46,7 @@ class AppointmentInMapAdapter : RecyclerView.Adapter<AppointmentInMapAdapter.App
             animSet.play(xAnimator).with(yAnimator)
             animSet.duration = 100
             animSet.start()
+            fragment.showDeletePopUpWindow(list[position], cardLayout)
         }
     }
 

@@ -39,5 +39,6 @@ data class Appointment(
         const val STATE_FINISH = "已完成"
         const val STATE_CANCEL = "已取消"
         const val STATE_WAITING = "待使用"
+        const val STATE_OUT_DATE = "已过期"
     }
 }

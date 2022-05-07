@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lijiahao.sharechargingpile2.data.Appointment
 import com.lijiahao.sharechargingpile2.data.AppointmentInfo
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
 import com.lijiahao.sharechargingpile2.network.service.AppointmentService
@@ -61,7 +62,12 @@ class AppointmentListViewModel @Inject constructor(
                 tasks.forEach {
                     appointmentInfoList.add(it.await())
                 }
-                this@AppointmentListViewModel.appointmentInfoList.postValue(appointmentInfoList)
+
+                val nowAppointment = appointmentInfoList.filter { it.appointment.state == Appointment.STATE_WAITING }
+                val historyAppointment = appointmentInfoList.filter { it.appointment.state != Appointment.STATE_WAITING }
+                val res = ArrayList(nowAppointment)
+                res.addAll(historyAppointment)
+                this@AppointmentListViewModel.appointmentInfoList.postValue(res)
 
             } catch (e: Exception) {
                 e.printStackTrace()
