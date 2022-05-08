@@ -41,10 +41,6 @@ class MessageListFragment : Fragment() {
     @Inject
     lateinit var sharedPreferenceData: SharedPreferenceData
 
-    // 初始化WebSocket（从MainActivity中获取）
-    private val webSocket: WebSocket? by lazy {
-        (requireActivity() as MainActivity).webSocket
-    }
 
     lateinit var messageReceiver: MessageReceiver
 

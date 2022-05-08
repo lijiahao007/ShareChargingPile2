@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.launch
 import androidx.core.view.WindowCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,15 +28,12 @@ import com.lijiahao.sharechargingpile2.databinding.FragmentChatBinding
 import com.lijiahao.sharechargingpile2.network.request.MessageRequest
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.MessageService
-import com.lijiahao.sharechargingpile2.network.service.UserService
 import com.lijiahao.sharechargingpile2.repository.MessageRepository
 import com.lijiahao.sharechargingpile2.ui.broadcastreceiver.MessageReceiver
 import com.lijiahao.sharechargingpile2.ui.chatModule.adapter.ChatAdapter
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.ChatViewModel
 import com.lijiahao.sharechargingpile2.ui.chatModule.viewmodel.MessageListViewModel
-import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.ui.publishStationModule.AddStationFragment
-import com.lijiahao.sharechargingpile2.utils.NetworkUtils
 import com.lijiahao.sharechargingpile2.utils.SoftKeyBoardUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +42,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.WebSocket
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -60,18 +56,20 @@ class ChatFragment : Fragment() {
     }
 
     private val args: ChatFragmentArgs by navArgs()
-
     private val messageListViewModel: MessageListViewModel by activityViewModels()
 
+
+    // TODO: targetUserInfo、curUserInfo 如果没有成果获取，该Fragment会崩溃。要解决这个问题
     // 注意：要开启ChatFragment的前提时，在messageListViewModel的userInfoResponseList中存在目标用户的UserInfoResponse。如果没有就需要先获取新用户消息，在转到ChatFragment中
     private val targetUserInfo: UserInfoResponse by lazy {
-        Log.i(TAG, "messageListViewModel.userInfoResponseList= ${messageListViewModel.userInfoResponseList.value}")
-        Log.i(TAG, "args.userId = ${args.userId}")
-        val userInfo = messageListViewModel.userInfoResponseList.value!!.find {
-            it.userId == args.userId
-        }
-        userInfo!!
+        val info = messageListViewModel.userInfoResponseList.value?.find { it.userId == args.userId }
+        info!!
     }
+
+    private val curUserInfo: UserInfoResponse by lazy {
+        messageListViewModel.curUserInfo
+    }
+
 
     @Inject
     lateinit var messageRepository: MessageRepository
@@ -125,7 +123,6 @@ class ChatFragment : Fragment() {
         }
         super.onCreate(savedInstanceState)
         initBroadcastReceiver()
-
     }
 
     override fun onCreateView(
@@ -157,8 +154,10 @@ class ChatFragment : Fragment() {
         }
 
         binding.tvUserName.text = targetUserInfo.name
+
         binding.tvUserInfo.setOnClickListener {
-            val action = ChatFragmentDirections.actionChatFragmentToUserInfoFragment(targetUserInfo.userId)
+            val action =
+                ChatFragmentDirections.actionChatFragmentToUserInfoFragment(targetUserInfo.userId)
             findNavController().navigate(action)
         }
     }
@@ -352,7 +351,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun initChatView() {
-        adapter = ChatAdapter(sharedPreferenceData.userId)
+        adapter = ChatAdapter(sharedPreferenceData.userId, curUserInfo, targetUserInfo)
         binding.rvChatList.adapter = adapter
     }
 
@@ -364,6 +363,12 @@ class ChatFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             var messageList = messageDao.queryMessageByUserId(targetId, messageNum)
             messageList = messageList.reversed()
+            messageList.forEach {
+                if (it.state == MsgState.UNCHECKED) {
+                    it.state = MsgState.CHECKED
+                }
+            }
+            messageDao.updateMessageCheckState(messageList)
             withContext(Dispatchers.Main) {
                 adapter.submitList(messageList)
             }
@@ -389,11 +394,11 @@ class ChatFragment : Fragment() {
 
     // 初始化广播接收器
     private fun initBroadcastReceiver() {
-        messageReceiver = object:MessageReceiver() {
+        messageReceiver = object : MessageReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 super.onReceive(context, intent)
-                message?.let{
-                    if(it.sendId != targetUserInfo.userId && it.targetId != targetUserInfo.userId) {
+                message?.let {
+                    if (it.sendId != targetUserInfo.userId && it.targetId != targetUserInfo.userId) {
                         // 与该聊天用户不相关的消息不显示
                         return
                     }
@@ -403,8 +408,8 @@ class ChatFragment : Fragment() {
                     val list = LinkedList(adapter.currentList)
                     list.add(it)
                     adapter.submitList(list)
-                    adapter.notifyItemInserted(list.size-1)
-                    binding.rvChatList.smoothScrollToPosition(list.size-1)
+                    adapter.notifyItemInserted(list.size - 1)
+                    binding.rvChatList.smoothScrollToPosition(list.size - 1)
                 }
             }
         }

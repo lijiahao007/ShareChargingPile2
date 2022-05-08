@@ -32,8 +32,9 @@ class BookViewModel @Inject constructor(
     private val stationId = savedStateHandle.get<Int>("stationId")
 
     val appointments: ArrayList<Appointment> = ArrayList()
-    var stationInfo:StationInfo?= null
-    val pileDateTimeBarDataMap: MutableLiveData<HashMap<Int, HashMap<LocalDate, List<TimeBarData>>>> = MutableLiveData() // <pileId, <date, timeBarList>>
+    var stationInfo: StationInfo? = null
+    val pileDateTimeBarDataMap: MutableLiveData<HashMap<Int, HashMap<LocalDate, List<TimeBarData>>>> =
+        MutableLiveData() // <pileId, <date, timeBarList>>
 
     init {
         getData()
@@ -54,20 +55,22 @@ class BookViewModel @Inject constructor(
                     this@BookViewModel.stationInfo = stationInfo
 
                     // 3. 计算TimeBarData
-                    val pileDateTimeBarDataMap: HashMap<Int, HashMap<LocalDate, List<TimeBarData>>> = HashMap() // <pileId, <date, timeBarList>>
+                    val pileDateTimeBarDataMap: HashMap<Int, HashMap<LocalDate, List<TimeBarData>>> =
+                        HashMap() // <pileId, <date, timeBarList>>
                     val pileIds = stationInfo.pileList.map { it.id }
                     val nowDate = LocalDate.now()
-                    val openTimeList = stationInfo.openTimeList.sortedWith(Comparator<OpenTime> { o1, o2 ->
-                        val o1BeginTime = LocalTime.parse(o1.beginTime)
-                        val o2BeginTime = LocalTime.parse(o2.beginTime)
-                        if (o1BeginTime.isBefore(o2BeginTime)) {
-                            -1
-                        } else if (o1BeginTime.isAfter(o2BeginTime)) {
-                            1
-                        } else {
-                            0
-                        }
-                    })
+                    val openTimeList =
+                        stationInfo.openTimeList.sortedWith(Comparator<OpenTime> { o1, o2 ->
+                            val o1BeginTime = LocalTime.parse(o1.beginTime)
+                            val o2BeginTime = LocalTime.parse(o2.beginTime)
+                            if (o1BeginTime.isBefore(o2BeginTime)) {
+                                -1
+                            } else if (o1BeginTime.isAfter(o2BeginTime)) {
+                                1
+                            } else {
+                                0
+                            }
+                        })
 
                     pileIds.forEach { pileId ->
                         val timeBarDataMap = HashMap<LocalDate, List<TimeBarData>>()
@@ -116,18 +119,37 @@ class BookViewModel @Inject constructor(
                             val finalTimeBarData = splitTimeBarData(openTimeList, midAppointList)
 
                             // 3.4 将今天现在之前的时间段标注为灰色
-                            if(date == nowDate) {
+                            if (date == nowDate) {
                                 val nowTime = LocalTime.now()
-                                val index = finalTimeBarData.indexOfFirst { nowTime.isBetween(it.beginTime, it.endTime) }
+                                val index = finalTimeBarData.indexOfFirst {
+                                    nowTime.isBetween(
+                                        it.beginTime,
+                                        it.endTime
+                                    )
+                                }
                                 if (index != -1) {
                                     for (j in 0 until index) {
                                         finalTimeBarData[j].state = TimeBarData.STATE_SUSPEND
                                     }
                                     val timeBarData = finalTimeBarData[index]
                                     if (timeBarData.beginTime != nowTime) {
-                                        finalTimeBarData.add(index, TimeBarData(timeBarData.beginTime, nowTime, TimeBarData.STATE_SUSPEND))
-                                        finalTimeBarData.add(index+1, TimeBarData(nowTime, timeBarData.endTime, timeBarData.state))
-                                        finalTimeBarData.removeAt(index+2)
+                                        finalTimeBarData.add(
+                                            index,
+                                            TimeBarData(
+                                                timeBarData.beginTime,
+                                                nowTime,
+                                                TimeBarData.STATE_SUSPEND
+                                            )
+                                        )
+                                        finalTimeBarData.add(
+                                            index + 1,
+                                            TimeBarData(
+                                                nowTime,
+                                                timeBarData.endTime,
+                                                timeBarData.state
+                                            )
+                                        )
+                                        finalTimeBarData.removeAt(index + 2)
                                     }
                                 }
                             }
@@ -142,6 +164,12 @@ class BookViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun isPileBooked(pileId: Int): Boolean {
+        return appointments.filter { it.pileId == pileId }.find {
+            LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime())
+        } == null
     }
 
 

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
+import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.ElectricChargePeriod
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.data.SharedPreferenceData
@@ -89,6 +90,11 @@ class GenerateOrderFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            if (viewModel.isPileNowAppointment(pileId.toInt())) {
+                Snackbar.make(binding.root, "已被预约", Snackbar.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 val userId = sharedPreferenceData.userId
                 try {
@@ -111,6 +117,9 @@ class GenerateOrderFragment : Fragment() {
                             "using" -> {
                                 Snackbar.make(binding.root, "当前充电桩使用中", Snackbar.LENGTH_SHORT)
                                     .show()
+                            }
+                            "appointment" -> {
+                                Snackbar.make(binding.root, "当前充电桩预约中", Snackbar.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -137,12 +146,8 @@ class GenerateOrderFragment : Fragment() {
             binding.tvElectricType.text = pile.electricType
             binding.tvPowerRate.text = pile.powerRate.toString()
 
-            viewModel.stationInfo.value?.run {
-                val appointments = appointmentList.filter { it.pileId == pile.id }
-                val isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } == null
-                if (isBooked) {
-                    binding.tvPileState.text = "被预约"
-                }
+            if (viewModel.isPileNowAppointment(pile.id)) {
+                binding.tvPileState.text = ChargingPile.STATE_APPOINTMENT
             }
         }
 

@@ -2,6 +2,7 @@ package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
@@ -67,6 +68,13 @@ class MessageListAdapter(private val messageListFragment: MessageListFragment) :
                 val otherId = if (message.sendId == userId) message.targetId else message.sendId
                 val action = MessageListFragmentDirections.actionMessageListFragmentToChatFragment(otherId)
                 fragment.findNavController().navigate(action)
+            }
+            
+            // 加载红点
+            if (messageListItem.message.isCheck) {
+                binding.messageItemRedPoint.visibility = View.GONE
+            } else {
+                binding.messageItemRedPoint.visibility = View.VISIBLE
             }
 
         }

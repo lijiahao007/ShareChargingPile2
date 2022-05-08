@@ -34,6 +34,10 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE (sendId == :userId) OR (targetId == :userId) ORDER BY sendTime DESC LIMIT 1")
     fun queryLatestMessage(userId: String):Message
 
+    // 更改消息查看状态
+    @Update
+    fun updateMessageCheckState(msg: List<Message>)
+
     // 获取一列表的用户ID对应的最新消息 （返回的Message顺序与传入UserId顺序一致）
     fun queryLatestMessage(userIds:List<String>):List<Message> {
         val res = ArrayList<Message>()

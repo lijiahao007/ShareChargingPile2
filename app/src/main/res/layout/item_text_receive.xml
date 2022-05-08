@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_text_receive"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/ll_text_receive"
+    android:background="@color/user_info_background"
     android:orientation="vertical"
-    android:padding="5dp"
-    android:background="@color/user_info_background">
+    android:padding="5dp">
 
 
     <TextView
@@ -22,21 +22,20 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-         android:layout_height="wrap_content"
-        >
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp">
 
 
-        <ImageView
+        <com.lijiahao.sharechargingpile2.ui.view.CircleImageView
             android:id="@+id/chat_item_header"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_people"
-            android:layout_marginRight="5dp" />
+            android:src="@drawable/ic_people" />
 
 
         <LinearLayout
@@ -53,10 +52,10 @@
                 android:id="@+id/chat_item_content_sender_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="left"
                 android:text="hello"
                 android:textSize="10dp"
-                android:visibility="gone"
-                android:layout_gravity="left"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/chat_item_content_text"

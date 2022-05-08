@@ -1,13 +1,16 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.lijiahao.sharechargingpile2.R
 import com.lijiahao.sharechargingpile2.databinding.ActivityMapModuleBinding
+import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.utils.PermissionTool
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +27,8 @@ class MapModuleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val permissionReady = PermissionTool.usedOnCreate(this,
+        val permissionReady = PermissionTool.usedOnCreate(
+            this,
             permissions,
             permissionsHint
         )
@@ -54,10 +58,10 @@ class MapModuleActivity : AppCompatActivity() {
         }
     }
 
+
     private fun init() {
         binding // 加载一下
     }
-
 
 
     companion object {

@@ -25,15 +25,14 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp">
 
-        <ImageView
+        <com.lijiahao.sharechargingpile2.ui.view.CircleImageView
             android:id="@+id/chat_item_header_send"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_people"
             android:layout_marginLeft="5dp"
-            />
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_people" />
 
 
         <RelativeLayout

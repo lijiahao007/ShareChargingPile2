@@ -1,5 +1,6 @@
 package com.lijiahao.sharechargingpile2.ui.chatModule.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,9 +11,17 @@ import com.lijiahao.sharechargingpile2.databinding.ItemImageReceiveBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemImageSendBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemTextReceiveBinding
 import com.lijiahao.sharechargingpile2.databinding.ItemTextSendBinding
+import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 
-class ChatAdapter(private val userId: String) :
+class ChatAdapter(
+    private val userId: String,
+    private val curUserInfo: UserInfoResponse,
+    private val targetInfo: UserInfoResponse
+) :
     ListAdapter<Message, MessageViewHolder>(MessageDiffItemCallback()) {
+
+    private val curUserAvatarUrl = curUserInfo.avatarUrl
+    private val targetUserAvatarUrl = targetInfo.avatarUrl
 
     // 根据每个消息设置Item类型
     override fun getItemViewType(position: Int): Int {
@@ -31,19 +40,19 @@ class ChatAdapter(private val userId: String) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return when (viewType) {
             TYPE_SEND_TEXT -> {
-                SendTextViewHolder(ItemTextSendBinding.inflate(LayoutInflater.from(parent.context)))
+                SendTextViewHolder(ItemTextSendBinding.inflate(LayoutInflater.from(parent.context)), curUserAvatarUrl)
             }
             TYPE_RECEIVE_TEXT -> {
-                ReceiveTextViewHolder(ItemTextReceiveBinding.inflate(LayoutInflater.from(parent.context)))
+                ReceiveTextViewHolder(ItemTextReceiveBinding.inflate(LayoutInflater.from(parent.context)), targetUserAvatarUrl)
             }
             TYPE_SEND_IMAGE -> {
-                SendImageViewHolder(ItemImageSendBinding.inflate(LayoutInflater.from(parent.context)))
+                SendImageViewHolder(ItemImageSendBinding.inflate(LayoutInflater.from(parent.context)), curUserAvatarUrl)
             }
             TYPE_RECEIVE_IMAGE -> {
-                ReceiveImageViewHolder(ItemImageReceiveBinding.inflate(LayoutInflater.from(parent.context)))
+                ReceiveImageViewHolder(ItemImageReceiveBinding.inflate(LayoutInflater.from(parent.context)), targetUserAvatarUrl)
             }
             else -> {
-                SendTextViewHolder(ItemTextSendBinding.inflate(LayoutInflater.from(parent.context)))
+                SendTextViewHolder(ItemTextSendBinding.inflate(LayoutInflater.from(parent.context)), curUserAvatarUrl)
             }
         }
 

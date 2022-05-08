@@ -59,7 +59,7 @@ class AppointmentAdapter(val fragment: OrderListFragment) :
                 )
             }
             val action =
-                OrderListFragmentDirections.actionOrderListFragmentToBookPileFragment2(info.station.id)
+                OrderListFragmentDirections.actionOrderListFragmentToBookPileFragment(info.station.id)
             fragment.findNavController().navigate(action)
             if ((position == 0 && info.appointment.state != Appointment.STATE_WAITING) ||
                 (position > 0 && info.appointment.state != Appointment.STATE_WAITING && getItem(position-1).appointment.state == Appointment.STATE_WAITING)) {

@@ -55,6 +55,8 @@ class StationDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        messageListViewModel
+        mapViewModel
         initUi()
         return binding.root
     }
@@ -115,33 +117,44 @@ class StationDetailFragment : Fragment() {
         }
 
         binding.btnContactOwner.setOnClickListener {
-            val targetUserId = mapViewModel.stationInfoMap[stationId.toString()]?.station?.userId.toString()!!
-            val userInfo = messageListViewModel.userInfoResponseList.value?.let { list ->
+            val targetUserId =
+                mapViewModel.stationInfoMap[stationId.toString()]?.station?.userId.toString()!!
+            messageListViewModel.userInfoResponseList.value?.let { list ->
                 val info = list.find { it.userId == targetUserId }
                 if (info == null) {
                     // 没有该用户，请求用户信息
                     lifecycleScope.launch(Dispatchers.IO) {
                         val response = userService.getUserInfo(targetUserId)
                         withContext(Dispatchers.Main) {
+                            Log.e(TAG, "userInfo = $response")
                             messageListViewModel.addUserInfoResponse(response)
-                            val action = MapFragmentDirections.actionMapFragmentToChatFragment(targetUserId)
-                            requireActivity().findNavController(R.id.map_module_fragment_container).navigate(action)
+                            val action =
+                                MapFragmentDirections.actionMapFragmentToChatFragment(targetUserId)
+                            requireActivity().findNavController(R.id.map_module_fragment_container)
+                                .navigate(action)
                         }
                     }
                 } else {
                     val action = MapFragmentDirections.actionMapFragmentToChatFragment(targetUserId)
-                    requireActivity().findNavController(R.id.map_module_fragment_container).navigate(action)
+                    requireActivity().findNavController(R.id.map_module_fragment_container)
+                        .navigate(action)
                 }
             }
         }
 
         binding.ivToElectricCharge.setOnClickListener {
-            val action = StationDetailFragmentDirections.actionStationDetailFragmentToElectricChargeFragment(stationId)
+            val action =
+                StationDetailFragmentDirections.actionStationDetailFragmentToElectricChargeFragment(
+                    stationId
+                )
             findNavController().navigate(action)
         }
 
         binding.ivToComment.setOnClickListener {
-            val action = StationDetailFragmentDirections.actionStationDetailFragmentToCommentListFragment(stationId)
+            val action =
+                StationDetailFragmentDirections.actionStationDetailFragmentToCommentListFragment(
+                    stationId
+                )
             findNavController().navigate(action)
         }
 

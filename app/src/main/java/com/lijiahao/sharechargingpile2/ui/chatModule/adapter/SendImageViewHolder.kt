@@ -9,11 +9,12 @@ import com.lijiahao.sharechargingpile2.di.GlideApp
 import java.io.File
 
 
-class SendImageViewHolder(val binding: ItemImageSendBinding) :
+class SendImageViewHolder(val binding: ItemImageSendBinding, val avatarUrl:String) :
     MessageViewHolder(binding.root){
     override fun bind(message: Message) {
         val msgBody = message.msgBody as ImageMsgBody
         GlideApp.with(binding.root).load(File(msgBody.localPath)).into(binding.bivPic)
+        GlideApp.with(binding.root).load(avatarUrl).into(binding.chatItemHeaderSend)
         when (message.state) {
             MsgState.SENDING -> {
                 binding.chatItemProgress.visibility = View.VISIBLE

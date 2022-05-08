@@ -328,8 +328,8 @@ class MapFragment : Fragment() {
 
     // 初始化地图上的UI， 如圆，如标点
     private fun initMarker() {
-        viewModel.isRemoteDataReady.observe(this) {
-            Log.i("initMarker", "viewModel.stationList.size=${viewModel.stationList.size}")
+        viewModel.stationList.observe(this) {
+            Log.i("initMarker", "viewModel.stationList.size=${it.size}")
             // 添加标点
             setStationMarker()
         }
@@ -339,7 +339,7 @@ class MapFragment : Fragment() {
 
     private fun setStationMarker() {
         isStationMarkerShowed = true
-        viewModel.stationList.forEach { station ->
+        viewModel.stationList.value?.forEach { station ->
             aMap.addMarker(
                 MarkerOptions()
                     .visible(true)

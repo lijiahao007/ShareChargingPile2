@@ -13,7 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class QRCodeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrcodeBinding
-    
+
+    var limitPileId: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityQrcodeBinding.inflate(layoutInflater)
@@ -37,7 +39,10 @@ class QRCodeActivity : AppCompatActivity() {
 
     private fun init() {
         // 初始化操作
-
+        val pileId = intent.getIntExtra("pileId", 0)
+        if (pileId != 0) {
+            limitPileId = pileId
+        }
     }
 
 

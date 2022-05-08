@@ -56,8 +56,9 @@
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ChoosePileFragment"
         android:label="ChoosePileFragment"
         tools:layout="@layout/fragment_choose_pile">
-    <argument android:name="pileArray"
-        app:argType="com.lijiahao.sharechargingpile2.data.ChargingPile[]"/>
+        <argument
+            android:name="pileArray"
+            app:argType="com.lijiahao.sharechargingpile2.data.ChargingPile[]" />
     </fragment>
 
 

@@ -6,6 +6,7 @@
     app:startDestination="@+id/navigation_home">
     <!--    app:startDestination="@+id/testFragment"-->
     <!--    app:startDestination="@+id/navigation_home"-->
+
     <fragment
         android:id="@+id/pileUsingFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.QRCodeModule.PileUsingFragment"
@@ -94,6 +95,7 @@
         <action
             android:id="@+id/action_chatFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+
     </fragment>
 
     <fragment
@@ -126,8 +128,8 @@
             android:id="@+id/action_orderListFragment_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
         <action
-            android:id="@+id/action_orderListFragment_to_bookPileFragment2"
-            app:destination="@id/bookPileFragment2" />
+            android:id="@+id/action_orderListFragment_to_bookPileFragment"
+            app:destination="@id/bookPileFragment" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
@@ -171,12 +173,26 @@
         android:label="TestFragment"
         tools:layout="@layout/fragment_test" />
     <fragment
-        android:id="@+id/bookPileFragment2"
+        android:id="@+id/bookPileFragment"
         android:name="com.lijiahao.sharechargingpile2.ui.mapModule.BookPileFragment"
         android:label="BookPileFragment"
-        tools:layout="@layout/fragment_book_pile"
-        >
-        <argument android:name="stationId"
-            app:argType="integer"/>
+        tools:layout="@layout/fragment_book_pile">
+        <argument
+            android:name="stationId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_bookPileFragment_to_choosePileFragment"
+            app:destination="@id/choosePileFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/choosePileFragment"
+        android:name="com.lijiahao.sharechargingpile2.ui.mapModule.ChoosePileFragment"
+        android:label="ChoosePileFragment"
+        tools:layout="@layout/fragment_choose_pile">
+        <argument
+            android:name="pileArray"
+            app:argType="com.lijiahao.sharechargingpile2.data.ChargingPile[]" />
+    </fragment>
+
 </navigation>

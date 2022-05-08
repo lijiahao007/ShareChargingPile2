@@ -46,7 +46,7 @@ class AppointmentInMapAdapter(val fragment: BookPileFragment) : RecyclerView.Ada
             animSet.play(xAnimator).with(yAnimator)
             animSet.duration = 100
             animSet.start()
-            fragment.showDeletePopUpWindow(list[position], cardLayout)
+            fragment.showPileInfoPopupWindow(list[position], cardLayout)
         }
     }
 

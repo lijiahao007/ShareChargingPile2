@@ -25,4 +25,8 @@ interface AppointmentService {
     @POST("appointment/deleteAppointment")
     suspend fun deleteAppointment(@Field("stationId") stationId: Int): String
 
+    @GET("appointment/getAllAppointment")
+    suspend fun getAllAppointment(): Map<String, List<Appointment>>
+
+
 }

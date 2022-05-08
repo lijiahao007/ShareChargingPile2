@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.lijiahao.sharechargingpile2.data.ChargingPile
 import com.lijiahao.sharechargingpile2.data.OpenTime
 import com.lijiahao.sharechargingpile2.databinding.FragmentOrderPayBinding
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
@@ -95,12 +96,8 @@ class OrderPayFragment : Fragment() {
             binding.tvElectricType.text = pile.electricType
             binding.tvPowerRate.text = pile.powerRate.toString()
 
-            viewModel.stationInfo.value?.run {
-                val appointments = appointmentList.filter { it.pileId == pile.id }
-                val isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } == null
-                if (isBooked) {
-                    binding.tvPileState.text = "被预约"
-                }
+            if (viewModel.isPileNowAppointment(pile.id)) {
+                binding.tvPileState.text = ChargingPile.STATE_APPOINTMENT
             }
         }
 

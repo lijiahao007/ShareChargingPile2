@@ -1,6 +1,7 @@
 package com.lijiahao.sharechargingpile2.ui.mapModule
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +30,8 @@ import com.lijiahao.sharechargingpile2.network.request.AddAppointmentRequest
 import com.lijiahao.sharechargingpile2.network.request.ModifyAppointmentRequest
 import com.lijiahao.sharechargingpile2.network.response.AddAppointmentResponse
 import com.lijiahao.sharechargingpile2.network.service.AppointmentService
+import com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeActivity
+import com.lijiahao.sharechargingpile2.ui.QRCodeModule.QRCodeScanFragment
 import com.lijiahao.sharechargingpile2.ui.mapModule.adapter.AppointmentInMapAdapter
 import com.lijiahao.sharechargingpile2.ui.mapModule.viewmodel.BookViewModel
 import com.lijiahao.sharechargingpile2.ui.view.OpenTimeWithChargeFeeLayout
@@ -100,8 +105,7 @@ class BookPileFragment : Fragment() {
         binding.tvToChoosePile.setOnClickListener {
             bookViewModel.stationInfo?.let {
                 val pileArray = it.pileList.toTypedArray()
-                val action =
-                    BookPileFragmentDirections.actionBookPileFragmentToChoosePileFragment(pileArray)
+                val action = BookPileFragmentDirections.actionBookPileFragmentToChoosePileFragment(pileArray)
                 findNavController().navigate(action)
             }
         }
@@ -131,12 +135,8 @@ class BookPileFragment : Fragment() {
         binding.tvPileState.text = pile.state
         binding.tvElectricType.text = pile.electricType
         binding.tvPowerRate.text = pile.powerRate.toString()
-        bookViewModel.stationInfo?.run {
-            val appointments = appointmentList.filter { it.pileId == pile.id }
-            val isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } == null
-            if (isBooked) {
-                binding.tvPileState.text = "被预约"
-            }
+        if (bookViewModel.isPileBooked(pileId)) {
+            binding.tvPileState.text = ChargingPile.STATE_APPOINTMENT
         }
 
         //2. 获取TimeBarData
@@ -266,7 +266,7 @@ class BookPileFragment : Fragment() {
 
 
     @SuppressLint("SetTextI18n")
-    fun showDeletePopUpWindow(appointment: Appointment, anchorView: View) {
+    fun showPileInfoPopupWindow(appointment: Appointment, anchorView: View) {
         if (::updateAppointmentPopupWindow.isInitialized) {
             updateAppointmentPopupWindow.dismiss()
         }
@@ -302,6 +302,7 @@ class BookPileFragment : Fragment() {
         val tvTime: TextView = popupView.findViewById(R.id.tv_time)
         val tvState: TextView = popupView.findViewById(R.id.tv_state)
         val tvModifyTime: TextView = popupView.findViewById(R.id.tv_modify_time)
+        val btnUse: Button = popupView.findViewById(R.id.btn_use)
         val btnModify: Button = popupView.findViewById(R.id.btn_modify)
         val btnDelete: Button = popupView.findViewById(R.id.btn_delete)
         val btnCancel: Button = popupView.findViewById(R.id.btn_cancel)
@@ -335,6 +336,13 @@ class BookPileFragment : Fragment() {
             popupView.findViewById<LinearLayout>(R.id.modify_range_layout).visibility = View.VISIBLE
         }
 
+        btnUse.setOnClickListener {
+            updateAppointmentPopupWindow.dismiss()
+            val activity = requireActivity()
+            val intent = Intent(requireContext(), QRCodeActivity::class.java)
+            intent.putExtra("pileId", pileId)
+            activity.startActivity(intent)
+        }
 
         btnModify.setOnClickListener {
             modifyPile(appointment, range)
@@ -498,7 +506,11 @@ class BookPileFragment : Fragment() {
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                         try {
                             val request =
-                                ModifyAppointmentRequest(appointment.id, beginDateTime.toString(), endDateTime.toString())
+                                ModifyAppointmentRequest(
+                                    appointment.id,
+                                    beginDateTime.toString(),
+                                    endDateTime.toString()
+                                )
                             val res = appointmentService.modifyAppointment(request)
                             withContext(Dispatchers.Main) {
                                 var msg = ""
@@ -613,7 +625,6 @@ class BookPileFragment : Fragment() {
     companion object {
         const val CHOOSE_PILE_ID_RESULT_KEY = "CHOOSE_PILE_ID_RESULT_KEY"
         const val CHOOSE_PILE_ID_BUNDLE_KEY = "CHOOSE_PILE_ID_BUNDLE_KEY"
-        const val ALL_DAY_SECONDS = 24 * 60 * 60
         const val TAG = "BookPileFragment"
     }
 }

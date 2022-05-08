@@ -41,8 +41,10 @@ class ChargingPileListFragment : Fragment() {
         val singlePiles =
             ArrayList<ChargingPile>() // 每个ChargingPile分来，例如2个直流12kw/h 变成 1个直流12kw/h, 1个直流12kw/h
         piles?.forEach {
-
-            val pile = ChargingPile(it.id, it.electricType, it.powerRate, it.stationId, it.state, null)
+            val isBooked = mapViewModel.isPileBooked(it.stationId, it.id)
+            var state = it.state
+            if (isBooked) state = ChargingPile.STATE_APPOINTMENT
+            val pile = ChargingPile(it.id, it.electricType, it.powerRate, it.stationId, state, null)
             singlePiles.add(pile)
         }
         adapter.submitList(singlePiles)

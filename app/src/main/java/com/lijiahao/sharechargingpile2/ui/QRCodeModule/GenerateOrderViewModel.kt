@@ -8,8 +8,11 @@ import com.lijiahao.sharechargingpile2.network.response.StationInfo
 import com.lijiahao.sharechargingpile2.network.response.UserInfoResponse
 import com.lijiahao.sharechargingpile2.network.service.ChargingPileStationService
 import com.lijiahao.sharechargingpile2.network.service.UserService
+import com.lijiahao.sharechargingpile2.utils.TimeUtils.Companion.isBetween
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 // 如果能够设置_order MutableLiveData的话，就不用设置orderId (默认设置为"0")
 // 如果不能够设置_order MutableLiveData的话，就直接传入一个orderId就好了。(一个大于0的数字符串)
@@ -62,6 +65,14 @@ class GenerateOrderViewModel(
         _order.value = order
     }
 
+    fun isPileNowAppointment(pileId: Int):Boolean {
+        var isBooked:Boolean = false
+        stationInfo.value?.run {
+            val appointments = appointmentList.filter { it.pileId == pileId }
+            isBooked = appointments.find { LocalDateTime.now().isBetween(it.getBeginDateTime(), it.getEndDateTime()) } != null
+        }
+        return isBooked
+    }
 
     companion object {
 

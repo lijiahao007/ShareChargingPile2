@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.chatFragment, R.id.userExtendInfoFragment, R.id.orderListFragment,
                 R.id.userInfoFragment, R.id.pileUsingFragment, R.id.payFragment,
-                R.id.orderPayFragment, R.id.orderDetailFragment, R.id.commentFragment -> {
+                R.id.orderPayFragment, R.id.orderDetailFragment, R.id.commentFragment,
+                R.id.bookPileFragment, R.id.choosePileFragment-> {
                     navView.visibility = View.GONE
                 }
                 R.id.navigation_home -> {
@@ -83,7 +84,6 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "MainService 与 MessageWebSocketService断开连接")
             webSocket = null
         }
-
     }
 
     companion object {
