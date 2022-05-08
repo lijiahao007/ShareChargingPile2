@@ -65,8 +65,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initUI() {
 
-        binding.username.setText("13535853646")
-        binding.password.setText("123456")
+        val sharedPreference = applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val username = sharedPreference.getString(USER_ACCOUNT_IN_PREFERENCES, "")
+        val password = sharedPreference.getString(USER_PASSWORD_IN_PREFERENCES, "")
+        binding.username.setText(username)
+        binding.password.setText(password)
         binding.login.setOnClickListener {
             val username = binding.username.text.toString()
             val password = binding.password.text.toString()
@@ -126,6 +129,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+
+        val sharedPreference = applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        val username = sharedPreference.getString(USER_ACCOUNT_IN_PREFERENCES, "")
+        val password = sharedPreference.getString(USER_PASSWORD_IN_PREFERENCES, "")
+        binding.username.setText(username)
+        binding.password.setText(password)
+
         intent?.getStringExtra(NEW_INTENT_EXTRA)?.let {
             when (it) {
                 NOTIFICATIONFRAGMENT_TO_LOGINACTIVITY -> {

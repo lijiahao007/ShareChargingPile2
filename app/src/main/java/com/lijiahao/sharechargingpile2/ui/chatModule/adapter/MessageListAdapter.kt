@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lijiahao.sharechargingpile2.data.MessageListItem
+import com.lijiahao.sharechargingpile2.data.MsgState
 import com.lijiahao.sharechargingpile2.data.MsgType
 import com.lijiahao.sharechargingpile2.data.TextMsgBody
 import com.lijiahao.sharechargingpile2.databinding.ItemMessageBinding
@@ -71,10 +72,10 @@ class MessageListAdapter(private val messageListFragment: MessageListFragment) :
             }
             
             // 加载红点
-            if (messageListItem.message.isCheck) {
-                binding.messageItemRedPoint.visibility = View.GONE
-            } else {
+            if (messageListItem.message.state == MsgState.UNCHECKED) {
                 binding.messageItemRedPoint.visibility = View.VISIBLE
+            } else {
+                binding.messageItemRedPoint.visibility = View.GONE
             }
 
         }

@@ -219,11 +219,12 @@ class MapFragment : Fragment() {
                         val loc = resList[0]
                         withContext(Dispatchers.Main) {
                             aMap.animateCamera(
-                                CameraUpdateFactory.newLatLng(
+                                CameraUpdateFactory.newLatLngZoom(
                                     LatLng(
                                         loc.latLonPoint.latitude,
                                         loc.latLonPoint.longitude
-                                    )
+                                    ),
+                                    16f
                                 )
                             )
                             binding.tfSearch.visibility = View.GONE
@@ -336,7 +337,6 @@ class MapFragment : Fragment() {
 
     }
 
-
     private fun setStationMarker() {
         isStationMarkerShowed = true
         viewModel.stationList.value?.forEach { station ->
@@ -391,6 +391,8 @@ class MapFragment : Fragment() {
             if (it && !isStationMarkerShowed) {
                 aMap.clear()
                 setStationMarker()
+                // 显示中心标点 (这样在移动屏幕的时候就会自动设置了)
+                mapCenterMarker = null
             }
         }
 

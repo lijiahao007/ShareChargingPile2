@@ -12,6 +12,8 @@ import com.lijiahao.sharechargingpile2.network.request.SignUpRequest
 import com.lijiahao.sharechargingpile2.network.service.LoginService
 import com.lijiahao.sharechargingpile2.ui.mainModule.MainActivity
 import com.lijiahao.sharechargingpile2.utils.SHARED_PREFERENCES_NAME
+import com.lijiahao.sharechargingpile2.utils.USER_ACCOUNT_IN_PREFERENCES
+import com.lijiahao.sharechargingpile2.utils.USER_PASSWORD_IN_PREFERENCES
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,11 +60,13 @@ class SignUpActivity : AppCompatActivity() {
                                 getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
                             val editor = sharedPreferences.edit()
                             editor.putString("userId", response.userId)
+                            editor.putString(USER_ACCOUNT_IN_PREFERENCES, username )
+                            editor.putString(USER_PASSWORD_IN_PREFERENCES, password)
                             editor.apply()
 
                             // 2. 跳转MainActivity
                             withContext(Dispatchers.Main) {
-                                val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                                val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                                 startActivity(intent)
                             }
                         } else {
